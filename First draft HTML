@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff; /* A vibrant blue for "shiny" feel */
+            --primary-gradient-start: #007bff;
+            --primary-gradient-end: #0056b3; /* Darker blue for gradient */
+            --accent-color: #28a745; /* Green for success/buttons */
+            --background-light: #f8f9fa;
+            --background-dark: #e9ecef;
+            --text-color: #343a40;
+            --border-color: #ced4da;
+            --card-background: #ffffff;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-strong: rgba(0, 0, 0, 0.2);
+            --hover-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--background-light), var(--background-dark));
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-strong);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px var(--shadow-strong);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .logo-link img {
+            height: 40px; /* Adjust as needed */
+            border-radius: 5px;
+            box-shadow: 0 2px 5px var(--shadow-light);
+            transition: transform 0.2s ease;
+        }
+        header .logo-link img:hover {
+            transform: scale(1.05);
+        }
+
+        header .help-section {
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+        }
+
+        header .help-section i {
+            margin-right: 8px;
+            color: #ffffff; /* White icon */
+        }
+
+        header .help-section a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease;
+        }
+
+        header .help-section a:hover {
+            color: #cceeff; /* Lighter blue on hover */
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--background-dark);
+            padding: 30px 20px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar .step-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar .step-navigation button {
+            background: linear-gradient(45deg, var(--primary-gradient-start), var(--primary-gradient-end));
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px var(--shadow-light);
+            font-weight: 500;
+            opacity: 0.7; /* Dim inactive steps */
+        }
+
+        .sidebar .step-navigation button.active {
+            background: linear-gradient(45deg, var(--accent-color), #218838); /* Active color */
+            opacity: 1; /* Full opacity for active */
+            transform: translateX(5px);
+            box-shadow: 0 6px 15px var(--shadow-strong);
+        }
+
+        .sidebar .step-navigation button:not(.active):hover {
+            background: linear-gradient(45deg, #0069d9, #004d9e); /* Darker on hover for inactive */
+            transform: scale(1.02);
+        }
+
+        .sidebar .review-links {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar .review-links a {
+            display: block;
+            background-color: var(--card-background);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .sidebar .review-links a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px var(--shadow-strong);
+        }
+
+        .sidebar .review-links img {
+            max-width: 120px; /* Adjust size of review logos */
+            height: auto;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically if space allows */
+        }
+
+        .form-section {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px var(--shadow-light);
+            display: none; /* Hidden by default */
+            border: 1px solid var(--border-color);
+        }
+
+        .form-section.active {
+            display: block; /* Show active section */
+        }
+
+        .form-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px var(--shadow-light);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group select,
+        .form-group textarea {
+            width: calc(100% - 20px); /* Adjust for padding */
+            padding: 12px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            box-shadow: inset 0 1px 3px var(--shadow-light);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="tel"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group input[type="date"]:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        .form-group .radio-group label {
+            display: inline-block;
+            margin-right: 20px;
+            font-weight: 400;
+            cursor: pointer;
+        }
+        .form-group .radio-group input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .file-upload-box {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background-color: var(--background-light);
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .file-upload-box:hover {
+            border-color: var(--primary-color);
+            background-color: #f0f8ff;
+        }
+
+        .file-upload-box input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-box p {
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        .file-upload-box i {
+            font-size: 3em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .signature-box {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-height: 100px;
+            padding: 10px;
+            background-color: #fefefe;
+            /* For a real signature pad, this would be a canvas */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .signature-box input {
+            width: 100%;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-size: 1.1em;
+            padding: 5px;
+        }
+
+
+        .form-navigation-buttons {
+            display: flex;
+            justify-content: flex-end; /* Align to the right */
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .form-navigation-buttons button {
+            background: linear-gradient(45deg, var(--accent-color), #218838);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px var(--shadow-light);
+            font-weight: 600;
+        }
+
+        .form-navigation-buttons button:hover {
+            background: linear-gradient(45deg, #218838, #1e7e34);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px var(--shadow-strong);
+        }
+
+        .form-navigation-buttons button#prevBtn {
+            background: linear-gradient(45deg, #6c757d, #5a6268); /* Gray for previous */
+        }
+        .form-navigation-buttons button#prevBtn:hover {
+            background: linear-gradient(45deg, #5a6268, #4e555b);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+            header .help-section {
+                font-size: 1em;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 20px 15px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                flex-direction: row; /* Steps side-by-side on small screens */
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+            .sidebar .step-navigation {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                gap: 8px;
+            }
+            .sidebar .step-navigation button {
+                white-space: nowrap;
+                padding: 10px 12px;
+                font-size: 0.9em;
+                opacity: 1; /* Keep visible on mobile scroll */
+                min-width: 120px;
+                text-align: center;
+            }
+            .sidebar .step-navigation button.active {
+                transform: none; /* No translateX on mobile */
+                box-shadow: none;
+            }
+            .sidebar .review-links {
+                display: none; /* Hide review links on small screens to save space */
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .form-navigation-buttons {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="YOUR_WEBSITE_HOMEPAGE_LINK" class="logo-link">
+            <img src="YOUR_WEBSITE_LOGO_IMAGE_URL" alt="Your Website Logo">
+        </a>
+        <div class="help-section">
+            <i class="fas fa-phone-alt"></i> Need Help? <a href="tel:YOUR_PHONE_NUMBER">YOUR PHONE NUMBER</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="step-navigation">
+                <button class="step-btn active" data-step="1">Basic Info</button>
+                <button class="step-btn" data-step="2">Business Info</button>
+                <button class="step-btn" data-step="3">Owner Info</button>
+                <button class="step-btn" data-step="4">Upload & Signature</button>
+            </div>
+            <div class="review-links">
+                <a href="YOUR_TRUSTPILOT_LINK" target="_blank">
+                    <img src="https://via.placeholder.com/120x40?text=Trustpilot+Logo" alt="Trustpilot Reviews">
+                </a>
+                <a href="YOUR_BBB_LINK" target="_blank">
+                    <img src="https://via.placeholder.com/120x40?text=BBB+Logo" alt="BBB Reviews">
+                </a>
+                <a href="YOUR_GOOGLE_REVIEWS_LINK" target="_blank">
+                    <img src="https://via.placeholder.com/120x40?text=Google+Reviews" alt="Google Reviews">
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <form id="applicationForm">
+                <div id="step1" class="form-section active">
+                    <h2>Basic Information</h2>
+                    <div class="form-group">
+                        <label for="fundingAmount">How much funding are you looking for?</label>
+                        <input type="number" id="fundingAmount" name="fundingAmount" placeholder="$" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="creditScore">What is your credit score?</label>
+                        <input type="number" id="creditScore" name="creditScore" min="300" max="850" placeholder="e.g., 700" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="industry">What industry are you in?</label>
+                        <input type="text" id="industry" name="industry" placeholder="e.g., Retail, Tech, Food Service" required>
+                        </div>
+                    <div class="form-group">
+                        <label for="timeframe">What timeframe do you need the money?</label>
+                        <select id="timeframe" name="timeframe" required>
+                            <option value="">Select a timeframe</option>
+                            <option value="1-2_weeks">1-2 Weeks</option>
+                            <option value="2-4_weeks">2-4 Weeks</option>
+                            <option value="1-2_months">1-2 Months</option>
+                            <option value="over_2_months">Over 2 Months</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(123) 456-7890" required>
+                    </div>
+                    <div class="form-navigation-buttons">
+                        <button type="button" class="next-btn">Next</button>
+                    </div>
+                </div>
+
+                <div id="step2" class="form-section">
+                    <h2>Business Information</h2>
+                    <div class="form-group">
+                        <label for="businessLegalName">Business Legal Name</label>
+                        <input type="text" id="businessLegalName" name="businessLegalName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessDBAName">Business DBA Name (if applicable)</label>
+                        <input type="text" id="businessDBAName" name="businessDBAName">
+                    </div>
+                    <div class="form-group">
+                        <label for="ein">EIN (Employer Identification Number)</label>
+                        <input type="text" id="ein" name="ein" placeholder="XX-XXXXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessStartDate">Business Start Date</label>
+                        <input type="date" id="businessStartDate" name="businessStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Legal Entity</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="legalEntity" value="corporation" required> Corporation</label>
+                            <label><input type="radio" name="legalEntity" value="llc"> LLC</label>
+                            <label><input type="radio" name="legalEntity" value="partnership"> Partnership</label>
+                            <label><input type="radio" name="legalEntity" value="sole_proprietorship"> Sole Proprietorship</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ownershipPercentage">Ownership Percentage</label>
+                        <input type="number" id="ownershipPercentage" name="ownershipPercentage" min="0" max="100" placeholder="e.g., 100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessStreetAddress">Business Street Address</label>
+                        <input type="text" id="businessStreetAddress" name="businessStreetAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessCity">Business City</label>
+                        <input type="text" id="businessCity" name="businessCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessState">Business State</label>
+                        <input type="text" id="businessState" name="businessState" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessZipCode">Business Zip Code</label>
+                        <input type="text" id="businessZipCode" name="businessZipCode" required>
+                    </div>
+                    <div class="form-navigation-buttons">
+                        <button type="button" id="prevBtn1" class="prev-btn">Previous</button>
+                        <button type="button" class="next-btn">Next</button>
+                    </div>
+                </div>
+
+                <div id="step3" class="form-section">
+                    <h2>Owner Information</h2>
+                    <div class="form-group">
+                        <label for="ownerFirstName">First Name</label>
+                        <input type="text" id="ownerFirstName" name="ownerFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ownerLastName">Last Name</label>
+                        <input type="text" id="ownerLastName" name="ownerLastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="socialSecurityNumber">Social Security Number (SSN)</label>
+                        <input type="text" id="socialSecurityNumber" name="socialSecurityNumber" placeholder="XXX-XX-XXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeStreetAddress">Home Street Address</label>
+                        <input type="text" id="homeStreetAddress" name="homeStreetAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeCity">Home City</label>
+                        <input type="text" id="homeCity" name="homeCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeState">Home State</label>
+                        <input type="text" id="homeState" name="homeState" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeZipCode">Home Zip Code</label>
+                        <input type="text" id="homeZipCode" name="homeZipCode" required>
+                    </div>
+                    <div class="form-navigation-buttons">
+                        <button type="button" id="prevBtn2" class="prev-btn">Previous</button>
+                        <button type="button" class="next-btn">Next</button>
+                    </div>
+                </div>
+
+                <div id="step4" class="form-section">
+                    <h2>Upload Documents & Signature</h2>
+                    <div class="form-group">
+                        <label>Upload Business Bank Statements (Last 3 months)</label>
+                        <div class="file-upload-box" onclick="document.getElementById('bankStatements').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag & Drop files here or click to browse</p>
+                            <input type="file" id="bankStatements" name="bankStatements" accept=".pdf, .doc, .docx, .png, .jpg" multiple>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ownerNameSignature">Owner Name (for signature)</label>
+                        <input type="text" id="ownerNameSignature" name="ownerNameSignature" placeholder="Full Legal Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signatureDate">Date</label>
+                        <input type="date" id="signatureDate" name="signatureDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signatureBox">Signature</label>
+                        <div class="signature-box">
+                            <input type="text" id="signatureBox" name="signatureBox" placeholder="Type your full name as signature" required>
+                            </div>
+                    </div>
+                    <div class="form-navigation-buttons">
+                        <button type="button" id="prevBtn3" class="prev-btn">Previous</button>
+                        <button type="submit">Submit Application</button>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        const formSections = document.querySelectorAll('.form-section');
+        const stepButtons = document.querySelectorAll('.step-btn');
+        const nextButtons = document.querySelectorAll('.next-btn');
+        const prevButtons = document.querySelectorAll('.prev-btn');
+        let currentStep = 0; // 0-indexed
+
+        function showStep(stepIndex) {
+            formSections.forEach((section, index) => {
+                section.classList.remove('active');
+                if (index === stepIndex) {
+                    section.classList.add('active');
+                }
+            });
+
+            stepButtons.forEach((button, index) => {
+                button.classList.remove('active');
+                if (index === stepIndex) {
+                    button.classList.add('active');
+                }
+            });
+
+            currentStep = stepIndex;
+        }
+
+        // Initialize form to show the first step
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(0);
+        });
+
+        nextButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Basic validation for current step before moving next
+                const currentFormSection = formSections[currentStep];
+                const inputs = currentFormSection.querySelectorAll('input[required], select[required], textarea[required]');
+                let allValid = true;
+                inputs.forEach(input => {
+                    if (!input.value.trim() && input.type !== 'file') {
+                        allValid = false;
+                        input.style.borderColor = 'red'; // Simple visual cue
+                    } else {
+                        input.style.borderColor = ''; // Reset
+                    }
+                    if (input.type === 'radio') {
+                         // Check if at least one radio in the group is checked
+                        const radioGroupName = input.name;
+                        if (currentFormSection.querySelector(`input[name="${radioGroupName}"]:checked`) === null) {
+                            allValid = false;
+                            // No specific border for radios, but the group needs attention
+                            const radioGroupDiv = input.closest('.radio-group');
+                            if (radioGroupDiv) radioGroupDiv.style.border = '1px solid red';
+                        } else {
+                            const radioGroupDiv = input.closest('.radio-group');
+                            if (radioGroupDiv) radioGroupDiv.style.border = '';
+                        }
+                    }
+                });
+
+                // Special handling for file uploads (can be empty for now if not explicitly required)
+                if (currentStep === 3) { // This is the Upload & Signature step
+                    const fileInput = document.getElementById('bankStatements');
+                    // If you want to make files *required*, uncomment this:
+                    /*
+                    if (fileInput.files.length === 0) {
+                        allValid = false;
+                        document.querySelector('.file-upload-box').style.borderColor = 'red';
+                    } else {
+                        document.querySelector('.file-upload-box').style.borderColor = '';
+                    }
+                    */
+                }
+
+
+                if (allValid && currentStep < formSections.length - 1) {
+                    showStep(currentStep + 1);
+                } else if (!allValid) {
+                    alert('Please fill out all required fields before proceeding.');
+                }
+            });
+        });
+
+        prevButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    showStep(currentStep - 1);
+                }
+            });
+        });
+
+        stepButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                // Allow direct navigation to any step for now, but in a real app,
+                // you might want to enforce completing previous steps first.
+                showStep(index);
+            });
+        });
+
+        // Basic form submission handler (for demonstration)
+        document.getElementById('applicationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            alert('Application Submitted! (This is a demo. Data is not actually sent yet.)');
+            // Here you would typically collect form data and send it to your server or Jotform API
+            // Example: const formData = new FormData(this);
+            // for (let [key, value] of formData.entries()) { console.log(`${key}: ${value}`); }
+        });
+
+        // Optional: Reset border color on input change
+        document.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.style.borderColor === 'red') {
+                    this.style.borderColor = '';
+                }
+                if (this.type === 'radio') {
+                    const radioGroupDiv = this.closest('.radio-group');
+                    if (radioGroupDiv && radioGroupDiv.style.border === '1px solid red') {
+                        radioGroupDiv.style.border = '';
+                    }
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
