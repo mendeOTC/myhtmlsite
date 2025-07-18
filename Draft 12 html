@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Funding - Elite Capital Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column; /* Arrange content vertically */
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #3a3a5a 0%, #2a2a4a 50%, #1a1a3a 100%);
+            color: #e0e0e0;
+            box-sizing: border-box;
+        }
+
+        .header-section {
+            width: 100%;
+            background-color: #1a1a3a; /* Darker header background */
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px; /* Space below header */
+        }
+
+        .header-section h1 {
+            color: #ffffff;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-container {
+            background-color: #2c2c4c;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px; /* Space before footer */
+        }
+
+        .form-container h1 { /* Override default h1 for form title */
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 2em;
+            font-weight: 700;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 10px; /* Default vertical spacing for all groups */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #c0c0e0;
+            font-size: 0.9em;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="date"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea,
+        .signature-box { /* Added .signature-box here */
+            width: 100%; /* All inputs now take full width */
+            padding: 8px 12px;
+            border: 1px solid #4a4a7a;
+            border-radius: 8px;
+            background-color: #3a3a5a;
+            color: #ffffff;
+            font-size: 0.95em;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Specific styling for file input to ensure consistency */
+        .form-group input[type="file"] {
+            width: 100%; /* Ensure file input also takes full width */
+            padding: 8px 12px; /* Consistent padding */
+            border: 1px solid #4a4a7a;
+            border-radius: 8px;
+            background-color: #3a3a5a;
+            color: #ffffff;
+            font-size: 0.95em;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Placeholder text color */
+        .form-group input::placeholder,
+        .form-group select::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .form-group input[type="date"] {
+            color-scheme: dark;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="tel"]:focus,
+        .form-group input[type="date"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group input[type="file"]:focus,
+        .form-group select:focus,
+        .form-group textarea:focus,
+        .signature-box:focus { /* Added .signature-box here */
+            border-color: #8a8af0;
+            box-shadow: 0 0 0 3px rgba(138, 138, 240, 0.3);
+            outline: none;
+        }
+
+        .form-group input[type="file"]::file-selector-button {
+            background-color: #5a5a8a;
+            color: #ffffff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .form-group input[type="file"]::file-selector-button:hover {
+            background-color: #6a6aa0;
+        }
+
+        .required-field::after {
+            content: '*';
+            color: #ff6b6b;
+            margin-left: 4px;
+        }
+
+        /* Signature Box Styling (redundant styles removed, now inherits from generic input rules) */
+        .signature-box {
+            font-style: italic;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #6a6af0;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(106, 106, 240, 0.4);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: #7a7af5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(106, 106, 240, 0.6);
+        }
+
+        .footer-section {
+            width: 100%;
+            background-color: #1a1a3a;
+            padding: 20px 0;
+            text-align: center;
+            color: #b0b0d0;
+            font-size: 0.9em;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.4);
+            margin-top: 20px; /* Space above footer */
+        }
+
+        .footer-section p {
+            margin: 5px 0;
+        }
+
+        .footer-section a {
+            color: #8a8af0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-section a:hover {
+            color: #a0a0f5;
+            text-decoration: underline;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 650px) {
+            body {
+                padding: 5px;
+            }
+            .header-section h1 {
+                font-size: 1.8em;
+            }
+            .form-container {
+                padding: 15px;
+                margin: 5px;
+            }
+            .form-container h1 {
+                font-size: 1.6em;
+                margin-bottom: 15px;
+            }
+            .form-group label {
+                font-size: 0.85em;
+            }
+            .form-group input,
+            .form-group select,
+            .form-group textarea,
+            .signature-box { /* Apply to all inputs, selects, textareas, and signature box */
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+            .submit-button {
+                font-size: 1em;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <h1>Elite Capital Solutions</h1>
+    </div>
+
+    <div class="form-container">
+        <h1>Funding Application</h1>
+
+        <form action="#" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="businessLegalName" class="required-field">Business Legal Name</label>
+                <input type="text" id="businessLegalName" name="businessLegalName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="businessDBAName" class="required-field">Business DBA Name</label>
+                <input type="text" id="businessDBAName" name="businessDBAName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ein" class="required-field">EIN</label>
+                <input type="text" id="ein" name="ein" required pattern="[0-9]{2}-[0-9]{7}" placeholder="XX-XXXXXXX">
+            </div>
+            <div class="form-group">
+                <label for="businessStartDate" class="required-field">Business Start Date</label>
+                <input type="date" id="businessStartDate" name="businessStartDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="legalEntity" class="required-field">Legal Entity</label>
+                <select id="legalEntity" name="legalEntity" required>
+                    <option value="">Select Entity Type</option>
+                    <option value="soleProprietorship">Sole Proprietorship</option>
+                    <option value="partnership">Partnership</option>
+                    <option value="llc">LLC</option>
+                    <option value="sCorp">S-Corp</option>
+                    <option value="cCorp">C-Corp</option>
+                    <option value="nonProfit">Non-Profit</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ownershipPercentage" class="required-field">Ownership Percentage</label>
+                <input type="number" id="ownershipPercentage" name="ownershipPercentage" min="0" max="100" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="businessStreet" class="required-field">Business Street</label>
+                <input type="text" id="businessStreet" name="businessStreet" required>
+            </div>
+
+            <div class="form-group">
+                <label for="businessCity" class="required-field">Business City</label>
+                <input type="text" id="businessCity" name="businessCity" required>
+            </div>
+            <div class="form-group">
+                <label for="businessState" class="required-field">Business State</label>
+                <input type="text" id="businessState" name="businessState" required>
+            </div>
+
+            <div class="form-group">
+                <label for="businessZip" class="required-field">Business ZIP</label>
+                <input type="text" id="businessZip" name="businessZip" required pattern="[0-9]{5}" placeholder="XXXXX">
+            </div>
+
+            <div class="form-group">
+                <label for="ownerFirstName" class="required-field">Owner First Name</label>
+                <input type="text" id="ownerFirstName" name="ownerFirstName" required>
+            </div>
+            <div class="form-group">
+                <label for="ownerLastName" class="required-field">Owner Last Name</label>
+                <input type="text" id="ownerLastName" name="ownerLastName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ownerPhone">Owner Phone</label>
+                <input type="tel" id="ownerPhone" name="ownerPhone" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" placeholder="XXXXXXXXXX">
+            </div>
+            <div class="form-group">
+                <label for="ownerEmail">Owner Email</label>
+                <input type="email" id="ownerEmail" name="ownerEmail" placeholder="example@domain.com">
+            </div>
+
+            <div class="form-group">
+                <label for="ownerSSN">Owner SSN</label>
+                <input type="text" id="ownerSSN" name="ownerSSN" pattern="[0-9]{3}-[0-9]{2}-[0-9]{4}" placeholder="XXX-XX-XXXX">
+            </div>
+            <div class="form-group">
+                <label for="ownerDOB" class="required-field">Owner Date of Birth (mm/dd/yyyy)</label>
+                <input type="date" id="ownerDOB" name="ownerDOB" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ownerStreet" class="required-field">Owner Street</label>
+                <input type="text" id="ownerStreet" name="ownerStreet" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ownerCity" class="required-field">Owner City</label>
+                <input type="text" id="ownerCity" name="ownerCity" required>
+            </div>
+            <div class="form-group">
+                <label for="ownerState" class="required-field">Owner State</label>
+                <input type="text" id="ownerState" name="ownerState" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ownerZip" class="required-field">Owner ZIP</label>
+                <input type="text" id="ownerZip" name="ownerZip" required pattern="[0-9]{5}" placeholder="XXXXX">
+            </div>
+
+            <div class="form-group">
+                <label for="bankStatements" class="required-field">Upload 3 Business Bank Statements (PDF)</label>
+                <input type="file" id="bankStatements" name="bankStatements" accept=".pdf" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ownerSignatureName" class="required-field">Owner Name (for Signature)</label>
+                <input type="text" id="ownerSignatureName" name="ownerSignatureName" class="signature-box" placeholder="Type your full name here" required>
+            </div>
+            <div class="form-group">
+                <label for="signatureDate" class="required-field">Date of Signature</label>
+                <input type="date" id="signatureDate" name="signatureDate" required>
+            </div>
+
+            <button type="submit" class="submit-button">Submit Application</button>
+        </form>
+    </div>
+
+    <div class="footer-section">
+        <p>&copy; 2025 Elite Capital Solutions. All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </div>
+</body>
+</html>
