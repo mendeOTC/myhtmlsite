@@ -203,27 +203,29 @@
 
         .form-content-area {
             flex-grow: 1;
-            padding: 50px 80px; /* More horizontal padding */
+            /* REMOVED padding: 50px 80px; from here */
             display: flex;
             flex-direction: column;
             align-items: center; /* Center the form sections horizontally */
             background-color: var(--form-bg);
             overflow-y: auto; /* Allow form content to scroll */
+            width: 100%; /* Ensure it takes full available width */
+            max-width: 800px; /* NEW: Constrain the main content area itself */
+            margin: 0 auto; /* NEW: Center the main content area */
         }
 
-        #applicationForm { /* NEW: Apply max-width and centering to the form itself */
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
+        #applicationForm {
+            width: 100%; /* Now takes 100% of the parent form-content-area's constrained width */
+            /* REMOVED max-width and margin from here */
         }
 
         .form-section {
-            width: 100%; /* Now takes 100% of the parent form's constrained width */
-            padding: 0; /* Remove any padding that might affect width */
+            width: 100%; /* Takes 100% of the parent form's width */
+            padding: 50px 80px; /* NEW: Apply padding directly to each section */
             box-shadow: none; /* No box shadow directly on section */
             border: none; /* No border directly on section */
             display: none;
-            /* REMOVED: margin: 0 auto; and max-width: 800px; from here */
+            box-sizing: border-box; /* Ensure padding is included in the width */
         }
 
         .form-section.active {
@@ -540,8 +542,8 @@
             }
 
             .form-content-area {
-                padding: 30px 20px;
-                align-items: stretch; /* Stretch content to fill area */
+                padding: 0; /* No padding on mobile, handled by form-section */
+                max-width: 100%; /* Take full width on small screens */
             }
 
             #applicationForm { /* Responsive adjustment for the form itself */
@@ -549,8 +551,8 @@
             }
 
             .form-section {
+                padding: 30px 20px; /* Adjusted padding for mobile */
                 max-width: 100%; /* On small screens, take full width */
-                /* margin: 0 auto; - Removed as parent form handles this */
             }
 
             .form-section h2 {
@@ -1161,4 +1163,3 @@
     </script>
 </body>
 </html>
-
