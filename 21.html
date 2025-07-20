@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Funding Application - New Design</title>
+    <title>Business Funding Application - Redesigned</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Configure Tailwind to include custom colors and fonts -->
@@ -45,6 +45,7 @@
         }
         body {
             font-family: 'Open Sans', sans-serif;
+            /* Background gradient applied to body for full page effect */
             background: linear-gradient(135deg, theme('colors.modernBgLight') 0%, theme('colors.backgroundWhite') 100%);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -77,6 +78,16 @@
             opacity: 0;
             transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
+
+        /* Specific styling for the active step icon */
+        .step-btn.active-step .active-icon {
+            color: theme('colors.modernAccent'); /* Active step color */
+            content: "\f058"; /* Checkmark circle for active */
+        }
+        /* Hover effect for step buttons */
+        .step-btn:not(.active-step):hover {
+            transform: translateX(5px);
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen text-modernSecondary">
@@ -99,7 +110,7 @@
         <!-- Sidebar Navigation -->
         <aside class="w-full md:w-72 p-8 md:p-12 bg-gradient-to-br from-modernBgLight to-backgroundWhite flex flex-col gap-10 shadow-md md:shadow-lg sticky top-0 h-auto md:h-screen overflow-y-auto border-b md:border-b-0 md:border-r border-modernBorder">
             <div class="flex flex-row md:flex-col gap-5 overflow-x-auto md:overflow-x-hidden pb-2 md:pb-0">
-                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent active-step" data-step="1">
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent" data-step="1">
                     <i class="fas fa-circle absolute left-0 top-1/2 -translate-y-1/2 text-modernBorder text-sm transition-colors duration-300 active-icon"></i>
                     Basic Info
                 </button>
@@ -123,12 +134,12 @@
             </div>
         </aside>
 
-        <!-- Form Content Area (Main White Card) -->
-        <main class="form-content-area flex-grow flex flex-col items-center justify-start p-8 md:p-12 bg-backgroundWhite shadow-md md:shadow-lg rounded-lg md:rounded-xl my-8 md:my-10 mx-auto w-full max-w-4xl overflow-y-auto">
-            <form id="applicationForm" class="w-full">
+        <!-- Main Form Area - Now wider and without a white box container -->
+        <main class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 w-full">
+            <form id="applicationForm" class="w-full max-w-5xl px-4 md:px-8"> <!-- Increased max-width for wider pages -->
 
                 <!-- Step 1: Basic Information -->
-                <div id="step1" class="form-section active">
+                <div id="step1" class="form-section active bg-backgroundWhite p-8 md:p-12 rounded-lg shadow-md mb-8">
                     <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Basic Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
                         <div class="form-group">
@@ -177,7 +188,7 @@
                 </div>
 
                 <!-- Step 2: Business Information -->
-                <div id="step2" class="form-section hidden">
+                <div id="step2" class="form-section hidden bg-backgroundWhite p-8 md:p-12 rounded-lg shadow-md mb-8">
                     <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Business Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
                         <div class="form-group">
@@ -258,7 +269,7 @@
                 </div>
 
                 <!-- Step 3: Owner Information -->
-                <div id="step3" class="form-section hidden">
+                <div id="step3" class="form-section hidden bg-backgroundWhite p-8 md:p-12 rounded-lg shadow-md mb-8">
                     <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Owner Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
                         <div class="form-group">
@@ -313,7 +324,7 @@
                 </div>
 
                 <!-- Step 4: Upload Documents & Signature -->
-                <div id="step4" class="form-section hidden">
+                <div id="step4" class="form-section hidden bg-backgroundWhite p-8 md:p-12 rounded-lg shadow-md mb-8">
                     <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Upload Documents & Signature</h2>
                     <div class="form-group mb-6 w-full">
                         <label class="block mb-2 font-semibold text-modernPrimary text-lg">Upload Business Bank Statements (Last 3 months)</label>
@@ -493,6 +504,7 @@
             });
             stepButtons.forEach((button) => {
                 button.classList.remove('active-step');
+                // Reset icon to empty circle
                 button.querySelector('i').classList.remove('fa-circle-check');
                 button.querySelector('i').classList.add('fa-circle');
             });
@@ -501,15 +513,16 @@
             formSections[stepIndex].classList.remove('hidden');
             formSections[stepIndex].classList.add('active');
             stepButtons[stepIndex].classList.add('active-step');
+            // Change icon to checkmark for active step
             stepButtons[stepIndex].querySelector('i').classList.remove('fa-circle');
             stepButtons[stepIndex].querySelector('i').classList.add('fa-circle-check');
 
             currentStep = stepIndex; // Update the current step index
 
             // Scroll the main form content area to the top when changing steps
-            const formContentArea = document.querySelector('.form-content-area');
-            if (formContentArea) {
-                formContentArea.scrollTop = 0;
+            const mainContentArea = document.querySelector('main'); // Target the main tag
+            if (mainContentArea) {
+                mainContentArea.scrollTop = 0;
             }
         }
 
@@ -688,13 +701,13 @@
             // Determine icon and colors based on message type
             if (type === 'success') {
                 iconHtml = '<i class="fas fa-check-circle"></i>';
-                bgColor = theme('colors.accentGreen');
+                bgColor = tailwind.config.theme.extend.colors.accentGreen;
             } else if (type === 'error') {
                 iconHtml = '<i class="fas fa-times-circle"></i>';
                 bgColor = '#dc3545'; /* Specific red for error */
             } else { // info
                 iconHtml = '<i class="fas fa-info-circle"></i>';
-                bgColor = theme('colors.primaryBlue');
+                bgColor = tailwind.config.theme.extend.colors.primaryBlue;
             }
 
             messageBox.style.backgroundColor = bgColor;
