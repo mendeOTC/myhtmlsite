@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Funding Application - Redesigned</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        'open-sans': ['Open Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        // Base colors from your original config (used as fallbacks or for specific elements)
+                        primaryBlue: '#007bff',
+                        darkBlue: '#0056b3',
+                        lightBlueBg: '#e0f7fa',
+                        accentGreen: '#28a745',
+                        grayText: '#495057',
+                        lightGrayBorder: '#dee2e6',
+                        backgroundWhite: '#ffffff',
+                        backgroundBody: '#f8f9fa',
+                        modernPrimary: '#1a202c',
+                        modernSecondary: '#4a5568',
+                        modernAccent: '#3182ce',
+                        modernBgLight: '#f7fafc',
+                        modernBorder: '#e2e8f0',
+
+                        // Dynamic Theme Colors (CSS Variables)
+                        'theme-primary': 'var(--theme-primary, #3182ce)', // Main accent color
+                        'theme-secondary': 'var(--theme-secondary, #4a5568)', // Secondary accent/text color
+                        'theme-background': 'var(--theme-background, #f7fafc)', // Main background
+                        'theme-sidebar-bg': 'var(--theme-sidebar-bg, #ffffff)', // Sidebar/modal background
+                        'theme-text': 'var(--theme-text, #4a5568)', // General text color
+                        'theme-heading': 'var(--theme-heading, #1a202c)', // Heading text color
+                        'theme-border': 'var(--theme-border, #e2e8f0)', // General border color
+                        'theme-input-bg': 'var(--theme-input-bg, #ffffff)', // Input background
+                        'theme-input-border': 'var(--theme-input-border, #e2e8f0)', // Input border
+                        'theme-input-focus-border': 'var(--theme-input-focus-border, #3182ce)', // Input focus border
+                        'theme-input-focus-ring': 'var(--theme-input-focus-ring, rgba(49, 130, 206, 0.3))', // Input focus ring
+                        'theme-button-bg': 'var(--theme-button-bg, #ffffff)', // Button background
+                        'theme-button-text': 'var(--theme-button-text, #4a5568)', // Button text
+                        'theme-button-hover-bg': 'var(--theme-button-hover-bg, #f7fafc)', // Button hover background
+                        'theme-button-hover-border': 'var(--theme-button-hover-border, #cbd5e0)', // Button hover border
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Ensure box-sizing is border-box globally for consistent layout */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--theme-background); /* Dynamic background */
+            color: var(--theme-text); /* Dynamic text color */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
+        }
+        /* Style for date input to ensure light mode calendar */
+        input[type="date"] {
+            color-scheme: light; /* Keep calendar light by default */
+        }
+        /* Custom styles for signature canvas border on error */
+        .signature-canvas-container.error {
+            border: 1px solid red !important;
+        }
+
+        /* Custom Message Box Styles */
+        #customMessageBox {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1em;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden; /* Use visibility for smoother hiding */
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, visibility 0.3s ease;
+        }
+        #customMessageBox.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Dynamic Theme Styling for specific elements */
+        .header-bg {
+            background-color: var(--theme-sidebar-bg);
+            border-bottom-color: var(--theme-border);
+        }
+        .sidebar-bg {
+            background: var(--theme-sidebar-bg); /* Use solid color for sidebar now */
+            border-right-color: var(--theme-border);
+            border-bottom-color: var(--theme-border);
+        }
+        .text-theme-heading {
+            color: var(--theme-heading);
+        }
+        .text-theme-primary {
+            color: var(--theme-primary);
+        }
+        .text-theme-secondary {
+            color: var(--theme-text);
+        }
+        .border-theme-border {
+            border-color: var(--theme-border);
+        }
+        .input-style {
+            background-color: var(--theme-input-bg);
+            border-color: var(--theme-input-border);
+            color: var(--theme-text);
+            /* Ensure cursor and caret are visible against dark backgrounds */
+            caret-color: var(--theme-text);
+        }
+        .input-style:focus {
+            border-color: var(--theme-input-focus-border);
+            box-shadow: 0 0 0 2px var(--theme-input-focus-ring);
+            outline: none;
+        }
+        .button-style {
+            background-color: var(--theme-button-bg);
+            color: var(--theme-button-text);
+            border-color: var(--theme-button-border); /* Use a specific border for buttons */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .button-style:hover {
+            background-color: var(--theme-button-hover-bg);
+            border-color: var(--theme-button-hover-border);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        .file-upload-box-style {
+            border-color: var(--theme-input-border);
+            background-color: var(--theme-input-bg);
+        }
+        .file-upload-box-style:hover {
+            border-color: var(--theme-input-focus-border);
+            background-color: var(--theme-input-bg); /* Keep same bg on hover */
+        }
+        .file-icon-style {
+            color: var(--theme-primary);
+        }
+        .modal-content-style {
+            background-color: var(--theme-sidebar-bg);
+        }
+        .modal-img-border {
+            border-color: var(--theme-primary);
+        }
+        .modal-icon-color {
+            color: var(--theme-primary);
+        }
+        .step-btn .active-icon { /* Apply default circle icon */
+            content: "\f111"; /* Circle icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: theme('colors.modernBorder'); /* Default to a light gray */
+            font-size: 0.8em;
+            transition: color 0.3s ease, content 0.3s ease; /* Transition content for icon change */
+        }
+
+        .step-btn.active-step .active-icon {
+            color: var(--theme-primary) !important; /* Active step color now uses theme variable */
+            content: "\f058"; /* Checkmark circle for active */
+        }
+        /* Radio button accent color */
+        input[type="radio"] {
+            accent-color: var(--theme-primary);
+        }
+
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(5px); /* Blur effect */
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--theme-text);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--theme-primary);
+        }
+        
+        /* Styles for color circles */
+        .color-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            flex-shrink: 0; /* Prevent circles from shrinking */
+        }
+        .color-circle:hover {
+            transform: scale(1.1);
+            border-color: #333;
+        }
+        .color-circle.selected {
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.2);
+        }
+
+        /* Seamless borders */
+        header, footer, aside {
+            box-shadow: none !important; /* Remove any lingering shadows */
+        }
+
+        /* Apply thin, subtle borders */
+        .header-bg {
+            border-bottom: 1px solid var(--theme-border); /* Thin bottom border for header */
+        }
+        .sidebar-bg {
+            border-right: 1px solid var(--theme-border); /* Thin right border for sidebar */
+        }
+        aside .border-t { /* Separator in sidebar */
+            border-top: 1px solid var(--theme-border);
+        }
+        .border-b-2 { /* Section title underlines, make them thin */
+            border-bottom-width: 1px !important;
+            border-bottom-color: var(--theme-border) !important;
+        }
+        .form-group .border { /* Input borders */
+            border-width: 1px !important;
+            border-color: var(--theme-input-border) !important;
+        }
+        .file-upload-box { /* File upload box border */
+            border-width: 1px !important;
+            border-style: dashed !important;
+        }
+        .signature-canvas-container { /* Signature pad border */
+            border-width: 1px !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="header-bg p-4 md:px-10 flex flex-col md:flex-row justify-between items-center sticky top-0 z-50">
+        <a href="https://ontimecap.com/" class="logo-link mb-4 md:mb-0 md:absolute md:left-10" target="_blank">
+            <img src="https://ontimecap.com/wp-content/uploads/2024/05/logos3-1.png" alt="On Time Capital Logo" class="h-14 transition-transform duration-200 hover:scale-105">
+        </a>
+        <div class="flex items-center gap-2 md:relative md:right-10 whitespace-nowrap" style="letter-spacing: -0.05em; margin-left: auto;">
+            <span class="text-lg font-montserrat font-semibold text-theme-heading">Need help?</span>
+            <i class="fas fa-phone-alt text-xl text-theme-primary"></i>
+            <a href="tel:4122046096" class="text-xl text-theme-heading no-underline hover:text-theme-primary transition-colors duration-200 font-montserrat font-extralight">412 204 6096</a>
+        </div>
+    </header>
+
+    <div class="flex flex-col md:flex-row flex-grow w-full">
+
+        <aside id="sidebar" class="sidebar-bg w-full md:w-72 p-8 md:p-12 flex flex-col gap-10 sticky top-0 h-auto md:h-screen overflow-y-auto">
+            <div class="flex flex-row md:flex-col gap-5 overflow-x-auto md:overflow-x-hidden pb-2 md:pb-0">
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-theme-primary text-theme-secondary" data-step="1">
+                    <i class="active-icon"></i>
+                    Basic Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-theme-primary text-theme-secondary" data-step="2">
+                    <i class="active-icon"></i>
+                    Business Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-theme-primary text-theme-secondary" data-step="3">
+                    <i class="active-icon"></i>
+                    Owner Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-theme-primary text-theme-secondary" data-step="4">
+                    <i class="active-icon"></i>
+                    Upload Documents & Signature
+                </button>
+            </div>
+            <div class="mt-auto pt-8 border-t border-theme-border flex flex-col gap-4">
+                <h3 class="font-montserrat text-xl text-theme-heading mb-1">Have any questions?</h3>
+                <p class="text-base text-theme-secondary">Get in contact:</p>
+                <a href="mailto:Mendel@ontimecap.com" class="text-theme-primary no-underline font-medium hover:text-theme-heading transition-colors duration-200">Mendel@ontimecap.com</a>
+            </div>
+            <div class="flex items-center justify-end gap-4 py-4 pr-2"> <div class="color-circle" style="background-color: #ffffff;" data-theme-name="white_original"></div>
+                <div class="color-circle" style="background-color: #000000;" data-theme-name="black_dark_mode"></div>
+            </div>
+        </aside>
+
+        <main id="mainContent" class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 w-full">
+            <form id="applicationForm" class="w-full max-w-5xl px-4 md:px-8">
+
+                <div id="step1" class="form-section active">
+                    <h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Basic Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+                        <div class="form-group">
+                            <label for="fundingAmount" class="block mb-2 font-semibold text-theme-heading text-lg">How much funding are you looking for?</label>
+                            <input type="number" id="fundingAmount" name="fundingAmount" placeholder="Enter amount"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="creditScore" class="block mb-2 font-semibold text-theme-heading text-lg">What is your credit score?</label>
+                            <input type="number" id="creditScore" name="creditScore" min="300" max="850" placeholder="e.g., 700"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style"
+                                oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);">
+                        </div>
+                        <div class="form-group">
+                            <label for="industry" class="block mb-2 font-semibold text-theme-heading text-lg">What industry are you in?</label>
+                            <input type="text" id="industry" name="industry" placeholder="e.g., Retail, Tech, Food Service"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="timeframe" class="block mb-2 font-semibold text-theme-heading text-lg">What timeframe do you need the money?</label>
+                            <select id="timeframe" name="timeframe"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                                <option value="">Select an option</option>
+                                <option value="ASAP">ASAP</option>
+                                <option value="within_week">Within a week</option>
+                                <option value="within_two_weeks">Within two weeks</option>
+                                <option value="within_month">Within a month</option>
+                                <option value="Browse_rates">Just Browse rates</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="block mb-2 font-semibold text-theme-heading text-lg">Email</label>
+                            <input type="email" id="email" name="email" placeholder="you@example.com"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber" class="block mb-2 font-semibold text-theme-heading text-lg">Phone Number</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(123) 456-7890" maxlength="10"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step2" class="form-section hidden">
+                    <h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Business Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+                        <div class="form-group">
+                            <label for="businessLegalName" class="block mb-2 font-semibold text-theme-heading text-lg">Business Legal Name</label>
+                            <input type="text" id="businessLegalName" name="businessLegalName"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessDBAName" class="block mb-2 font-semibold text-theme-heading text-lg">Business DBA Name (if applicable)</label>
+                            <input type="text" id="businessDBAName" name="businessDBAName"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="ein" class="block mb-2 font-semibold text-theme-heading text-lg">EIN (Employer Identification Number)</label>
+                            <input type="text" id="ein" name="ein" placeholder="XX-XXXXXXX" maxlength="9"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessStartDate" class="block mb-2 font-semibold text-theme-heading text-lg">Business Start Date</label>
+                            <input type="date" id="businessStartDate" name="businessStartDate"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label class="block mb-2 font-semibold text-theme-heading text-lg">Legal Entity</label>
+                            <div class="flex flex-wrap gap-x-8 gap-y-2">
+                                <label class="inline-flex items-center text-theme-text text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="corporation" class="form-radio h-5 w-5 mr-2 transform scale-110">
+                                    Corporation
+                                </label>
+                                <label class="inline-flex items-center text-theme-text text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="llc" class="form-radio h-5 w-5 mr-2 transform scale-110">
+                                    LLC
+                                </label>
+                                <label class="inline-flex items-center text-theme-text text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="partnership" class="form-radio h-5 w-5 mr-2 transform scale-110">
+                                    Partnership
+                                </label>
+                                <label class="inline-flex items-center text-theme-text text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="sole_proprietorship" class="form-radio h-5 w-5 mr-2 transform scale-110">
+                                    Sole Proprietorship
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ownershipPercentage" class="block mb-2 font-semibold text-theme-heading text-lg">Ownership Percentage</label>
+                            <input type="number" id="ownershipPercentage" name="ownershipPercentage" min="0" max="100" placeholder="e.g., 100" maxlength="3" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessStreetAddress" class="block mb-2 font-semibold text-theme-heading text-lg">Business Street Address</label>
+                            <input type="text" id="businessStreetAddress" name="businessStreetAddress"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessCity" class="block mb-2 font-semibold text-theme-heading text-lg">Business City</label>
+                            <input type="text" id="businessCity" name="businessCity"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessState" class="block mb-2 font-semibold text-theme-heading text-lg">Business State</label>
+                            <select id="businessState" name="businessState"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                                <option value="">Select a State</option>
+                                <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="businessZipCode" class="block mb-2 font-semibold text-theme-heading text-lg">Business Zip Code</label>
+                            <input type="text" id="businessZipCode" name="businessZipCode" maxlength="5"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step3" class="form-section hidden">
+                    <h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Owner Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+                        <div class="form-group">
+                            <label for="ownerFirstName" class="block mb-2 font-semibold text-theme-heading text-lg">First Name</label>
+                            <input type="text" id="ownerFirstName" name="ownerFirstName"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="ownerLastName" class="block mb-2 font-semibold text-theme-heading text-lg">Last Name</label>
+                            <input type="text" id="ownerLastName" name="ownerLastName"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialSecurityNumber" class="block mb-2 font-semibold text-theme-heading text-lg">Social Security Number (SSN)</label>
+                            <input type="text" id="socialSecurityNumber" name="socialSecurityNumber" placeholder="XXX-XX-XXXX" maxlength="9"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateOfBirth" class="block mb-2 font-semibold text-theme-heading text-lg">Date of Birth</label>
+                            <input type="date" id="dateOfBirth" name="dateOfBirth"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="homeStreetAddress" class="block mb-2 font-semibold text-theme-heading text-lg">Home Street Address</label>
+                            <input type="text" id="homeStreetAddress" name="homeStreetAddress"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="homeCity" class="block mb-2 font-semibold text-theme-heading text-lg">Home City</label>
+                            <input type="text" id="homeCity" name="homeCity"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="homeState" class="block mb-2 font-semibold text-theme-heading text-lg">Home State</label>
+                            <select id="homeState" name="homeState"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                                <option value="">Select a State</option>
+                                <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="homeZipCode" class="block mb-2 font-semibold text-theme-heading text-lg">Home Zip Code</label>
+                            <input type="text" id="homeZipCode" name="homeZipCode" maxlength="5"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step4" class="form-section hidden">
+                    <h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Upload Documents & Signature</h2>
+                    <div class="form-group mb-6 w-full">
+                        <label class="block mb-2 font-semibold text-theme-heading text-lg">Upload Business Bank Statements (Last 3 months)</label>
+                        <div class="file-upload-box flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer shadow-sm file-upload-box-style"
+                            id="fileUploadArea">
+                            <i class="fas fa-cloud-upload-alt text-5xl mb-4 file-icon-style"></i>
+                            <p class="text-theme-secondary font-medium text-lg text-center">Drag & Drop files here or click to browse</p>
+                            <input type="file" id="bankStatements" name="bankStatements" multiple class="hidden">
+                        </div>
+                        <div id="fileList" class="mt-4 space-y-2">
+                            </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+                        <div class="form-group">
+                            <label for="ownerNameSignature" class="block mb-2 font-semibold text-theme-heading text-lg">Owner Name (for signature)</label>
+                            <input type="text" id="ownerNameSignature" name="ownerNameSignature" placeholder="Full Legal Name"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="signatureDate" class="block mb-2 font-semibold text-theme-heading text-lg">Date</label>
+                            <input type="date" id="signatureDate" name="signatureDate"
+                                class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                        </div>
+                    </div>
+                    <div class="form-group mb-6 w-full">
+                        <label for="signatureCanvas" class="block mb-2 font-semibold text-theme-heading text-lg">Signature</label>
+                        <div class="signature-canvas-container relative border rounded-lg cursor-crosshair shadow-sm h-40 w-full border-theme-border" style="background-color: var(--theme-input-bg);">
+                            <canvas id="signatureCanvas" class="block w-full h-full rounded-lg"></canvas>
+                            <button type="button" id="clearSignature" class="absolute bottom-3 right-3 rounded-md px-3 py-1.5 text-sm cursor-pointer z-10 button-style" style="background-color: var(--theme-sidebar-bg); color: var(--theme-text); border-color: var(--theme-border);">
+                                Clear
+                            </button>
+                        </div>
+                        <input type="hidden" id="signatureData" name="signatureData">
+                    </div>
+                    <div class="flex justify-center mt-10 w-full">
+                        <button type="submit" class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style">
+                            Submit Application
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="thankYouPage" class="hidden flex flex-col items-center justify-center text-center w-full max-w-5xl px-4 md:px-8 py-16 md:py-24 flex-grow">
+                <h2 class="font-montserrat text-theme-heading text-4xl md:text-5xl font-bold mb-8">Thank you for submitting the funding application!</h2>
+                <p class="text-theme-secondary text-xl mb-4">Funded over $1.5 Billion, over 20,000 Happy Clients!</p>
+                <p class="text-theme-secondary text-xl mb-8">We appreciate you choosing On Time Capital. We will review your application shortly.</p>
+                <div class="flex flex-col md:flex-row gap-6 mt-8 justify-center w-full">
+                    <button id="contactRepresentativeBtn" class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style">
+                        Contact Your Representative
+                    </button>
+                    <button id="contactCustomerServiceBtn" class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style">
+                        Contact Customer Service
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="representativeModal" class="modal-overlay">
+        <div class="modal-content modal-content-style">
+            <button class="modal-close-btn" onclick="closeModal('representativeModal')">&times;</button>
+            <h3 class="font-montserrat text-theme-heading text-3xl font-bold mb-6">Your Representative</h3>
+            <img src="https://d3k81ch9hvuctc.cloudfront.net/company/VvZhYk/images/282c3fbe-3890-45b8-8315-162d78814213.png" alt="Mendel Profile Picture" class="rounded-full w-32 h-32 object-cover mx-auto mb-4 shadow-md border-2 modal-img-border">
+            <p class="font-montserrat text-theme-heading text-xl font-semibold mb-2">Mendel Junik</p>
+            <p class="text-theme-secondary text-lg mb-1"><i class="fas fa-phone-alt mr-2 modal-icon-color"></i>412-204-6096</p>
+            <p class="text-theme-secondary text-lg"><i class="fas fa-envelope mr-2 modal-icon-color"></i>mendel@ontimecap.com</p>
+        </div>
+    </div>
+
+    <div id="customerServiceModal" class="modal-overlay">
+        <div class="modal-content modal-content-style">
+            <button class="modal-close-btn" onclick="closeModal('customerServiceModal')">&times;</button>
+            <h3 class="font-montserrat text-theme-heading text-3xl font-bold mb-6">Customer Service</h3>
+            <img src="https://d3k81ch9hvuctc.cloudfront.net/company/VvZhYk/images/d4c7f6ce-009e-4914-af06-0f9feb437e77.png" alt="Emma Profile Picture" class="rounded-full w-32 h-32 object-cover mx-auto mb-4 shadow-md border-2 modal-img-border">
+            <p class="font-montserrat text-theme-heading text-xl font-semibold mb-2">Emma Birch</p>
+            <p class="text-theme-secondary text-lg mb-1"><i class="fas fa-phone-alt mr-2 modal-icon-color"></i>718-735-1976</p>
+            <p class="text-theme-secondary text-lg"><i class="fas fa-envelope mr-2 modal-icon-color"></i>emma.b@ontimecap.com</p>
+        </div>
+    </div>
+
+
+    <footer class="header-bg p-5 md:px-10 flex flex-col md:flex-row justify-between items-center border-t text-theme-secondary text-sm font-normal">
+        <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 mb-4 md:mb-0">
+            <span class="font-semibold text-theme-heading text-lg">Customer Reviews:</span>
+            <div class="flex items-center gap-4">
+                <a href="https://www.trustpilot.com/review/ontimecap.com" target="_blank">
+                    <img src="https://www.netimperative.com/wp-content/uploads/2020/01/trustpilot.png" alt="Trustpilot Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+                <a href="https://www.bbb.org/us/ny/brooklyn/profile/loan-broker/on-time-capital-llc-0121-87177095" target="_blank">
+                    <img src="https://www.kearneyhvac.com/wp-content/uploads/2023/07/bbb_a_rating_logo.jpg.webp" alt="BBB Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+                <a href="https://www.google.com/search?q=on+time+capital+reviews" target="_blank">
+                    <img src="https://cdn.prod.website-files.com/602cf6148109ccfeb1d80c49/60d4509851d12743d030a9eb_5c11336dd43b9272273fb4ce_Google-Reviews.webp" alt="Google Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+            </div>
+        </div>
+        <div class="text-theme-secondary">
+            Copyright &copy; 2025 On Time Capital, LLC.
+        </div>
+    </footer>
+
+    <script>
+        // Get all form sections and navigation buttons
+        const formSections = document.querySelectorAll('.form-section');
+        const stepButtons = document.querySelectorAll('.step-btn');
+        const continueButtons = document.querySelectorAll('.continue-btn');
+        const applicationForm = document.getElementById('applicationForm');
+        const thankYouPage = document.getElementById('thankYouPage');
+        const contactRepresentativeBtn = document.getElementById('contactRepresentativeBtn');
+        const contactCustomerServiceBtn = document.getElementById('contactCustomerServiceBtn');
+        const sidebar = document.getElementById('sidebar'); // Get the sidebar element
+        const mainContent = document.getElementById('mainContent'); // Get the main content area
+
+        const representativeModal = document.getElementById('representativeModal');
+        const customerServiceModal = document.getElementById('customerServiceModal');
+
+        let currentStep = 0; // Initialize current step to the first one (0-indexed)
+
+        // New Signature Pad Elements & Logic
+        const signatureCanvas = document.getElementById('signatureCanvas');
+        const ctx = signatureCanvas.getContext('2d');
+        const clearSignatureBtn = document.getElementById('clearSignature');
+        const signatureDataInput = document.getElementById('signatureData');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function initializeSignaturePad() {
+            // Set canvas resolution for crisp drawing
+            signatureCanvas.width = signatureCanvas.offsetWidth;
+            signatureCanvas.height = signatureCanvas.offsetHeight;
+
+            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+            ctx.strokeStyle = '#000'; // Default black for signature ink
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            signatureDataInput.value = ''; // Clear any previous data
+        }
+
+        function draw(e) {
+            if (!isDrawing) return; // Stop the fn from running when they are not moused down
+            const rect = signatureCanvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(clientX - rect.left, clientY - rect.top);
+            ctx.stroke();
+            [lastX, lastY] = [clientX - rect.left, clientY - rect.top];
+        }
+
+        signatureCanvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = signatureCanvas.getBoundingClientRect();
+            [lastX, lastY] = [e.clientX - rect.left, e.clientY - rect.top];
+        });
+
+        signatureCanvas.addEventListener('mousemove', draw);
+        signatureCanvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL(); // Save signature when drawing stops
+        });
+        signatureCanvas.addEventListener('mouseout', () => {
+            if (isDrawing) { // If mouse leaves while drawing, save the current state
+                signatureDataInput.value = signatureCanvas.toDataURL();
+            }
+            isDrawing = false;
+        });
+
+        // Touch events for mobile
+        signatureCanvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling
+            isDrawing = true;
+            const rect = signatureCanvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            [lastX, lastY] = [touch.clientX - rect.left, touch.clientY - rect.top];
+        });
+        signatureCanvas.addEventListener('touchmove', draw);
+        signatureCanvas.addEventListener('touchend', () => {
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL();
+        });
+        signatureCanvas.addEventListener('touchcancel', () => { // For when touch is interrupted
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL();
+        });
+
+
+        clearSignatureBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height); // Clear the canvas
+            signatureDataInput.value = ''; // Clear the hidden input value
+        });
+
+        // Initialize signature pad when the page loads, ensuring elements are ready
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(0); // Show the first step
+            initializeSignaturePad(); // Initial setup of the signature pad
+        });
+        window.addEventListener('resize', initializeSignaturePad); // Re-initialize on resize
+
+
+        // File list display and removal (using DataTransfer for robust handling)
+        const bankStatementsInput = document.getElementById('bankStatements');
+        const fileListContainer = document.getElementById('fileList');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        let dataTransfer = new DataTransfer(); // Use DataTransfer object to manage files
+
+        // Trigger hidden input click when file upload area is clicked
+        fileUploadArea.addEventListener('click', () => {
+            bankStatementsInput.click();
+        });
+
+        bankStatementsInput.addEventListener('change', (event) => {
+            // Add newly selected files to our DataTransfer object
+            for (const file of event.target.files) {
+                // Check for duplicates before adding (name + size + lastModified for better uniqueness)
+                let isDuplicate = false;
+                for (let i = 0; i < dataTransfer.files.length; i++) {
+                    if (dataTransfer.files[i].name === file.name && dataTransfer.files[i].size === file.size && file.lastModified === dataTransfer.files[i].lastModified) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (!isDuplicate) {
+                    dataTransfer.items.add(file);
+                }
+            }
+            renderFileList();
+            // Clear the input's files after processing to allow re-selection
+            event.target.value = null;
+        });
+
+        function renderFileList() {
+            fileListContainer.innerHTML = ''; // Clear current list
+            Array.from(dataTransfer.files).forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex items-center justify-between p-2 border rounded-md text-sm input-style';
+                fileItem.style.backgroundColor = 'var(--theme-input-bg)';
+                fileItem.style.borderColor = 'var(--theme-input-border)';
+                fileItem.style.color = 'var(--theme-text)';
+                
+                fileItem.innerHTML = `
+                    <span><i class="fas fa-file-alt mr-2 file-icon-style"></i>${file.name}</span>
+                    <button type="button" class="text-red-500 hover:text-red-700 ml-2" data-index="${index}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileListContainer.appendChild(fileItem);
+            });
+
+            // Add event listeners to the new delete buttons
+            fileListContainer.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const indexToDelete = parseInt(event.currentTarget.dataset.index);
+                    dataTransfer.items.remove(indexToDelete); // Remove file from DataTransfer
+                    renderFileList(); // Re-render the list
+                });
+            });
+        }
+
+
+        /**
+         * Shows a specific step in the multi-step form and updates sidebar navigation.
+         * @param {number} stepIndex - The 0-indexed number of the step to show.
+         */
+        function showStep(stepIndex) {
+            // Hide all form sections and remove 'active' class from sidebar buttons
+            formSections.forEach((section, index) => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+            stepButtons.forEach((button) => {
+                button.classList.remove('active-step');
+            });
+
+            // Show the target step and update its corresponding sidebar button
+            formSections[stepIndex].classList.remove('hidden');
+            formSections[stepIndex].classList.add('active');
+            stepButtons[stepIndex].classList.add('active-step');
+
+            currentStep = stepIndex; // Update the current step index
+
+            // Scroll to the top of the window for the new step
+            window.scrollTo(0, 0); // This reliably scrolls the entire window to the top
+
+            // If navigating to the signature step (index 3), ensure the canvas is initialized
+            if (stepIndex === 3) {
+                initializeSignaturePad();
+                renderFileList(); // Re-render file list to apply current theme styles
+            }
+            applyThemeToElements(); // Re-apply theme colors when switching steps
+        }
+
+        // Event listeners for 'Continue' buttons
+        continueButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Since fields are no longer required, simply advance the step
+                if (currentStep < formSections.length - 1) {
+                    showStep(currentStep + 1);
+                }
+            });
+        });
+
+        // Event listeners for sidebar step buttons (allow jumping backwards or forwards without validation)
+        stepButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                showStep(index);
+            });
+        });
+
+        // Main form submission handler
+        applicationForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default browser form submission
+            
+            // Hide the form and sidebar
+            applicationForm.classList.add('hidden');
+            sidebar.classList.add('hidden'); // Hide the sidebar
+
+            // Show the thank you page and make it fill the main content area
+            mainContent.classList.remove('justify-start'); // Remove justify-start
+            mainContent.classList.add('justify-center', 'items-center', 'flex-grow'); // Center thank you page vertically and horizontally
+            thankYouPage.classList.remove('hidden');
+            thankYouPage.classList.add('flex-grow'); // Ensure it takes available space
+
+            // In a real application, you would collect form data and send it to a server here.
+            const formData = new FormData(this);
+            // Append each selected file individually from DataTransfer object
+            Array.from(dataTransfer.files).forEach(file => {
+                formData.append('bankStatements[]', file); // Use '[]' for array-like submission
+            });
+
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            data.signatureData = signatureDataInput.value; // Add signature data
+            // console.log('Form Data:', data); // Log collected data for demonstration
+        });
+
+        // Event listeners for the new contact buttons on the thank you page
+        contactRepresentativeBtn.addEventListener('click', () => {
+            openModal('representativeModal');
+        });
+
+        contactCustomerServiceBtn.addEventListener('click', () => {
+            openModal('customerServiceModal');
+        });
+
+
+        // Apply input styling dynamically (important for theme changes)
+        document.querySelectorAll('.input-style').forEach(input => {
+            input.addEventListener('input', () => applyThemeToElements());
+            input.addEventListener('change', () => applyThemeToElements());
+            input.addEventListener('focus', () => {
+                input.style.borderColor = 'var(--theme-input-focus-border)';
+                input.style.boxShadow = '0 0 0 2px var(--theme-input-focus-ring)';
+            });
+            input.addEventListener('blur', () => {
+                input.style.borderColor = 'var(--theme-input-border)';
+                input.style.boxShadow = 'none';
+            });
+        });
+
+        /**
+         * Displays a custom message box at the top of the screen.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('success', 'error', 'info').
+         */
+        function showMessageBox(message, type = 'info') {
+            let messageBox = document.getElementById('customMessageBox');
+            if (!messageBox) {
+                messageBox = document.createElement('div');
+                messageBox.id = 'customMessageBox';
+                document.body.appendChild(messageBox);
+            }
+
+            messageBox.innerHTML = ''; // Clear previous content
+            let iconHtml = '';
+            let bgColor = '';
+            let textColor = ''; // Will be set dynamically
+
+            // Determine icon and colors based on message type
+            if (type === 'success') {
+                iconHtml = '<i class="fas fa-check-circle"></i>';
+                bgColor = 'var(--theme-primary)'; // Use theme primary for success
+                textColor = 'var(--theme-button-text)'; // Text color for buttons
+            } else if (type === 'error') {
+                iconHtml = '<i class="fas fa-times-circle"></i>';
+                bgColor = '#dc3545'; /* Specific red for error */
+                textColor = '#ffffff';
+            } else { // info
+                iconHtml = '<i class="fas fa-info-circle"></i>';
+                bgColor = 'var(--theme-primary)'; // Use theme primary for info
+                textColor = 'var(--theme-button-text)'; // Text color for buttons
+            }
+
+            messageBox.style.backgroundColor = bgColor;
+            messageBox.style.color = textColor;
+            messageBox.innerHTML = `${iconHtml}<span>${message}</span>`;
+
+            // Show the message box with animation
+            messageBox.classList.add('show');
+
+            // Hide after 3 seconds with animation
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000);
+        }
+
+        /**
+         * Opens a modal by adding the 'show' class.
+         * @param {string} modalId - The ID of the modal to open.
+         */
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        /**
+         * Closes a modal by removing the 'show' class.
+         * @param {string} modalId - The ID of the modal to close.
+         */
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Theme definitions with darker, shinier, high-contrast styles
+        const themes = {
+            "white_original": { // This is the new default white theme
+                "--theme-primary":"#3182ce", "--theme-secondary":"#4a5568", "--theme-background":"#f7fafc", "--theme-sidebar-bg":"#ffffff", "--theme-text":"#4a5568", "--theme-heading":"#1a202c", "--theme-border":"#e2e8f0", "--theme-input-bg":"#ffffff", "--theme-input-border":"#e2e8f0", "--theme-input-focus-border":"#3182ce", "--theme-input-focus-ring":"rgba(49, 130, 206, 0.3)", "--theme-button-bg":"#ffffff", "--theme-button-text":"#4a5568", "--theme-button-hover-bg":"#f7fafc", "--theme-button-hover-border":"#cbd5e0"
+            },
+            "black_dark_mode": { // Truly darker dark mode
+                "--theme-primary":"#66ccff", "--theme-secondary":"#aaaaaa","--theme-background":"#000000","--theme-sidebar-bg":"#1a1a1a","--theme-text":"#f0f0f0","--theme-heading":"#ffffff","--theme-border":"#2a2a2a","--theme-input-bg":"#1a1a1a","--theme-input-border":"#3a3a3a","--theme-input-focus-border":"#66ccff","--theme-input-focus-ring":"rgba(102, 204, 255, 0.3)","--theme-button-bg":"#1a1a1a","--theme-button-text":"#f0f0f0","--theme-button-hover-bg":"#3a3a3a","--theme-button-hover-border":"#5a5a5a"
+            },
+            "deep_purplish_blue": { // New blue based on image style, more purplish
+                "--theme-primary":"#5c6bc0", "--theme-secondary":"#9fa8da","--theme-background":"#282c3f","--theme-sidebar-bg":"#34394c","--theme-text":"#e0e3ed","--theme-heading":"#ffffff","--theme-border":"#4a5266","--theme-input-bg":"#34394c","--theme-input-border":"#4a5266","--theme-input-focus-border":"#5c6bc0","--theme-input-focus-ring":"rgba(92, 107, 192, 0.3)","--theme-button-bg":"#34394c","--theme-button-text":"#e0e3ed","--theme-button-hover-bg":"#4a5266","--theme-button-hover-border":"#5c6bc0"
+            },
+            "deep_orange": { // Matching image style
+                "--theme-primary":"#ffb74d", "--theme-secondary":"#ffe0b2","--theme-background":"#ba3f00","--theme-sidebar-bg":"#e65100","--theme-text":"#fff3e0","--theme-heading":"#ffffff","--theme-border":"#fb8c00","--theme-input-bg":"#e65100","--theme-input-border":"#fb8c00","--theme-input-focus-border":"#ffb74d","--theme-input-focus-ring":"rgba(255, 183, 77, 0.3)","--theme-button-bg":"#e65100","--theme-button-text":"#fff3e0","--theme-button-hover-bg":"#fb8c00","--theme-button-hover-border":"#ffb74d"
+            },
+            "deep_forest_green": { // Matching image style
+                "--theme-primary":"#81c784", "--theme-secondary":"#c8e6c9","--theme-background":"#0a3511","--theme-sidebar-bg":"#1b5e20","--theme-text":"#e8f5e9","--theme-heading":"#ffffff","--theme-border":"#2e7d32","--theme-input-bg":"#1b5e20","--theme-input-border":"#2e7d32","--theme-input-focus-border":"#81c784","--theme-input-focus-ring":"rgba(129, 199, 132, 0.3)","--theme-button-bg":"#1b5e20","--theme-button-text":"#e8f5e9","--theme-button-hover-bg":"#2e7d32","--theme-button-hover-border":"#81c784"
+            },
+            "deep_pink": { // Matching image style
+                "--theme-primary":"#f48fb1", "--theme-secondary":"#f8bbd0","--theme-background":"#6a003f","--theme-sidebar-bg":"#880e4f","--theme-text":"#fce4ec","--theme-heading":"#ffffff","--theme-border":"#ad1457","--theme-input-bg":"#880e4f","--theme-input-border":"#ad1457","--theme-input-focus-border":"#f48fb1","--theme-input-focus-ring":"rgba(244, 143, 177, 0.3)","--theme-button-bg":"#880e4f","--theme-button-text":"#fce4ec","--theme-button-hover-bg":"#ad1457","--theme-button-hover-border":"#f48fb1"
+            },
+            "deep_ocean_blue": { // Matching image style
+                "--theme-primary":"#42a5f5", "--theme-secondary":"#90caf9","--theme-background":"#15284b","--theme-sidebar-bg":"#1a335a","--theme-text":"#bbdefb","--theme-heading":"#e3f2fd","--theme-border":"#2a4b7e","--theme-input-bg":"#1a335a","--theme-input-border":"#2a4b7e","--theme-input-focus-border":"#42a5f5","--theme-input-focus-ring":"rgba(66, 165, 245, 0.3)","--theme-button-bg":"#1a335a","--theme-button-text":"#bbdefb","--theme-button-hover-bg":"#2a4b7e","--theme-button-hover-border":"#42a5f5"
+            },
+            "dark_teal": { // Matching image style
+                "--theme-primary":"#80cbc4", "--theme-secondary":"#b2dfdb","--theme-background":"#00332e","--theme-sidebar-bg":"#004d40","--theme-text":"#e0f2f1","--theme-heading":"#ffffff","--theme-border":"#00695c","--theme-input-bg":"#004d40","--theme-input-border":"#00695c","--theme-input-focus-border":"#80cbc4","--theme-input-focus-ring":"rgba(128, 203, 196, 0.3)","--theme-button-bg":"#004d40","--theme-button-text":"#e0f2f1","--theme-button-hover-bg":"#00695c","--theme-button-hover-border":"#80cbc4"
+            },
+            "sophisticated_gray": { // Matching image style
+                "--theme-primary":"#9e9e9e", "--theme-secondary":"#bdbdbd","--theme-background":"#263238","--theme-sidebar-bg":"#37474f","--theme-text":"#eceff1","--theme-heading":"#cfd8dc","--theme-border":"#455a64","--theme-input-bg":"#37474f","--theme-input-border":"#455a64","--theme-input-focus-border":"#9e9e9e","--theme-input-focus-ring":"rgba(158, 158, 158, 0.3)","--theme-button-bg":"#37474f","--theme-button-text":"#eceff1","--theme-button-hover-bg":"#455a64","--theme-button-hover-border":"#9e9e9e"
+            },
+            "elegant_gold": { // Elegant gold
+                "--theme-primary":"#ffeb3b", "--theme-secondary":"#fff176","--theme-background":"#3e2723","--theme-sidebar-bg":"#5d4037","--theme-text":"#efebe9","--theme-heading":"#ffee58","--theme-border":"#795548","--theme-input-bg":"#5d4037","--theme-input-border":"#795548","--theme-input-focus-border":"#ffeb3b","--theme-input-focus-ring":"rgba(255, 235, 59, 0.3)","--theme-button-bg":"#5d4037","--theme-button-text":"#efebe9","--theme-button-hover-bg":"#795548","--theme-button-hover-border":"#ffeb3b"
+            }
+        };
+
+        function applyTheme(themeName) {
+            const selectedTheme = themes[themeName] || themes["white_original"]; // Fallback to white
+
+            for (const [prop, value] of Object.entries(selectedTheme)) {
+                document.documentElement.style.setProperty(prop, value);
+            }
+
+            // Update selected class for visual feedback on circles
+            const colorCircles = document.querySelectorAll('.color-circle');
+            colorCircles.forEach(c => c.classList.remove('selected'));
+            // Find the circle matching the applied theme's primary color OR the theme name data attribute
+            const currentCircle = document.querySelector(`.color-circle[data-theme-name="${themeName}"]`);
+            if (currentCircle) {
+                currentCircle.classList.add('selected');
+            }
+            
+            // Re-apply styles to elements that might need explicit updates after theme change
+            applyThemeToElements();
+        }
+
+        const colorCircles = document.querySelectorAll('.color-circle');
+        colorCircles.forEach(circle => {
+            circle.addEventListener('click', (event) => {
+                const themeName = event.target.dataset.themeName;
+                applyTheme(themeName);
+            });
+        });
+
+        // Function to apply theme colors to relevant elements (called on theme change and step change)
+        function applyThemeToElements() {
+            const rootStyle = document.documentElement.style;
+
+            // Header/Footer Backgrounds and Borders
+            document.querySelector('header').style.backgroundColor = rootStyle.getPropertyValue('--theme-sidebar-bg');
+            document.querySelector('header').style.borderColor = rootStyle.getPropertyValue('--theme-border');
+            document.querySelector('footer').style.backgroundColor = rootStyle.getPropertyValue('--theme-sidebar-bg');
+            document.querySelector('footer').style.borderColor = rootStyle.getPropertyValue('--theme-border');
+
+            // Sidebar Background and Borders
+            sidebar.style.background = rootStyle.getPropertyValue('--theme-sidebar-bg');
+            sidebar.style.borderColor = rootStyle.getPropertyValue('--theme-border');
+            sidebar.querySelector('.border-t').style.borderColor = rootStyle.getPropertyValue('--theme-border'); // Separator in sidebar
+
+            // Headings
+            document.querySelectorAll('h2, h3').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-heading');
+            });
+            document.querySelectorAll('.border-b-2').forEach(el => { // Section title underlines
+                el.style.borderColor = rootStyle.getPropertyValue('--theme-border');
+            });
+
+            // General Text (if not specifically heading/primary)
+            document.body.style.color = rootStyle.getPropertyValue('--theme-text');
+            document.querySelectorAll('.text-theme-secondary').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-text');
+            });
+
+            // Primary/Accent Text & Icons
+            document.querySelectorAll('.text-theme-primary, .fas.fa-phone-alt, a[href^="mailto"], .file-icon-style').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-primary');
+            });
+            document.querySelectorAll('.step-btn .text-theme-secondary').forEach(el => { // Sidebar step text
+                 el.style.color = rootStyle.getPropertyValue('--theme-text');
+            });
+            document.querySelectorAll('.step-btn.active-step .active-icon').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-primary');
+            });
+            document.querySelector('a[href^="tel:"]').style.color = rootStyle.getPropertyValue('--theme-heading'); // Phone number text
+            document.querySelector('span.text-lg.font-montserrat.font-semibold.text-theme-heading').style.color = rootStyle.getPropertyValue('--theme-heading'); // "Need help?" text
+
+            // Input Fields
+            document.querySelectorAll('.input-style').forEach(el => {
+                el.style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+                el.style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+                el.style.color = rootStyle.getPropertyValue('--theme-text');
+                el.style.caretColor = rootStyle.getPropertyValue('--theme-text'); // Ensure caret is visible
+            });
+
+            // Buttons (Continue, Submit, Clear Signature, Contact Buttons)
+            document.querySelectorAll('.button-style').forEach(el => {
+                el.style.backgroundColor = rootStyle.getPropertyValue('--theme-button-bg');
+                el.style.color = rootStyle.getPropertyValue('--theme-button-text');
+                el.style.borderColor = rootStyle.getPropertyValue('--theme-button-border');
+            });
+            // Specific hover for buttons
+            document.querySelectorAll('.button-style').forEach(el => {
+                el.onmouseover = () => {
+                    el.style.backgroundColor = rootStyle.getPropertyValue('--theme-button-hover-bg');
+                    el.style.borderColor = rootStyle.getPropertyValue('--theme-button-hover-border');
+                };
+                el.onmouseout = () => {
+                    el.style.backgroundColor = rootStyle.getPropertyValue('--theme-button-bg');
+                    el.style.borderColor = rootStyle.getPropertyValue('--theme-button-border');
+                };
+            });
+
+
+            // File Upload Box
+            document.querySelector('.file-upload-box').style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+            document.querySelector('.file-upload-box').style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+            document.querySelector('.file-upload-box').onmouseover = () => {
+                document.querySelector('.file-upload-box').style.borderColor = rootStyle.getPropertyValue('--theme-input-focus-border');
+                document.querySelector('.file-upload-box').style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg'); // Keep same on hover
+            };
+            document.querySelector('.file-upload-box').onmouseout = () => {
+                document.querySelector('.file-upload-box').style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+                document.querySelector('.file-upload-box').style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+            };
+
+            // File List Items
+            document.querySelectorAll('#fileList > div').forEach(item => {
+                item.style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+                item.style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+                item.style.color = rootStyle.getPropertyValue('--theme-text');
+                item.querySelector('.file-icon-style').style.color = rootStyle.getPropertyValue('--theme-primary');
+            });
+
+
+            // Modals (Content Background, Image Borders, Icons)
+            document.querySelectorAll('.modal-content-style').forEach(el => {
+                el.style.backgroundColor = rootStyle.getPropertyValue('--theme-sidebar-bg');
+            });
+            document.querySelectorAll('.modal-img-border').forEach(el => {
+                el.style.borderColor = rootStyle.getPropertyValue('--theme-primary');
+            });
+            document.querySelectorAll('.modal-icon-color').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-primary');
+            });
+            document.querySelectorAll('.modal-close-btn').forEach(el => {
+                 el.style.color = rootStyle.getPropertyValue('--theme-text');
+            });
+            document.querySelectorAll('.modal-close-btn').forEach(el => {
+                el.onmouseover = () => { el.style.color = rootStyle.getPropertyValue('--theme-primary'); };
+                el.onmouseout = () => { el.style.color = rootStyle.getPropertyValue('--theme-text'); };
+            });
+
+            // Radio Buttons accent-color
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.style.accentColor = rootStyle.getPropertyValue('--theme-primary');
+            });
+
+            // Signature Canvas container border and background
+            document.querySelector('.signature-canvas-container').style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+            document.querySelector('.signature-canvas-container').style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+        }
+
+        // Set initial theme (white_original)
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme("white_original");
+        });
+    </script>
+</body>
+</html>
