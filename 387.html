@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Funding Application - Redesigned</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        'open-sans': ['Open Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        primaryBlue: '#007bff',
+                        darkBlue: '#0056b3',
+                        lightBlueBg: '#e0f7fa',
+                        accentGreen: '#28a745',
+                        grayText: '#495057',
+                        lightGrayBorder: '#dee2e6',
+                        backgroundWhite: '#ffffff',
+                        backgroundBody: '#f8f9fa',
+                        modernPrimary: '#1a202c',
+                        modernSecondary: '#4a5568',
+                        modernAccent: '#3182ce',
+                        modernBgLight: '#f7fafc',
+                        modernBorder: '#e2e8f0',
+                        // Custom theme colors for the application form fields
+                        themeColor: 'var(--theme-color, #3182ce)', // Default to modernAccent blue
+                        themeColorLight: 'var(--theme-color-light, #e0f7fa)', // Light version for hover/bg
+                        themeColorBorder: 'var(--theme-color-border, #a0aec0)', // A subtle border color
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Ensure box-sizing is border-box globally for consistent layout */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            /* Background gradient applied to body for full page effect */
+            background: linear-gradient(135deg, theme('colors.modernBgLight') 0%, theme('colors.backgroundWhite') 100%);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Style for date input to ensure light mode calendar */
+        input[type="date"] {
+            color-scheme: light;
+        }
+        /* Custom styles for signature canvas border on error */
+        .signature-canvas-container.error {
+            border: 1px solid red !important;
+        }
+
+        /* Custom Message Box Styles */
+        #customMessageBox {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1em;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        /* Specific styling for the active step icon */
+        .step-btn .active-icon { /* Apply default circle icon */
+            content: "\f111"; /* Circle icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: theme('colors.modernBorder');
+            font-size: 0.8em;
+            transition: color 0.3s ease, content 0.3s ease; /* Transition content for icon change */
+        }
+
+        .step-btn.active-step .active-icon {
+            color: var(--theme-color); /* Active step color now uses theme variable */
+            content: "\f058"; /* Checkmark circle for active */
+        }
+        /* Hover effect for step buttons */
+        .step-btn:not(.active-step):hover {
+            transform: translateX(5px);
+        }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(5px); /* Blur effect */
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: #ffffff; /* Explicitly set to white */
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: theme('colors.grayText');
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            color: theme('colors.modernPrimary');
+        }
+        /* Custom style for white buttons */
+        .white-button {
+            background-color: white;
+            color: #4a5568; /* modernSecondary for text */
+            border: 1px solid #e2e8f0; /* modernBorder for border */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* subtle shadow */
+        }
+
+        .white-button:hover {
+            background-color: #f7fafc; /* modernBgLight on hover */
+            border-color: #cbd5e0; /* slightly darker border on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Dynamic Theme Styling */
+        .apply-theme {
+            transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .apply-theme-border {
+            border-color: var(--theme-color) !important;
+        }
+
+        .apply-theme-focus:focus {
+            border-color: var(--theme-color) !important;
+            box-shadow: 0 0 0 2px var(--theme-color-light) !important;
+            outline: none !important;
+        }
+
+        .apply-theme-text {
+            color: var(--theme-color) !important;
+        }
+
+        .apply-theme-bg {
+            background-color: var(--theme-color) !important;
+            color: white !important; /* Ensure text is readable on colored background */
+        }
+        .apply-theme-bg-light-hover:hover {
+            background-color: var(--theme-color-light) !important;
+        }
+
+        /* Styles for color circles */
+        .color-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .color-circle:hover {
+            transform: scale(1.1);
+            border-color: #333;
+        }
+        .color-circle.selected {
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-modernSecondary">
+
+    <header class="bg-backgroundWhite p-4 md:px-10 flex flex-col md:flex-row justify-between items-center shadow-sm sticky top-0 z-50 border-b border-modernBorder">
+        <a href="https://ontimecap.com/" class="logo-link mb-4 md:mb-0 md:absolute md:left-10" target="_blank">
+            <img src="https://ontimecap.com/wp-content/uploads/2024/05/logos3-1.png" alt="On Time Capital Logo" class="h-14 transition-transform duration-200 hover:scale-105">
+        </a>
+        <h1 id="headerTitle" class="font-montserrat text-modernPrimary text-2xl md:text-3xl font-bold flex-grow text-center opacity-0 transition-opacity duration-300">Funding Application</h1>
+        <div class="flex items-center gap-2 md:relative md:right-10 whitespace-nowrap" style="letter-spacing: -0.02em;"> <span class="text-lg font-montserrat font-semibold text-modernPrimary">Need help?</span>
+            <i class="fas fa-phone-alt text-xl text-modernPrimary"></i>
+            <a href="tel:4122046096" class="text-xl text-modernPrimary no-underline hover:text-modernAccent transition-colors duration-200 font-montserrat font-thin">412 204 6096</a> </div>
+    </header>
+
+    <div class="flex flex-col md:flex-row flex-grow w-full">
+
+        <aside id="sidebar" class="w-full md:w-72 p-8 md:p-12 bg-gradient-to-br from-modernBgLight to-backgroundWhite flex flex-col gap-10 shadow-md md:shadow-lg sticky top-0 h-auto md:h-screen overflow-y-auto border-b md:border-b-0 md:border-r border-modernBorder">
+            <div class="flex flex-row md:flex-col gap-5 overflow-x-auto md:overflow-x-hidden pb-2 md:pb-0">
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent" data-step="1">
+                    <i class="active-icon"></i> Basic Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent" data-step="2">
+                    <i class="active-icon"></i> Business Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent" data-step="3">
+                    <i class="active-icon"></i> Owner Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent" data-step="4">
+                    <i class="active-icon"></i> Upload Documents & Signature
+                </button>
+            </div>
+            <div class="mt-auto pt-8 border-t border-modernBorder flex flex-col gap-4">
+                <h3 class="font-montserrat text-xl text-modernPrimary mb-1">Have any questions?</h3>
+                <p class="text-base text-modernSecondary">Get in contact:</p>
+                <a href="mailto:Mendel@ontimecap.com" class="text-modernAccent no-underline font-medium hover:text-modernPrimary transition-colors duration-200">Mendel@ontimecap.com</a>
+            </div>
+        </aside>
+
+        <main id="mainContent" class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 w-full">
+            <form id="applicationForm" class="w-full max-w-5xl px-4 md:px-8">
+
+                <div id="step1" class="form-section active">
+                    <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Basic Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+                        <div class="form-group">
+                            <label for="fundingAmount" class="block mb-2 font-semibold text-modernPrimary text-lg">How much funding are you looking for?</label>
+                            <input type="number" id="fundingAmount" name="fundingAmount" placeholder="Enter amount"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="creditScore" class="block mb-2 font-semibold text-modernPrimary text-lg">What is your credit score?</label>
+                            <input type="number" id="creditScore" name="creditScore" min="300" max="850" placeholder="e.g., 700"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus"
+                                oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);">
+                        </div>
+                        <div class="form-group">
+                            <label for="industry" class="block mb-2 font-semibold text-modernPrimary text-lg">What industry are you in?</label>
+                            <input type="text" id="industry" name="industry" placeholder="e.g., Retail, Tech, Food Service"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="timeframe" class="block mb-2 font-semibold text-modernPrimary text-lg">What timeframe do you need the money?</label>
+                            <select id="timeframe" name="timeframe"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                                <option value="">Select an option</option>
+                                <option value="ASAP">ASAP</option>
+                                <option value="within_week">Within a week</option>
+                                <option value="within_two_weeks">Within two weeks</option>
+                                <option value="within_month">Within a month</option>
+                                <option value="Browse_rates">Just Browse rates</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="block mb-2 font-semibold text-modernPrimary text-lg">Email</label>
+                            <input type="email" id="email" name="email" placeholder="you@example.com"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber" class="block mb-2 font-semibold text-modernPrimary text-lg">Phone Number</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(123) 456-7890" maxlength="10"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn white-button px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 apply-theme-border apply-theme-text apply-theme-bg-light-hover">
+                            Continue
+                        </button>
+                    </div>
+                    <div class="flex justify-center mt-10 space-x-3">
+                        <div class="color-circle" style="background-color: #3182ce;" data-color="#3182ce" data-light-color="#e0f7fa" data-border-color="#a0aec0"></div> <div class="color-circle" style="background-color: #f7a200;" data-color="#f7a200" data-light-color="#fffbe0" data-border-color="#d69e2e"></div> <div class="color-circle" style="background-color: #2b6cb0;" data-color="#2b6cb0" data-light-color="#e2f0fe" data-border-color="#63b3ed"></div> <div class="color-circle" style="background-color: #4a5568;" data-color="#4a5568" data-light-color="#edf2f7" data-border-color="#718096"></div> <div class="color-circle" style="background-color: #38b2ac;" data-color="#38b2ac" data-light-color="#e6fffa" data-border-color="#81e6d9"></div> <div class="color-circle" style="background-color: #9f7aea;" data-color="#9f7aea" data-light-color="#faf5ff" data-border-color="#d6bcfa"></div> <div class="color-circle" style="background-color: #d53f8c;" data-color="#d53f8c" data-light-color="#fef2f2" data-border-color="#fbb6ce"></div> <div class="color-circle" style="background-color: #ed8936;" data-color="#ed8936" data-light-color="#fffaf0" data-border-color="#f6ad55"></div> <div class="color-circle" style="background-color: #48bb78;" data-color="#48bb78" data-light-color="#f0fff4" data-border-color="#82e68b"></div> <div class="color-circle" style="background-color: #a0a0a0;" data-color="#a0a0a0" data-light-color="#f5f5f5" data-border-color="#cccccc"></div> </div>
+                </div>
+
+                <div id="step2" class="form-section hidden">
+                    <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Business Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+                        <div class="form-group">
+                            <label for="businessLegalName" class="block mb-2 font-semibold text-modernPrimary text-lg">Business Legal Name</label>
+                            <input type="text" id="businessLegalName" name="businessLegalName"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessDBAName" class="block mb-2 font-semibold text-modernPrimary text-lg">Business DBA Name (if applicable)</label>
+                            <input type="text" id="businessDBAName" name="businessDBAName"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="ein" class="block mb-2 font-semibold text-modernPrimary text-lg">EIN (Employer Identification Number)</label>
+                            <input type="text" id="ein" name="ein" placeholder="XX-XXXXXXX" maxlength="9"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessStartDate" class="block mb-2 font-semibold text-modernPrimary text-lg">Business Start Date</label>
+                            <input type="date" id="businessStartDate" name="businessStartDate"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label class="block mb-2 font-semibold text-modernPrimary text-lg">Legal Entity</label>
+                            <div class="flex flex-wrap gap-x-8 gap-y-2">
+                                <label class="inline-flex items-center text-modernSecondary text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="corporation" class="form-radio h-5 w-5 text-modernAccent accent-modernAccent mr-2 transform scale-110 apply-theme">
+                                    Corporation
+                                </label>
+                                <label class="inline-flex items-center text-modernSecondary text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="llc" class="form-radio h-5 w-5 text-modernAccent accent-modernAccent mr-2 transform scale-110 apply-theme">
+                                    LLC
+                                </label>
+                                <label class="inline-flex items-center text-modernSecondary text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="partnership" class="form-radio h-5 w-5 text-modernAccent accent-modernAccent mr-2 transform scale-110 apply-theme">
+                                    Partnership
+                                </label>
+                                <label class="inline-flex items-center text-modernSecondary text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="sole_proprietorship" class="form-radio h-5 w-5 text-modernAccent accent-modernAccent mr-2 transform scale-110 apply-theme">
+                                    Sole Proprietorship
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ownershipPercentage" class="block mb-2 font-semibold text-modernPrimary text-lg">Ownership Percentage</label>
+                            <input type="number" id="ownershipPercentage" name="ownershipPercentage" min="0" max="100" placeholder="e.g., 100" maxlength="3" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessStreetAddress" class="block mb-2 font-semibold text-modernPrimary text-lg">Business Street Address</label>
+                            <input type="text" id="businessStreetAddress" name="businessStreetAddress"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessCity" class="block mb-2 font-semibold text-modernPrimary text-lg">Business City</label>
+                            <input type="text" id="businessCity" name="businessCity"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessState" class="block mb-2 font-semibold text-modernPrimary text-lg">Business State</label>
+                            <select id="businessState" name="businessState"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                                <option value="">Select a State</option>
+                                <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="businessZipCode" class="block mb-2 font-semibold text-modernPrimary text-lg">Business Zip Code</label>
+                            <input type="text" id="businessZipCode" name="businessZipCode" maxlength="5"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn white-button px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 apply-theme-border apply-theme-text apply-theme-bg-light-hover">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step3" class="form-section hidden">
+                    <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Owner Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+                        <div class="form-group">
+                            <label for="ownerFirstName" class="block mb-2 font-semibold text-modernPrimary text-lg">First Name</label>
+                            <input type="text" id="ownerFirstName" name="ownerFirstName"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="ownerLastName" class="block mb-2 font-semibold text-modernPrimary text-lg">Last Name</label>
+                            <input type="text" id="ownerLastName" name="ownerLastName"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialSecurityNumber" class="block mb-2 font-semibold text-modernPrimary text-lg">Social Security Number (SSN)</label>
+                            <input type="text" id="socialSecurityNumber" name="socialSecurityNumber" placeholder="XXX-XX-XXXX" maxlength="9"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateOfBirth" class="block mb-2 font-semibold text-modernPrimary text-lg">Date of Birth</label>
+                            <input type="date" id="dateOfBirth" name="dateOfBirth"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="homeStreetAddress" class="block mb-2 font-semibold text-modernPrimary text-lg">Home Street Address</label>
+                            <input type="text" id="homeStreetAddress" name="homeStreetAddress"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="homeCity" class="block mb-2 font-semibold text-modernPrimary text-lg">Home City</label>
+                            <input type="text" id="homeCity" name="homeCity"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="homeState" class="block mb-2 font-semibold text-modernPrimary text-lg">Home State</label>
+                            <select id="homeState" name="homeState"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                                <option value="">Select a State</option>
+                                <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="homeZipCode" class="block mb-2 font-semibold text-modernPrimary text-lg">Home Zip Code</label>
+                            <input type="text" id="homeZipCode" name="homeZipCode" maxlength="5"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn white-button px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 apply-theme-border apply-theme-text apply-theme-bg-light-hover">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step4" class="form-section hidden">
+                    <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Upload Documents & Signature</h2>
+                    <div class="form-group mb-6 w-full">
+                        <label class="block mb-2 font-semibold text-modernPrimary text-lg">Upload Business Bank Statements (Last 3 months)</label>
+                        <div class="file-upload-box flex flex-col items-center justify-center p-8 border-2 border-dashed border-modernBorder rounded-xl bg-inputBg cursor-pointer hover:border-modernAccent hover:bg-lightBlueBg transition-all duration-300 apply-theme-border apply-theme-bg-light-hover"
+                            onclick="document.getElementById('bankStatements').click()">
+                            <i class="fas fa-cloud-upload-alt text-modernAccent text-5xl mb-4 apply-theme-text"></i>
+                            <p class="text-modernSecondary font-medium text-lg text-center">Drag & Drop files here or click to browse</p>
+                            <input type="file" id="bankStatements" name="bankStatements" multiple>
+                        </div>
+                        <div id="fileList" class="mt-4 space-y-2">
+                            </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+                        <div class="form-group">
+                            <label for="ownerNameSignature" class="block mb-2 font-semibold text-modernPrimary text-lg">Owner Name (for signature)</label>
+                            <input type="text" id="ownerNameSignature" name="ownerNameSignature" placeholder="Full Legal Name"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                        <div class="form-group">
+                            <label for="signatureDate" class="block mb-2 font-semibold text-modernPrimary text-lg">Date</label>
+                            <input type="date" id="signatureDate" name="signatureDate"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm bg-inputBg text-modernSecondary apply-theme-border apply-theme-focus">
+                        </div>
+                    </div>
+                    <div class="form-group mb-6 w-full">
+                        <label for="signatureCanvas" class="block mb-2 font-semibold text-modernPrimary text-lg">Signature</label>
+                        <div class="signature-canvas-container relative border border-modernBorder rounded-lg bg-inputBg cursor-crosshair shadow-sm h-40 w-full apply-theme-border">
+                            <canvas id="signatureCanvas" class="block w-full h-full rounded-lg"></canvas>
+                            <button type="button" id="clearSignature" class="absolute bottom-3 right-3 bg-modernBgLight border border-modernBorder rounded-md px-3 py-1.5 text-sm cursor-pointer z-10 hover:bg-gray-200 transition-colors duration-200 text-modernSecondary apply-theme-border apply-theme-text apply-theme-bg-light-hover">
+                                Clear
+                            </button>
+                        </div>
+                        <input type="hidden" id="signatureData" name="signatureData">
+                    </div>
+                    <div class="flex justify-center mt-10 w-full">
+                        <button type="submit" class="white-button px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 apply-theme-border apply-theme-text apply-theme-bg-light-hover">
+                            Submit Application
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="thankYouPage" class="hidden flex flex-col items-center justify-center text-center w-full max-w-5xl px-4 md:px-8 py-16 md:py-24 flex-grow">
+                <h2 class="font-montserrat text-modernPrimary text-4xl md:text-5xl font-bold mb-8">Thank you for submitting the funding application!</h2>
+                <p class="text-modernSecondary text-xl mb-4">Funded over $1.5 Billion, over 20,000 Happy Clients!</p>
+                <p class="text-modernSecondary text-xl mb-8">We appreciate you choosing On Time Capital. We will review your application shortly.</p>
+                <div class="flex flex-col md:flex-row gap-6 mt-8 justify-center w-full">
+                    <button id="contactRepresentativeBtn" class="white-button px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        Contact Your Representative
+                    </button>
+                    <button id="contactCustomerServiceBtn" class="white-button px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        Contact Customer Service
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="representativeModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeModal('representativeModal')">&times;</button>
+            <h3 class="font-montserrat text-modernPrimary text-3xl font-bold mb-6">Your Representative</h3>
+            <img src="https://d3k81ch9hvuctc.cloudfront.net/company/VvZhYk/images/282c3fbe-3890-45b8-8315-162d78814213.png" alt="Mendel Profile Picture" class="rounded-full w-32 h-32 object-cover mx-auto mb-4 shadow-md border-2 border-modernAccent apply-theme-border">
+            <p class="font-montserrat text-modernPrimary text-xl font-semibold mb-2">Mendel Junik</p>
+            <p class="text-modernSecondary text-lg mb-1"><i class="fas fa-phone-alt mr-2 text-modernAccent apply-theme-text"></i>412-204-6096</p>
+            <p class="text-modernSecondary text-lg"><i class="fas fa-envelope mr-2 text-modernAccent apply-theme-text"></i>mendel@ontimecap.com</p>
+        </div>
+    </div>
+
+    <div id="customerServiceModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeModal('customerServiceModal')">&times;</button>
+            <h3 class="font-montserrat text-modernPrimary text-3xl font-bold mb-6">Customer Service</h3>
+            <img src="https://d3k81ch9hvuctc.cloudfront.net/company/VvZhYk/images/d4c7f6ce-009e-4914-af06-0f9feb437e77.png" alt="Emma Profile Picture" class="rounded-full w-32 h-32 object-cover mx-auto mb-4 shadow-md border-2 border-modernAccent apply-theme-border">
+            <p class="font-montserrat text-modernPrimary text-xl font-semibold mb-2">Emma Birch</p>
+            <p class="text-modernSecondary text-lg mb-1"><i class="fas fa-phone-alt mr-2 text-modernAccent apply-theme-text"></i>718-735-1976</p>
+            <p class="text-modernSecondary text-lg"><i class="fas fa-envelope mr-2 text-modernAccent apply-theme-text"></i>emma.b@ontimecap.com</p>
+        </div>
+    </div>
+
+
+    <footer class="bg-backgroundWhite p-5 md:px-10 flex flex-col md:flex-row justify-between items-center border-t border-modernBorder text-modernSecondary text-sm font-normal">
+        <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 mb-4 md:mb-0">
+            <span class="font-semibold text-modernPrimary text-lg">Customer Reviews:</span>
+            <div class="flex items-center gap-4">
+                <a href="https://www.trustpilot.com/review/ontimecap.com" target="_blank">
+                    <img src="https://www.netimperative.com/wp-content/uploads/2020/01/trustpilot.png" alt="Trustpilot Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+                <a href="https://www.bbb.org/us/ny/brooklyn/profile/loan-broker/on-time-capital-llc-0121-87177095" target="_blank">
+                    <img src="https://www.kearneyhvac.com/wp-content/uploads/2023/07/bbb_a_rating_logo.jpg.webp" alt="BBB Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+                <a href="https://www.google.com/search?q=on+time+capital+reviews" target="_blank">
+                    <img src="https://cdn.prod.website-files.com/602cf6148109ccfeb1d80c49/60d4509851d12743d030a9eb_5c11336dd43b9272273fb4ce_Google-Reviews.webp" alt="Google Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+            </div>
+        </div>
+        <div class="text-modernSecondary">
+            Copyright &copy; 2025 On Time Capital, LLC.
+        </div>
+    </footer>
+
+    <script>
+        // Get all form sections and navigation buttons
+        const formSections = document.querySelectorAll('.form-section');
+        const stepButtons = document.querySelectorAll('.step-btn');
+        const continueButtons = document.querySelectorAll('.continue-btn');
+        const applicationForm = document.getElementById('applicationForm');
+        const thankYouPage = document.getElementById('thankYouPage');
+        const contactRepresentativeBtn = document.getElementById('contactRepresentativeBtn');
+        const contactCustomerServiceBtn = document.getElementById('contactCustomerServiceBtn');
+        const sidebar = document.getElementById('sidebar'); // Get the sidebar element
+        const mainContent = document.getElementById('mainContent'); // Get the main content area
+        const headerTitle = document.getElementById('headerTitle'); // Get the header title element
+
+        const representativeModal = document.getElementById('representativeModal');
+        const customerServiceModal = document.getElementById('customerServiceModal');
+
+        let currentStep = 0; // Initialize current step to the first one (0-indexed)
+
+        // New Signature Pad Elements & Logic
+        const signatureCanvas = document.getElementById('signatureCanvas');
+        const ctx = signatureCanvas.getContext('2d');
+        const clearSignatureBtn = document.getElementById('clearSignature');
+        const signatureDataInput = document.getElementById('signatureData');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function initializeSignaturePad() {
+            // Set canvas resolution for crisp drawing
+            signatureCanvas.width = signatureCanvas.offsetWidth;
+            signatureCanvas.height = signatureCanvas.offsetHeight;
+
+            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            signatureDataInput.value = ''; // Clear any previous data
+        }
+
+        function draw(e) {
+            if (!isDrawing) return; // Stop the fn from running when they are not moused down
+            const rect = signatureCanvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(clientX - rect.left, clientY - rect.top);
+            ctx.stroke();
+            [lastX, lastY] = [clientX - rect.left, clientY - rect.top];
+        }
+
+        signatureCanvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = signatureCanvas.getBoundingClientRect();
+            [lastX, lastY] = [e.clientX - rect.left, e.clientY - rect.top];
+        });
+
+        signatureCanvas.addEventListener('mousemove', draw);
+        signatureCanvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL(); // Save signature when drawing stops
+        });
+        signatureCanvas.addEventListener('mouseout', () => {
+            if (isDrawing) { // If mouse leaves while drawing, save the current state
+                signatureDataInput.value = signatureCanvas.toDataURL();
+            }
+            isDrawing = false;
+        });
+
+        // Touch events for mobile
+        signatureCanvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling
+            isDrawing = true;
+            const rect = signatureCanvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            [lastX, lastY] = [touch.clientX - rect.left, touch.clientY - rect.top];
+        });
+        signatureCanvas.addEventListener('touchmove', draw);
+        signatureCanvas.addEventListener('touchend', () => {
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL();
+        });
+        signatureCanvas.addEventListener('touchcancel', () => { // For when touch is interrupted
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL();
+        });
+
+
+        clearSignatureBtn.addEventListener('click', () => {
+            initializeSignaturePad(); // Clear canvas and reset data
+        });
+
+        // Initialize signature pad when the step is shown, and on window resize
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(0); // Show the first step
+            initializeSignaturePad(); // Initial setup of the signature pad
+        });
+        window.addEventListener('resize', initializeSignaturePad); // Re-initialize on resize
+
+
+        // File list display and removal
+        const bankStatementsInput = document.getElementById('bankStatements');
+        const fileListContainer = document.getElementById('fileList');
+        let selectedFiles = []; // Array to store actual File objects
+
+        bankStatementsInput.addEventListener('change', (event) => {
+            // Add newly selected files to our array
+            // Filter out duplicates if any (e.g., user selects same file again)
+            for (const file of event.target.files) {
+                if (!selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    selectedFiles.push(file);
+                }
+            }
+            renderFileList();
+            // Clear the input's files after processing to allow re-selection
+            event.target.value = null; 
+        });
+
+        function renderFileList() {
+            fileListContainer.innerHTML = ''; // Clear current list
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex items-center justify-between p-2 border border-modernBorder rounded-md bg-white text-modernSecondary text-sm';
+                fileItem.innerHTML = `
+                    <span><i class="fas fa-file-alt mr-2"></i>${file.name}</span>
+                    <button type="button" class="text-red-500 hover:text-red-700 ml-2" data-index="${index}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileListContainer.appendChild(fileItem);
+            });
+
+            // Add event listeners to the new delete buttons
+            fileListContainer.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const indexToDelete = parseInt(event.currentTarget.dataset.index);
+                    selectedFiles.splice(indexToDelete, 1); // Remove file from array
+                    renderFileList(); // Re-render the list
+                });
+            });
+        }
+
+
+        /**
+         * Shows a specific step in the multi-step form and updates sidebar navigation.
+         * @param {number} stepIndex - The 0-indexed number of the step to show.
+         */
+        function showStep(stepIndex) {
+            // Hide all form sections and remove 'active' class from sidebar buttons
+            formSections.forEach((section, index) => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+            stepButtons.forEach((button) => {
+                button.classList.remove('active-step');
+            });
+
+            // Show the target step and update its corresponding sidebar button
+            formSections[stepIndex].classList.remove('hidden');
+            formSections[stepIndex].classList.add('active');
+            stepButtons[stepIndex].classList.add('active-step');
+
+            currentStep = stepIndex; // Update the current step index
+
+            // Adjust header title visibility
+            if (stepIndex === 0) { // Only show on the first page
+                headerTitle.classList.remove('opacity-0');
+            } else {
+                headerTitle.classList.add('opacity-0');
+            }
+
+            // Scroll to the top of the window for the new step
+            window.scrollTo(0, 0); // This reliably scrolls the entire window to the top
+
+            // If navigating to the signature step, ensure the canvas is initialized
+            if (stepIndex === 3) { // Assuming step 4 is index 3
+                initializeSignaturePad();
+            }
+        }
+
+        // Event listeners for 'Continue' buttons
+        continueButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Since fields are no longer required, simply advance the step
+                if (currentStep < formSections.length - 1) {
+                    showStep(currentStep + 1);
+                }
+            });
+        });
+
+        // Event listeners for sidebar step buttons (allow jumping backwards or forwards without validation)
+        stepButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                showStep(index);
+            });
+        });
+
+        // Main form submission handler
+        applicationForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default browser form submission
+            
+            // Hide the form and sidebar
+            applicationForm.classList.add('hidden');
+            sidebar.classList.add('hidden'); // Hide the sidebar
+            headerTitle.classList.add('opacity-0'); // Hide header title on thank you page
+
+            // Show the thank you page and make it fill the main content area
+            mainContent.classList.remove('justify-start'); // Remove justify-start
+            mainContent.classList.add('justify-center', 'items-center', 'flex-grow'); // Center thank you page vertically and horizontally
+            thankYouPage.classList.remove('hidden');
+            thankYouPage.classList.add('flex-grow'); // Ensure it takes available space
+
+            // In a real application, you would collect form data and send it to a server here.
+            const formData = new FormData(this);
+            // Append each selected file individually
+            selectedFiles.forEach(file => {
+                formData.append('bankStatements[]', file); // Use '[]' for array-like submission
+            });
+
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            data.signatureData = signatureDataInput.value; // Add signature data
+            // console.log('Form Data:', data); // Log collected data for demonstration
+            // To see files in console, you'd iterate through formData for 'bankStatements[]' entries
+            // For example:
+            // for (let pair of formData.entries()) {
+            //     if (pair[0] === 'bankStatements[]') {
+            //         console.log(pair[0] + ': ' + pair[1].name);
+            //     } else {
+            //         console.log(pair[0] + ': ' + pair[1]);
+            //     }
+            // }
+
+            // Here you would typically send `formData` via Fetch API or XMLHttpRequest
+            // Example:
+            // fetch('/submit-application', {
+            //     method: 'POST',
+            //     body: formData
+            // })
+            // .then(response => response.json())
+            // .then(data => console.log('Success:', data))
+            // .catch(error => console.error('Error:', error));
+        });
+
+        // Event listeners for the new contact buttons on the thank you page
+        contactRepresentativeBtn.addEventListener('click', () => {
+            openModal('representativeModal');
+        });
+
+        contactCustomerServiceBtn.addEventListener('click', () => {
+            openModal('customerServiceModal');
+        });
+
+
+        // Reset border color on input/select/textarea change or input (only if validation was in place)
+        document.querySelectorAll('input:not([type="file"]), select, textarea').forEach(input => { // Exclude file input from generic reset
+            input.addEventListener('input', function() {
+                this.classList.remove('border-red-500');
+                this.classList.add('border-modernBorder');
+                // Special handling for signature canvas border reset
+                if (this.id === 'signatureData' || this.id === 'ownerNameSignature' || this.id === 'signatureDate') {
+                    document.querySelector('.signature-canvas-container').classList.remove('border-red-500');
+                    document.querySelector('.signature-canvas-container').classList.add('border-modernBorder');
+                }
+            });
+            input.addEventListener('change', function() { // For selects, radios, dates
+                this.classList.remove('border-red-500');
+                this.classList.add('border-modernBorder');
+            });
+        });
+
+        /**
+         * Displays a custom message box at the top of the screen.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('success', 'error', 'info').
+         */
+        function showMessageBox(message, type = 'info') {
+            let messageBox = document.getElementById('customMessageBox');
+            if (!messageBox) {
+                messageBox = document.createElement('div');
+                messageBox.id = 'customMessageBox';
+                document.body.appendChild(messageBox);
+            }
+
+            messageBox.innerHTML = ''; // Clear previous content
+            let iconHtml = '';
+            let bgColor = '';
+            let textColor = '#ffffff';
+
+            // Determine icon and colors based on message type
+            if (type === 'success') {
+                iconHtml = '<i class="fas fa-check-circle"></i>';
+                bgColor = tailwind.config.theme.extend.colors.accentGreen;
+            } else if (type === 'error') {
+                iconHtml = '<i class="fas fa-times-circle"></i>';
+                bgColor = '#dc3545'; /* Specific red for error */
+            } else { // info
+                iconHtml = '<i class="fas fa-info-circle"></i>';
+                bgColor = tailwind.config.theme.extend.colors.primaryBlue;
+            }
+
+            messageBox.style.backgroundColor = bgColor;
+            messageBox.style.color = textColor;
+            messageBox.innerHTML = `${iconHtml}<span>${message}</span>`;
+
+            // Show the message box with animation
+            messageBox.style.opacity = '1';
+            messageBox.style.transform = 'translateX(-50%) translateY(0)';
+
+            // Hide after 3 seconds with animation
+            setTimeout(() => {
+                messageBox.style.opacity = '0';
+                messageBox.style.transform = 'translateX(-50%) translateY(-20px)';
+                // Remove from DOM after transition completes
+                setTimeout(() => {
+                    if (messageBox.parentNode) {
+                        messageBox.parentNode.removeChild(messageBox);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        /**
+         * Opens a modal by adding the 'show' class.
+         * @param {string} modalId - The ID of the modal to open.
+         */
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        /**
+         * Closes a modal by removing the 'show' class.
+         * @param {string} modalId - The ID of the modal to close.
+         */
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Theme switching logic
+        const colorCircles = document.querySelectorAll('.color-circle');
+        colorCircles.forEach(circle => {
+            circle.addEventListener('click', () => {
+                const newColor = circle.dataset.color;
+                const newLightColor = circle.dataset.lightColor;
+                const newBorderColor = circle.dataset.borderColor;
+
+                document.documentElement.style.setProperty('--theme-color', newColor);
+                document.documentElement.style.setProperty('--theme-color-light', newLightColor);
+                document.documentElement.style.setProperty('--theme-color-border', newBorderColor);
+
+                // Update selected class for visual feedback
+                colorCircles.forEach(c => c.classList.remove('selected'));
+                circle.classList.add('selected');
+
+                // Apply new colors to elements that should change dynamically
+                applyThemeToElements();
+            });
+        });
+
+        // Function to apply theme colors to relevant elements
+        function applyThemeToElements() {
+            // Apply to inputs and selects (borders and focus rings)
+            document.querySelectorAll('input:not([type="radio"]), select, textarea').forEach(el => {
+                el.style.borderColor = 'var(--theme-color-border)';
+                el.style.setProperty('--tw-ring-color', 'var(--theme-color-light)');
+            });
+
+            // Apply to buttons (text color, background on hover)
+            document.querySelectorAll('.continue-btn, button[type="submit"], #clearSignature').forEach(el => {
+                el.style.color = 'var(--theme-color)';
+                el.style.borderColor = 'var(--theme-color-border)';
+                // Remove existing hover effect classes and re-add them if needed for custom hover
+                el.classList.add('hover:bg-opacity-80'); // Example: Add a subtle hover effect
+            });
+
+            // Apply to file upload box border
+            document.querySelector('.file-upload-box').style.borderColor = 'var(--theme-color-border)';
+            document.querySelector('.file-upload-box').style.setProperty('--tw-bg-opacity', '1'); // Ensure background is set
+
+            // Apply to active step icon
+            document.querySelector('.step-btn.active-step .active-icon').style.color = 'var(--theme-color)';
+
+            // Apply to file upload icon
+            document.querySelector('.file-upload-box .fas.fa-cloud-upload-alt').style.color = 'var(--theme-color)';
+
+            // Apply to contact modal icons and image borders
+            document.querySelectorAll('.modal-content .fas').forEach(icon => {
+                icon.style.color = 'var(--theme-color)';
+            });
+            document.querySelectorAll('.modal-content img').forEach(img => {
+                img.style.borderColor = 'var(--theme-color)';
+            });
+
+            // Apply to radio buttons (accent color)
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.style.accentColor = 'var(--theme-color)';
+            });
+
+            // Apply to signature canvas border
+            document.querySelector('.signature-canvas-container').style.borderColor = 'var(--theme-color-border)';
+        }
+
+        // Set initial theme color
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.color-circle[data-color="#3182ce"]').classList.add('selected');
+            applyThemeToElements(); // Apply default theme on load
+        });
+    </script>
+</body>
+</html>
