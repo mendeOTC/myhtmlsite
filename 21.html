@@ -7,6 +7,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* NEW: Global box-sizing for consistent layout calculations */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         :root {
             /* Sleek, modern On Time Capital color palette */
             --primary-blue: #007bff; /* Main brand blue */
@@ -203,23 +208,23 @@
 
         .form-content-area {
             flex-grow: 1;
-            /* NEW: Set max-width, margin-auto, and padding directly on this container */
+            /* NEW: Set max-width, margin-auto, padding, background, and shadow directly on this container */
             max-width: 800px; /* This is the effective width of the white content block */
             margin: 0 auto; /* This centers the white content block */
             padding: 50px 80px; /* Apply padding here, inside the max-width */
-            box-sizing: border-box; /* Crucial for padding to be included in max-width */
+            background-color: var(--form-bg); /* Moved background here */
+            box-shadow: var(--shadow-md); /* Added shadow to make it a distinct card */
 
             display: flex;
             flex-direction: column;
             align-items: center; /* Still centers children horizontally within this block */
-            background-color: var(--form-bg);
             overflow-y: auto;
             width: 100%; /* Allows it to shrink on smaller screens */
         }
 
         #applicationForm {
             width: 100%; /* Will now fill the padded form-content-area */
-            /* REMOVED max-width, margin, and padding from here */
+            /* REMOVED max-width, margin, padding, background-color, box-shadow from here */
         }
 
         .form-section {
@@ -228,7 +233,6 @@
             box-shadow: none;
             border: none;
             display: none;
-            /* REMOVED box-sizing from here */
         }
 
         .form-section.active {
@@ -246,7 +250,6 @@
             padding-bottom: 10px;
             border-bottom: 2px solid var(--modern-border); /* Subtle underline */
             width: 100%; /* Make sure heading spans full available width of form-section */
-            box-sizing: border-box; /* Include padding/border in width calculation */
         }
 
         .form-row {
@@ -259,7 +262,7 @@
 
         .form-row .form-group {
             flex: none; /* Remove flex-grow/shrink from default */
-            width: calc(50% - 10px); /* NEW: Explicitly set width for two columns, accounting for gap */
+            width: calc(50% - 10px); /* Explicitly set width for two columns, accounting for gap */
             margin-bottom: 0; /* Remove bottom margin from child form-group as row handles spacing */
         }
 
@@ -293,7 +296,6 @@
             font-family: 'Open Sans', sans-serif;
             color: var(--modern-secondary);
             background-color: var(--input-bg);
-            box-sizing: border-box; /* Ensure padding doesn't add to width */
         }
 
         .form-group input[type="text"]:focus,
@@ -350,7 +352,6 @@
             align-items: center;
             justify-content: center;
             width: 100%; /* Ensure it also fills the width */
-            box-sizing: border-box;
         }
 
         .file-upload-box:hover {
@@ -383,7 +384,6 @@
             position: relative;
             height: 150px; /* Adjusted height */
             width: 100%; /* Ensure it fills the width */
-            box-sizing: border-box;
         }
 
         .signature-canvas-container canvas {
@@ -863,8 +863,8 @@
             signatureCanvas.style.width = '100%';
             signatureCanvas.style.height = '100%';
             // Set canvas internal drawing surface size
-            signatureCanvas.width = container.clientWidth - 2; // Account for border
-            signatureCanvas.height = container.clientHeight - 2; // Account for border
+            signatureCanvas.width = container.clientWidth;
+            signatureCanvas.height = container.clientHeight;
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
             ctx.lineWidth = 2;
