@@ -3,656 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Funding Application</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Business Funding Application - New Design</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind to include custom colors and fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        'open-sans': ['Open Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        primaryBlue: '#007bff',
+                        darkBlue: '#0056b3',
+                        lightBlueBg: '#e0f7fa',
+                        accentGreen: '#28a745',
+                        grayText: '#495057',
+                        lightGrayBorder: '#dee2e6',
+                        backgroundWhite: '#ffffff',
+                        backgroundBody: '#f8f9fa',
+                        modernPrimary: '#1a202c',
+                        modernSecondary: '#4a5568',
+                        modernAccent: '#3182ce',
+                        modernBgLight: '#f7fafc',
+                        modernBorder: '#e2e8f0',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom Styles (minimal, mostly for specific overrides or non-Tailwind elements) -->
     <style>
-        /* Global box-sizing for consistent layout calculations */
+        /* Ensure box-sizing is border-box globally for consistent layout */
         *, *::before, *::after {
             box-sizing: border-box;
         }
-
-        :root {
-            /* Sleek, modern On Time Capital color palette */
-            --primary-blue: #007bff; /* Main brand blue */
-            --dark-blue: #0056b3; /* Darker blue for accents/hover */
-            --light-blue-bg: #e0f7fa; /* Very light blue for subtle backgrounds */
-            --accent-green: #28a745; /* Success/submit buttons */
-            --gray-text: #495057; /* General text color */
-            --light-gray-border: #dee2e6; /* Input borders */
-            --background-white: #ffffff;
-            --background-body: #f8f9fa; /* Off-white body background */
-
-            /* Shadows for depth */
-            --shadow-sm: rgba(0, 0, 0, 0.05) 0 1px 2px 0;
-            --shadow-md: rgba(0, 0, 0, 0.08) 0 4px 12px -2px;
-            --shadow-lg: rgba(0, 0, 0, 0.1) 0 10px 20px -5px;
-
-            /* Subtle gradient for body background for "shiny" effect that blends in */
-            --body-gradient-start: #eef5ff; /* Lighter start */
-            --body-gradient-end: #f8fbff; /* Even lighter end */
-
-            /* Form container and input styling for a smooth, professional feel */
-            --form-bg: #ffffff;
-            --input-bg: #fdfefe;
-            --input-border: #e0e6eb;
-            --input-focus-border: var(--primary-blue);
-            --input-shadow-inner: inset 0 1px 3px rgba(0, 0, 0, 0.03);
-            --button-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
-            --button-hover-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
-
-            /* Modern color scheme adjustments */
-            --modern-primary: #1a202c; /* Dark charcoal for primary elements */
-            --modern-secondary: #4a5568; /* Slightly lighter charcoal for secondary text */
-            --modern-accent: #3182ce; /* A clean blue for highlights */
-            --modern-bg-light: #f7fafc; /* Very light background for sections */
-            --modern-border: #e2e8f0; /* Light border for separation */
-            --modern-shadow: rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
-        }
-
         body {
             font-family: 'Open Sans', sans-serif;
-            margin: 0;
-            padding: 0;
-            /* Smoother, less stark gradient, more subtle */
-            background: linear-gradient(135deg, var(--modern-bg-light) 0%, #ffffff 100%);
-            color: var(--modern-secondary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased; /* Better font rendering */
+            background: linear-gradient(135deg, theme('colors.modernBgLight') 0%, theme('colors.backgroundWhite') 100%);
+            -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-
-        header {
-            background-color: var(--background-white);
-            padding: 15px 40px; /* Increased padding */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px var(--modern-shadow); /* Subtle shadow */
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid var(--modern-border);
+        /* Style for date input to ensure light mode calendar */
+        input[type="date"] {
+            color-scheme: light;
+        }
+        /* Custom styles for signature canvas border on error */
+        .signature-canvas-container.error {
+            border: 1px solid red !important;
         }
 
-        header .logo-link img {
-            height: 60px; /* Larger logo */
-            transition: transform 0.2s ease;
-        }
-        header .logo-link img:hover {
-            transform: scale(1.03);
-        }
-
-        header .help-contact {
-            display: flex;
-            align-items: center;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            color: var(--modern-primary); /* Black text */
-            gap: 8px; /* Space between icon, text, number */
-        }
-        header .help-contact i {
-            font-size: 1.2em; /* Phone icon size */
-            color: var(--modern-primary); /* Black icon */
-        }
-        header .help-contact a {
-            font-size: 1.1em;
-            color: var(--modern-primary); /* Black text */
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-        header .help-contact a:hover {
-            color: var(--modern-accent);
-        }
-
-        .main-wrapper {
-            display: flex;
-            flex-grow: 1;
-            width: 100%;
-        }
-
-        .sidebar {
-            width: 280px; /* Consistent width */
-            padding: 50px 30px;
-            background: linear-gradient(135deg, var(--modern-bg-light) 0%, var(--background-white) 100%); /* Subtle gradient for sidebar */
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            box-shadow: 2px 0 5px var(--modern-shadow); /* Subtle shadow */
-            position: sticky; /* Make sidebar fixed */
-            top: 0; /* Align to top */
-            height: 100vh; /* Take full viewport height */
-            overflow-y: auto; /* Allow scrolling if content overflows */
-            border-right: 1px solid var(--modern-border);
-        }
-
-        .sidebar .step-navigation {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .sidebar .step-navigation button {
-            background-color: transparent;
-            color: var(--modern-secondary);
-            border: none;
-            padding: 12px 0;
-            text-align: left;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: color 0.3s ease, font-weight 0.3s ease, transform 0.2s ease;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            position: relative;
-            padding-left: 30px;
-        }
-
-        .sidebar .step-navigation button::before {
-            content: "\f111"; /* Circle icon */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--modern-border);
-            font-size: 0.8em;
-            transition: color 0.3s ease;
-        }
-        .sidebar .step-navigation button.active::before {
-            content: "\f058"; /* Checkmark circle for active */
-            color: var(--modern-accent); /* Active step color */
-        }
-
-        .sidebar .step-navigation button.active {
-            color: var(--modern-primary);
-            font-weight: 600;
-        }
-
-        .sidebar .step-navigation button:not(.active):hover {
-            color: var(--modern-accent);
-            transform: translateX(5px);
-        }
-
-        .sidebar .contact-info {
-            margin-top: auto; /* Pushes contact info and review links to the bottom */
-            padding-top: 30px;
-            border-top: 1px solid var(--modern-border);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .sidebar .contact-info h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.2em;
-            color: var(--modern-primary);
-            margin-bottom: 5px;
-        }
-        .sidebar .contact-info p {
-            margin: 0;
-            font-size: 0.95em;
-            color: var(--modern-secondary);
-        }
-        .sidebar .contact-info a {
-            color: var(--modern-accent);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-        .sidebar .contact-info a:hover {
-            color: var(--modern-primary);
-        }
-
-        .form-content-area {
-            flex-grow: 1;
-            /* This is the main container for the form content, setting its overall visual width */
-            max-width: 800px; /* Defines the consistent width of the white content panel */
-            margin: 0 auto; /* Centers the content panel horizontally */
-            padding: 50px 80px; /* Applies padding inside the max-width */
-            background-color: var(--form-bg); /* Sets the white background */
-            box-shadow: var(--shadow-md); /* Adds a subtle shadow for depth */
-
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Centers the form elements horizontally within this panel */
-            overflow-y: auto; /* Allows scrolling if form content is too long */
-            width: 100%; /* Ensures responsiveness on smaller screens */
-        }
-
-        #applicationForm {
-            width: 100%; /* Fills the now correctly sized .form-content-area */
-            /* No max-width, margin, or padding needed here, as parent handles it */
-        }
-
-        .form-section {
-            width: 100%; /* Fills the #applicationForm */
-            /* No padding needed here, as .form-content-area handles it */
-            box-shadow: none;
-            border: none;
-            display: none;
-        }
-
-        .form-section.active {
-            display: block;
-        }
-
-        .form-section h2 {
-            font-family: 'Montserrat', sans-serif;
-            color: var(--modern-primary);
-            margin-bottom: 50px; /* More space below heading */
-            text-align: center;
-            font-weight: 700;
-            font-size: 2.5em; /* Larger heading */
-            letter-spacing: -0.8px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--modern-border); /* Subtle underline */
-            width: 100%; /* Ensures heading spans full available width */
-        }
-
-        .form-row {
-            display: flex;
-            justify-content: space-between; /* Space between side-by-side fields */
-            gap: 20px; /* Consistent gap between items */
-            margin-bottom: 20px; /* Consistent spacing between rows */
-            width: 100%; /* Ensures form-rows take full width of their parent .form-section */
-        }
-
-        .form-row .form-group {
-            flex: none; /* Prevents flex-grow/shrink from default behavior */
-            width: calc(50% - 10px); /* Explicitly sets width for two columns, accounting for the 20px gap */
-            margin-bottom: 0; /* Removes bottom margin from child form-group as row handles spacing */
-        }
-
-        .form-group {
-            margin-bottom: 20px; /* Default vertical spacing for single-column groups */
-            width: 100%; /* Ensures form-groups take full width when not in a row */
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px; /* Reduced margin below label */
-            font-weight: 600;
-            color: var(--modern-primary);
-            font-size: 1.05em;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="tel"],
-        .form-group input[type="number"],
-        .form-group input[type="date"],
-        .form-group select,
-        .form-group textarea {
-            width: 100%; /* Ensures input fields take full width of their parent form-group */
-            padding: 12px 15px; /* Reduced padding for compactness, but still comfortable */
-            border: 1px solid var(--modern-border);
-            border-radius: 8px; /* Slightly less rounded than before, more modern */
-            font-size: 1em; /* Adjusted font size */
-            box-shadow: inset 0 1px 2px var(--modern-shadow); /* Softer inner shadow */
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        /* Custom Message Box Styles */
+        #customMessageBox {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 8px;
             font-family: 'Open Sans', sans-serif;
-            color: var(--modern-secondary);
-            background-color: var(--input-bg);
-        }
-
-        .form-group input[type="text"]:focus,
-        .form-group input[type="email"]:focus,
-        .form-group input[type="tel"]:focus,
-        .form-group input[type="number"]:focus,
-        .form-group input[type="date"]:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--modern-accent);
-            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15); /* Softer, subtle focus glow */
-            outline: none;
-            background-color: var(--background-white); /* White background on focus */
-        }
-        .form-group input[type="date"] {
-            color-scheme: light; /* Ensures date picker calendar is light mode compatible */
-        }
-
-        .form-group .radio-group label {
-            display: inline-block;
-            margin-right: 35px; /* More space */
-            font-weight: 400;
-            cursor: pointer;
             font-size: 1em;
-            color: var(--modern-secondary);
-        }
-        .form-group .radio-group input[type="radio"] {
-            margin-right: 10px;
-            transform: scale(1.2); /* Slightly larger radio buttons */
-            accent-color: var(--modern-accent); /* Modern accent color for radios */
-        }
-
-        /* Dollar sign for funding amount, only appears when value is present */
-        .form-group.dollar-visible input {
-            padding-left: 15px; /* Removed extra padding as dollar sign is gone */
-        }
-        .form-group.dollar-visible::before {
-            display: none; /* Hide dollar sign */
-        }
-        .form-group.input-icon-left { /* For the funding amount input */
-            position: relative;
-        }
-
-        .file-upload-box {
-            border: 2px dashed var(--modern-border);
-            border-radius: 10px; /* Rounded corners */
-            padding: 30px; /* Reduced padding */
-            text-align: center;
-            background-color: var(--input-bg);
-            cursor: pointer;
-            transition: border-color 0.3s ease, background-color 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%; /* Ensure it also fills the width */
-        }
-
-        .file-upload-box:hover {
-            border-color: var(--modern-accent);
-            background-color: #f0f8fd; /* Lighter blue on hover */
-        }
-
-        .file-upload-box input[type="file"] {
-            display: none;
-        }
-
-        .file-upload-box p {
-            margin: 0;
-            color: var(--modern-secondary);
-            font-weight: 500;
-            font-size: 1em;
-        }
-        .file-upload-box i {
-            font-size: 3.5em; /* Adjusted icon size */
-            color: var(--modern-accent);
-            margin-bottom: 15px; /* Adjusted space below icon */
-        }
-
-        .signature-canvas-container {
-            border: 1px solid var(--modern-border);
-            border-radius: 8px;
-            background-color: var(--input-bg);
-            cursor: crosshair;
-            box-shadow: inset 0 1px 2px var(--modern-shadow);
-            position: relative;
-            height: 150px; /* Adjusted height */
-            width: 100%; /* Ensure it fills the width */
-        }
-
-        .signature-canvas-container canvas {
-            display: block;
-            border-radius: 8px;
-        }
-        .signature-canvas-container button {
-            position: absolute;
-            bottom: 10px; /* Adjusted position */
-            right: 10px; /* Adjusted position */
-            background-color: var(--modern-bg-light);
-            border: 1px solid var(--modern-border);
-            border-radius: 6px; /* Adjusted radius */
-            padding: 6px 12px; /* Adjusted padding */
-            font-size: 0.85em; /* Adjusted font size */
-            cursor: pointer;
-            z-index: 10;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-            color: var(--modern-secondary);
-        }
-        .signature-canvas-container button:hover {
-            background-color: #e0e0e0;
-            border-color: #c2c2c2;
-        }
-
-        .form-navigation-buttons {
-            display: flex;
-            justify-content: center; /* Center the single button */
-            margin-top: 40px; /* Adjusted space above buttons */
-            width: 100%; /* Ensure buttons span the full form width */
-        }
-
-        .form-navigation-buttons button {
-            flex: 1; /* Take full width of its container */
-            max-width: 350px; /* Apply max-width to the button itself */
-            background-color: var(--modern-accent); /* Flat color for modern look */
-            color: white;
-            border: none;
-            padding: 15px 25px; /* Adjusted padding */
-            border-radius: 10px; /* Adjusted rounded buttons */
-            font-size: 1.1em; /* Adjusted font size */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 5px 15px rgba(49, 130, 206, 0.2);
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            letter-spacing: 0.5px;
-        }
-
-        .form-navigation-buttons button:hover {
-            background-color: #2c5282; /* Darker accent blue on hover */
-            transform: translateY(-2px); /* Subtle lift */
-            box-shadow: 0 8px 20px rgba(49, 130, 206, 0.3);
-        }
-
-        .form-navigation-buttons button[type="submit"] {
-            background-color: var(--accent-green);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
-        }
-        .form-navigation-buttons button[type="submit"]:hover {
-            background-color: #218838;
-            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--background-white);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--modern-border);
-            color: var(--modern-secondary);
-            font-size: 0.9em;
-            font-weight: 400;
-        }
-        footer .footer-reviews {
+            z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
-            gap: 20px; /* Increased gap between images and text for more space */
-        }
-        footer .footer-reviews span {
-            font-weight: 600;
-            color: var(--modern-primary);
-            font-size: 1.1em; /* Larger text */
-        }
-        footer .footer-reviews a img {
-            height: 55px; /* Even larger images */
-            width: auto;
-            opacity: 0.95;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-        footer .footer-reviews a:hover img {
-            opacity: 1;
-            transform: translateY(-2px);
-        }
-        footer .footer-copyright {
-            color: var(--modern-secondary);
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 992px) {
-            .main-wrapper {
-                flex-direction: column;
-            }
-
-            header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px 20px;
-            }
-            header .help-contact {
-                flex-direction: column;
-                text-align: center;
-            }
-            header .help-contact a {
-                font-size: 1em;
-            }
-            header .logo-link img {
-                height: 50px; /* Adjust for smaller screens */
-            }
-
-            .sidebar {
-                width: 100%;
-                padding: 20px;
-                height: auto; /* Allow sidebar to collapse */
-                position: relative; /* Not fixed on small screens */
-                border-bottom: 1px solid var(--modern-border);
-                box-shadow: 0 2px 5px var(--modern-shadow);
-                gap: 20px; /* Less gap */
-            }
-            .sidebar .step-navigation {
-                flex-direction: row;
-                overflow-x: auto; /* Allow horizontal scrolling for steps */
-                justify-content: flex-start;
-                padding-bottom: 10px;
-            }
-            .sidebar .step-navigation button {
-                white-space: nowrap; /* Prevent text wrapping */
-                padding: 10px 15px;
-                font-size: 1em;
-                padding-left: 0;
-                text-align: center;
-                min-width: 120px;
-            }
-            .sidebar .step-navigation button::before {
-                display: none; /* Hide circle/checkmark icons on mobile */
-            }
-            .sidebar .step-navigation button.active {
-                transform: none;
-            }
-            .sidebar .step-navigation button:not(.active):hover {
-                transform: none;
-            }
-
-            .sidebar .contact-info {
-                padding-top: 20px;
-                margin-top: 20px;
-            }
-
-            .form-content-area {
-                padding: 30px 20px; /* Adjusted padding for mobile */
-                max-width: 100%; /* Take full width on small screens */
-            }
-
-            #applicationForm { /* Responsive adjustment for the form itself */
-                max-width: 100%; /* Take full width on small screens */
-                padding: 0; /* Padding handled by form-content-area on mobile */
-            }
-
-            .form-section {
-                /* No padding here, handled by form-content-area */
-                max-width: 100%; /* On small screens, take full width */
-            }
-
-            .form-section h2 {
-                font-size: 2em;
-                margin-bottom: 30px;
-            }
-
-            .form-row {
-                flex-direction: column; /* Stack fields on small screens */
-                gap: 10px; /* Adjust gap for stacked items */
-            }
-            .form-row .form-group {
-                width: 100%; /* Each group takes full width when stacked */
-                flex: none; /* Remove flex:none when stacked */
-            }
-            .form-group {
-                margin-bottom: 15px; /* Adjust default for stacked */
-            }
-
-            .form-group input,
-            .form-group select {
-                padding: 10px 12px;
-                font-size: 0.95em;
-            }
-
-            .form-navigation-buttons {
-                margin-top: 30px;
-                max-width: 100%; /* Full width button container on small screens */
-            }
-            .form-navigation-buttons button {
-                font-size: 1em;
-                padding: 14px 20px;
-                max-width: 100%; /* Ensure button also takes full width on small screens */
-            }
-
-            footer {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-                padding: 15px 20px;
-            }
-            footer .footer-reviews a img {
-                height: 40px; /* Adjust for smaller screens */
-            }
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
     </style>
 </head>
-<body>
-    <header>
-        <a href="https://ontimecap.com/" class="logo-link" target="_blank">
-            <img src="https://ontimecap.com/wp-content/uploads/2024/05/logos3-1.png" alt="On Time Capital Logo">
+<body class="flex flex-col min-h-screen text-modernSecondary">
+
+    <!-- Header Section -->
+    <header class="bg-backgroundWhite p-4 md:px-10 flex flex-col md:flex-row justify-between items-center shadow-sm sticky top-0 z-50 border-b border-modernBorder">
+        <a href="https://ontimecap.com/" class="logo-link mb-4 md:mb-0" target="_blank">
+            <img src="https://ontimecap.com/wp-content/uploads/2024/05/logos3-1.png" alt="On Time Capital Logo" class="h-14 transition-transform duration-200 hover:scale-105">
         </a>
-        <div class="help-contact">
-            <span>Need help?</span>
-            <i class="fas fa-phone-alt"></i>
-            <a href="tel:4122046096">412 204 6096</a>
+        <div class="flex items-center font-montserrat font-semibold text-modernPrimary gap-2">
+            <span class="text-lg">Need help?</span>
+            <i class="fas fa-phone-alt text-xl text-modernPrimary"></i>
+            <a href="tel:4122046096" class="text-xl text-modernPrimary no-underline hover:text-modernAccent transition-colors duration-200">412 204 6096</a>
         </div>
     </header>
 
-    <div class="main-wrapper">
-        <aside class="sidebar">
-            <div class="step-navigation">
-                <button class="step-btn active" data-step="1">Basic Info</button>
-                <button class="step-btn" data-step="2">Business Info</button>
-                <button class="step-btn" data-step="3">Owner Info</button>
-                <button class="step-btn" data-step="4">Upload Documents & Signature</button>
+    <!-- Main Content Wrapper -->
+    <div class="flex flex-col md:flex-row flex-grow w-full">
+
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-72 p-8 md:p-12 bg-gradient-to-br from-modernBgLight to-backgroundWhite flex flex-col gap-10 shadow-md md:shadow-lg sticky top-0 h-auto md:h-screen overflow-y-auto border-b md:border-b-0 md:border-r border-modernBorder">
+            <div class="flex flex-row md:flex-col gap-5 overflow-x-auto md:overflow-x-hidden pb-2 md:pb-0">
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent active-step" data-step="1">
+                    <i class="fas fa-circle absolute left-0 top-1/2 -translate-y-1/2 text-modernBorder text-sm transition-colors duration-300 active-icon"></i>
+                    Basic Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent" data-step="2">
+                    <i class="fas fa-circle absolute left-0 top-1/2 -translate-y-1/2 text-modernBorder text-sm transition-colors duration-300"></i>
+                    Business Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent" data-step="3">
+                    <i class="fas fa-circle absolute left-0 top-1/2 -translate-y-1/2 text-modernBorder text-sm transition-colors duration-300"></i>
+                    Owner Info
+                </button>
+                <button class="step-btn flex-shrink-0 md:flex-shrink text-modernSecondary text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-modernAccent" data-step="4">
+                    <i class="fas fa-circle absolute left-0 top-1/2 -translate-y-1/2 text-modernBorder text-sm transition-colors duration-300"></i>
+                    Upload Documents & Signature
+                </button>
             </div>
-            <div class="contact-info">
-                <h3>Have any questions?</h3>
-                <p>Get in contact:</p>
-                <a href="mailto:Mendel@ontimecap.com">Mendel@ontimecap.com</a>
+            <div class="mt-auto pt-8 border-t border-modernBorder flex flex-col gap-4">
+                <h3 class="font-montserrat text-xl text-modernPrimary mb-1">Have any questions?</h3>
+                <p class="text-base text-modernSecondary">Get in contact:</p>
+                <a href="mailto:Mendel@ontimecap.com" class="text-modernAccent no-underline font-medium hover:text-modernPrimary transition-colors duration-200">Mendel@ontimecap.com</a>
             </div>
         </aside>
 
-        <main class="form-content-area">
-            <form id="applicationForm">
+        <!-- Form Content Area (Main White Card) -->
+        <main class="form-content-area flex-grow flex flex-col items-center justify-start p-8 md:p-12 bg-backgroundWhite shadow-md md:shadow-lg rounded-lg md:rounded-xl my-8 md:my-10 mx-auto w-full max-w-4xl overflow-y-auto">
+            <form id="applicationForm" class="w-full">
+
+                <!-- Step 1: Basic Information -->
                 <div id="step1" class="form-section active">
-                    <h2>Basic Information</h2>
-                    <div class="form-row">
+                    <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Basic Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
                         <div class="form-group">
-                            <label for="fundingAmount">How much funding are you looking for?</label>
-                            <input type="number" id="fundingAmount" name="fundingAmount" placeholder="Enter amount" required>
+                            <label for="fundingAmount" class="block mb-2 font-semibold text-modernPrimary text-lg">How much funding are you looking for?</label>
+                            <input type="number" id="fundingAmount" name="fundingAmount" placeholder="Enter amount" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                         <div class="form-group">
-                            <label for="creditScore">What is your credit score?</label>
-                            <input type="number" id="creditScore" name="creditScore" min="300" max="850" placeholder="e.g., 700" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="industry">What industry are you in?</label>
-                            <input type="text" id="industry" name="industry" placeholder="e.g., Retail, Tech, Food Service" required>
+                            <label for="creditScore" class="block mb-2 font-semibold text-modernPrimary text-lg">What is your credit score?</label>
+                            <input type="number" id="creditScore" name="creditScore" min="300" max="850" placeholder="e.g., 700" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                         <div class="form-group">
-                            <label for="timeframe">What timeframe do you need the money?</label>
-                            <select id="timeframe" name="timeframe" required>
+                            <label for="industry" class="block mb-2 font-semibold text-modernPrimary text-lg">What industry are you in?</label>
+                            <input type="text" id="industry" name="industry" placeholder="e.g., Retail, Tech, Food Service" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
+                        </div>
+                        <div class="form-group">
+                            <label for="timeframe" class="block mb-2 font-semibold text-modernPrimary text-lg">What timeframe do you need the money?</label>
+                            <select id="timeframe" name="timeframe" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                                 <option value="">Select an option</option>
                                 <option value="ASAP">ASAP</option>
                                 <option value="within_week">Within a week</option>
@@ -661,215 +158,257 @@
                                 <option value="Browse_rates">Just Browse rates</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                        <div class="form-group md:col-span-2">
+                            <label for="email" class="block mb-2 font-semibold text-modernPrimary text-lg">Email</label>
+                            <input type="email" id="email" name="email" placeholder="you@example.com" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
-                        <div class="form-group">
-                            <label for="phoneNumber">Phone Number</label>
-                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(123) 456-7890" maxlength="10" required>
+                        <div class="form-group md:col-span-2">
+                            <label for="phoneNumber" class="block mb-2 font-semibold text-modernPrimary text-lg">Phone Number</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(123) 456-7890" maxlength="10" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                     </div>
-                    <div class="form-navigation-buttons">
-                        <button type="button" class="continue-btn">Continue</button>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn bg-modernAccent text-white px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:bg-darkBlue hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                            Continue
+                        </button>
                     </div>
                 </div>
 
-                <div id="step2" class="form-section">
-                    <h2>Business Information</h2>
-                    <div class="form-row">
+                <!-- Step 2: Business Information -->
+                <div id="step2" class="form-section hidden">
+                    <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Business Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
                         <div class="form-group">
-                            <label for="businessLegalName">Business Legal Name</label>
-                            <input type="text" id="businessLegalName" name="businessLegalName" required>
+                            <label for="businessLegalName" class="block mb-2 font-semibold text-modernPrimary text-lg">Business Legal Name</label>
+                            <input type="text" id="businessLegalName" name="businessLegalName" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                         <div class="form-group">
-                            <label for="businessDBAName">Business DBA Name (if applicable)</label>
-                            <input type="text" id="businessDBAName" name="businessDBAName" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="ein">EIN (Employer Identification Number)</label>
-                            <input type="text" id="ein" name="ein" placeholder="XX-XXXXXXX" maxlength="9" required>
+                            <label for="businessDBAName" class="block mb-2 font-semibold text-modernPrimary text-lg">Business DBA Name (if applicable)</label>
+                            <input type="text" id="businessDBAName" name="businessDBAName"
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                         <div class="form-group">
-                            <label for="businessStartDate">Business Start Date</label>
-                            <input type="date" id="businessStartDate" name="businessStartDate" required>
+                            <label for="ein" class="block mb-2 font-semibold text-modernPrimary text-lg">EIN (Employer Identification Number)</label>
+                            <input type="text" id="ein" name="ein" placeholder="XX-XXXXXXX" maxlength="9" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
-                    </div>
-                    <div class="form-row">
                         <div class="form-group">
-                            <label>Legal Entity</label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="legalEntity" value="corporation" required> Corporation</label>
-                                <label><input type="radio" name="legalEntity" value="llc"> LLC</label>
-                                <label><input type="radio" name="legalEntity" value="partnership"> Partnership</label>
-                                <label><input type="radio" name="legalEntity" value="sole_proprietorship"> Sole Proprietorship</label>
+                            <label for="businessStartDate" class="block mb-2 font-semibold text-modernPrimary text-lg">Business Start Date</label>
+                            <input type="date" id="businessStartDate" name="businessStartDate" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
+                        </div>
+                        <div class="form-group">
+                            <label class="block mb-2 font-semibold text-modernPrimary text-lg">Legal Entity</label>
+                            <div class="flex flex-wrap gap-x-8 gap-y-2">
+                                <label class="inline-flex items-center text-modernSecondary text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="corporation" required class="form-radio h-5 w-5 text-modernAccent accent-modernAccent mr-2 transform scale-110">
+                                    Corporation
+                                </label>
+                                <label class="inline-flex items-center text-modernSecondary text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="llc" class="form-radio h-5 w-5 text-modernAccent accent-modernAccent mr-2 transform scale-110">
+                                    LLC
+                                </label>
+                                <label class="inline-flex items-center text-modernSecondary text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="partnership" class="form-radio h-5 w-5 text-modernAccent accent-modernAccent mr-2 transform scale-110">
+                                    Partnership
+                                </label>
+                                <label class="inline-flex items-center text-modernSecondary text-base cursor-pointer">
+                                    <input type="radio" name="legalEntity" value="sole_proprietorship" class="form-radio h-5 w-5 text-modernAccent accent-modernAccent mr-2 transform scale-110">
+                                    Sole Proprietorship
+                                </label>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="ownershipPercentage">Ownership Percentage</label>
-                            <input type="number" id="ownershipPercentage" name="ownershipPercentage" min="0" max="100" placeholder="e.g., 100" maxlength="3" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required>
+                            <label for="ownershipPercentage" class="block mb-2 font-semibold text-modernPrimary text-lg">Ownership Percentage</label>
+                            <input type="number" id="ownershipPercentage" name="ownershipPercentage" min="0" max="100" placeholder="e.g., 100" maxlength="3" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="businessStreetAddress">Business Street Address</label>
-                            <input type="text" id="businessStreetAddress" name="businessStreetAddress" required>
+                        <div class="form-group md:col-span-2">
+                            <label for="businessStreetAddress" class="block mb-2 font-semibold text-modernPrimary text-lg">Business Street Address</label>
+                            <input type="text" id="businessStreetAddress" name="businessStreetAddress" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                         <div class="form-group">
-                            <label for="businessCity">Business City</label>
-                            <input type="text" id="businessCity" name="businessCity" required>
+                            <label for="businessCity" class="block mb-2 font-semibold text-modernPrimary text-lg">Business City</label>
+                            <input type="text" id="businessCity" name="businessCity" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
-                    </div>
-                    <div class="form-row">
                         <div class="form-group">
-                            <label for="businessState">Business State</label>
-                            <select id="businessState" name="businessState" required>
+                            <label for="businessState" class="block mb-2 font-semibold text-modernPrimary text-lg">Business State</label>
+                            <select id="businessState" name="businessState" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                                 <option value="">Select a State</option>
                                 <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="businessZipCode">Business Zip Code</label>
-                            <input type="text" id="businessZipCode" name="businessZipCode" maxlength="5" required>
+                            <label for="businessZipCode" class="block mb-2 font-semibold text-modernPrimary text-lg">Business Zip Code</label>
+                            <input type="text" id="businessZipCode" name="businessZipCode" maxlength="5" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                     </div>
-                    <div class="form-navigation-buttons">
-                        <button type="button" class="continue-btn">Continue</button>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn bg-modernAccent text-white px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:bg-darkBlue hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                            Continue
+                        </button>
                     </div>
                 </div>
 
-                <div id="step3" class="form-section">
-                    <h2>Owner Information</h2>
-                    <div class="form-row">
+                <!-- Step 3: Owner Information -->
+                <div id="step3" class="form-section hidden">
+                    <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Owner Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
                         <div class="form-group">
-                            <label for="ownerFirstName">First Name</label>
-                            <input type="text" id="ownerFirstName" name="ownerFirstName" required>
+                            <label for="ownerFirstName" class="block mb-2 font-semibold text-modernPrimary text-lg">First Name</label>
+                            <input type="text" id="ownerFirstName" name="ownerFirstName" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                         <div class="form-group">
-                            <label for="ownerLastName">Last Name</label>
-                            <input type="text" id="ownerLastName" name="ownerLastName" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="socialSecurityNumber">Social Security Number (SSN)</label>
-                            <input type="text" id="socialSecurityNumber" name="socialSecurityNumber" placeholder="XXX-XX-XXXX" maxlength="9" required>
+                            <label for="ownerLastName" class="block mb-2 font-semibold text-modernPrimary text-lg">Last Name</label>
+                            <input type="text" id="ownerLastName" name="ownerLastName" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                         <div class="form-group">
-                            <label for="dateOfBirth">Date of Birth</label>
-                            <input type="date" id="dateOfBirth" name="dateOfBirth" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="homeStreetAddress">Home Street Address</label>
-                            <input type="text" id="homeStreetAddress" name="homeStreetAddress" required>
+                            <label for="socialSecurityNumber" class="block mb-2 font-semibold text-modernPrimary text-lg">Social Security Number (SSN)</label>
+                            <input type="text" id="socialSecurityNumber" name="socialSecurityNumber" placeholder="XXX-XX-XXXX" maxlength="9" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                         <div class="form-group">
-                            <label for="homeCity">Home City</label>
-                            <input type="text" id="homeCity" name="homeCity" required>
+                            <label for="dateOfBirth" class="block mb-2 font-semibold text-modernPrimary text-lg">Date of Birth</label>
+                            <input type="date" id="dateOfBirth" name="dateOfBirth" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
-                    </div>
-                    <div class="form-row">
+                        <div class="form-group md:col-span-2">
+                            <label for="homeStreetAddress" class="block mb-2 font-semibold text-modernPrimary text-lg">Home Street Address</label>
+                            <input type="text" id="homeStreetAddress" name="homeStreetAddress" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
+                        </div>
                         <div class="form-group">
-                            <label for="homeState">Home State</label>
-                            <select id="homeState" name="homeState" required>
+                            <label for="homeCity" class="block mb-2 font-semibold text-modernPrimary text-lg">Home City</label>
+                            <input type="text" id="homeCity" name="homeCity" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
+                        </div>
+                        <div class="form-group">
+                            <label for="homeState" class="block mb-2 font-semibold text-modernPrimary text-lg">Home State</label>
+                            <select id="homeState" name="homeState" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                                 <option value="">Select a State</option>
                                 <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="homeZipCode">Home Zip Code</label>
-                            <input type="text" id="homeZipCode" name="homeZipCode" maxlength="5" required>
+                            <label for="homeZipCode" class="block mb-2 font-semibold text-modernPrimary text-lg">Home Zip Code</label>
+                            <input type="text" id="homeZipCode" name="homeZipCode" maxlength="5" required
+                                class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                         </div>
                     </div>
-                    <div class="form-navigation-buttons">
-                        <button type="button" class="continue-btn">Continue</button>
+                    <div class="flex justify-center mt-10">
+                        <button type="button" class="continue-btn bg-modernAccent text-white px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:bg-darkBlue hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                            Continue
+                        </button>
                     </div>
                 </div>
 
-                <div id="step4" class="form-section">
-                    <h2>Upload Documents & Signature</h2>
-                    <div class="form-group">
-                        <label>Upload Business Bank Statements (Last 3 months)</label>
-                        <div class="file-upload-box" onclick="document.getElementById('bankStatements').click()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Drag & Drop files here or click to browse</p>
-                            <input type="file" id="bankStatements" name="bankStatements" accept=".pdf, .doc, .docx, .png, .jpg" multiple>
+                <!-- Step 4: Upload Documents & Signature -->
+                <div id="step4" class="form-section hidden">
+                    <h2 class="font-montserrat text-modernPrimary text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-modernBorder w-full">Upload Documents & Signature</h2>
+                    <div class="form-group mb-6 w-full">
+                        <label class="block mb-2 font-semibold text-modernPrimary text-lg">Upload Business Bank Statements (Last 3 months)</label>
+                        <div class="file-upload-box flex flex-col items-center justify-center p-8 border-2 border-dashed border-modernBorder rounded-xl bg-inputBg cursor-pointer hover:border-modernAccent hover:bg-lightBlueBg transition-all duration-300"
+                            onclick="document.getElementById('bankStatements').click()">
+                            <i class="fas fa-cloud-upload-alt text-modernAccent text-5xl mb-4"></i>
+                            <p class="text-modernSecondary font-medium text-lg text-center">Drag & Drop files here or click to browse</p>
+                            <input type="file" id="bankStatements" name="bankStatements" accept=".pdf, .doc, .docx, .png, .jpg" multiple class="hidden">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="ownerNameSignature">Owner Name (for signature)</label>
-                        <input type="text" id="ownerNameSignature" name="ownerNameSignature" placeholder="Full Legal Name" required>
+                    <div class="form-group mb-6 w-full">
+                        <label for="ownerNameSignature" class="block mb-2 font-semibold text-modernPrimary text-lg">Owner Name (for signature)</label>
+                        <input type="text" id="ownerNameSignature" name="ownerNameSignature" placeholder="Full Legal Name" required
+                            class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                     </div>
-                    <div class="form-group">
-                        <label for="signatureDate">Date</label>
-                        <input type="date" id="signatureDate" name="signatureDate" required>
+                    <div class="form-group mb-6 w-full">
+                        <label for="signatureDate" class="block mb-2 font-semibold text-modernPrimary text-lg">Date</label>
+                        <input type="date" id="signatureDate" name="signatureDate" required
+                            class="w-full p-3 border border-modernBorder rounded-lg text-lg shadow-sm focus:border-modernAccent focus:ring-2 focus:ring-modernAccent/30 transition-all duration-200 bg-inputBg text-modernSecondary">
                     </div>
-                    <div class="form-group">
-                        <label for="signatureCanvas">Signature</label>
-                        <div class="signature-canvas-container">
-                            <canvas id="signatureCanvas" width="500" height="150" style="border: 1px transparent;"></canvas>
-                            <button type="button" id="clearSignature">Clear</button>
+                    <div class="form-group mb-6 w-full">
+                        <label for="signatureCanvas" class="block mb-2 font-semibold text-modernPrimary text-lg">Signature</label>
+                        <div class="signature-canvas-container relative border border-modernBorder rounded-lg bg-inputBg cursor-crosshair shadow-sm h-40 w-full">
+                            <canvas id="signatureCanvas" class="block w-full h-full rounded-lg"></canvas>
+                            <button type="button" id="clearSignature" class="absolute bottom-3 right-3 bg-modernBgLight border border-modernBorder rounded-md px-3 py-1.5 text-sm cursor-pointer z-10 hover:bg-gray-200 transition-colors duration-200 text-modernSecondary">
+                                Clear
+                            </button>
                         </div>
                         <input type="hidden" id="signatureData" name="signatureData">
                     </div>
-                    <div class="form-navigation-buttons">
-                        <button type="submit">Submit Application</button>
+                    <div class="flex justify-center mt-10 w-full">
+                        <button type="submit" class="bg-accentGreen text-white px-8 py-4 rounded-xl text-xl font-semibold shadow-lg hover:bg-green-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                            Submit Application
+                        </button>
                     </div>
                 </div>
             </form>
         </main>
     </div>
 
-    <footer>
-        <div class="footer-reviews">
-            <span>Customer Reviews:</span>
-            <a href="https://www.trustpilot.com/review/ontimecap.com" target="_blank">
-                <img src="https://www.netimperative.com/wp-content/uploads/2020/01/trustpilot.png" alt="Trustpilot Reviews">
-            </a>
-            <a href="https://www.bbb.org/us/ny/brooklyn/profile/loan-broker/on-time-capital-llc-0121-87177095" target="_blank">
-                <img src="https://www.kearneyhvac.com/wp-content/uploads/2023/07/bbb_a_rating_logo.jpg.webp" alt="BBB Reviews">
-            </a>
-            <a href="https://www.google.com/search?client=ms-android-samsung-rvo1&sca_esv=9cb49794e0b2005d&source=android-browser&biw=384&bih=660&sxsrf=AE3TifP11cT4abYNJS2Tr3vHyfvhqpZd2Q:1752822174800&q=on+time+capital+reviews&uds=AOm0WdFY0GdalVU1UsU-tNmlAtO_htFNr1j1I-MaW1oNviMuaWsdu_n44X9cEoBW8Lsh2xzFHEI4oHJRGjsbHj8adJ-J0pJnnbkXJpem00Rm7vWrCSI7s3VWakNl-lgluLImnUjLp68dJGh0yt_mfBJq_Q2NIMBjs-boDZAMD-An1zpY8ItBOekyHhaSjbUSXHHYn3YatgzYK5jrFSkiC7aKj8u2k4exVfsA4Lwz9rAr8Ts_81kPbGGTmeELwXaMN4p0B-_M4MZnYuPJ9aT7ipwbGN2N5EczAPuCj6E5y6VTg_yknmzJbuOjz1KmCEn9HjS-YTug8At2RQ6GpKzkRyfQijTbmlzze4UNBVQzmuCllCl2FM0kKFhkH69URcr7rC21zqAw&si=AMgyJEtREmoPL4P1I1IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-Ewq6B3PqomtRWx9b4ay5ggq_5vePRSJkel3oxu8PD5y3vsTKhvNsHU6D67m6zCJticCU7vaolUG3xmdiQcF4FolzpWm5&sa=X&ved=2ahUKEwiYldW468WOAxXFFVkFHexgJ4IQk8gLegQIHRAB&ictx=1" target="_blank">
-                <img src="https://cdn.prod.website-files.com/602cf6148109ccfeb1d80c49/60d4509851d12743d030a9eb_5c11336dd43b9272273fb4ce_Google-Reviews.webp" alt="Google Reviews">
-            </a>
+    <!-- Footer Section -->
+    <footer class="bg-backgroundWhite p-5 md:px-10 flex flex-col md:flex-row justify-between items-center border-t border-modernBorder text-modernSecondary text-sm font-normal">
+        <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 mb-4 md:mb-0">
+            <span class="font-semibold text-modernPrimary text-lg">Customer Reviews:</span>
+            <div class="flex items-center gap-4">
+                <a href="https://www.trustpilot.com/review/ontimecap.com" target="_blank">
+                    <img src="https://placehold.co/120x40/e0f7fa/007bff?text=Trustpilot" alt="Trustpilot Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+                <a href="https://www.bbb.org/us/ny/brooklyn/profile/loan-broker/on-time-capital-llc-0121-87177095" target="_blank">
+                    <img src="https://placehold.co/120x40/e0f7fa/007bff?text=BBB" alt="BBB Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+                <a href="https://www.google.com/search?q=on+time+capital+reviews" target="_blank">
+                    <img src="https://placehold.co/120x40/e0f7fa/007bff?text=Google" alt="Google Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200">
+                </a>
+            </div>
         </div>
-        <div class="footer-copyright">
+        <div class="text-modernSecondary">
             Copyright &copy; 2025 On Time Capital, LLC.
         </div>
     </footer>
 
     <script>
+        // Get all form sections and navigation buttons
         const formSections = document.querySelectorAll('.form-section');
         const stepButtons = document.querySelectorAll('.step-btn');
         const continueButtons = document.querySelectorAll('.continue-btn');
-        let currentStep = 0; // 0-indexed
+        let currentStep = 0; // Initialize current step to the first one (0-indexed)
 
-        // Signature Pad Logic
+        // Signature Pad Elements
         const signatureCanvas = document.getElementById('signatureCanvas');
         const ctx = signatureCanvas.getContext('2d');
         const clearSignatureBtn = document.getElementById('clearSignature');
         const signatureDataInput = document.getElementById('signatureData');
-        let drawing = false;
+        let drawing = false; // Flag to track if drawing is in progress
 
+        /**
+         * Resizes the signature canvas to fit its parent container.
+         * Redraws existing signature data if available.
+         */
         function resizeCanvas() {
             const container = signatureCanvas.parentElement;
-            // Set canvas display size
+            // Set canvas's display size to fill the container
             signatureCanvas.style.width = '100%';
             signatureCanvas.style.height = '100%';
-            // Set canvas internal drawing surface size
+            // Set canvas's internal drawing surface size to match actual pixels
             signatureCanvas.width = container.clientWidth;
             signatureCanvas.height = container.clientHeight;
+
+            // Configure drawing properties
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
             ctx.lineWidth = 2;
             ctx.strokeStyle = '#000';
-            // If there's existing signature data, redraw it after resize
+
+            // If there's existing signature data, redraw it after resize to prevent loss
             if (signatureDataInput.value) {
                 const img = new Image();
                 img.onload = () => {
@@ -879,49 +418,57 @@
             }
         }
 
+        // Event listener for window resize to make canvas responsive
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas(); // Initial resize
+        // Initial call to set canvas size when the page loads
+        resizeCanvas();
 
+        // Mouse event listeners for signature drawing
         signatureCanvas.addEventListener('mousedown', (e) => {
             drawing = true;
-            ctx.beginPath();
-            const rect = signatureCanvas.getBoundingClientRect();
+            ctx.beginPath(); // Start a new path
+            const rect = signatureCanvas.getBoundingClientRect(); // Get canvas position
+            // Move to the current mouse position relative to the canvas
             ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
         });
 
         signatureCanvas.addEventListener('mousemove', (e) => {
-            if (!drawing) return;
+            if (!drawing) return; // Only draw if mouse is down
             const rect = signatureCanvas.getBoundingClientRect();
+            // Draw a line to the current mouse position relative to the canvas
             ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-            ctx.stroke();
+            ctx.stroke(); // Render the line
         });
 
         signatureCanvas.addEventListener('mouseup', () => {
-            drawing = false;
-            signatureDataInput.value = signatureCanvas.toDataURL(); // Save signature as data URL
+            drawing = false; // Stop drawing when mouse is released
+            // Save the signature as a data URL in the hidden input field
+            signatureDataInput.value = signatureCanvas.toDataURL();
         });
 
         signatureCanvas.addEventListener('mouseout', () => {
+            // Stop drawing if mouse leaves the canvas area
             drawing = false;
         });
 
+        // Clear signature button functionality
         clearSignatureBtn.addEventListener('click', () => {
-            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-            signatureDataInput.value = '';
+            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height); // Clear the canvas
+            signatureDataInput.value = ''; // Clear the hidden input value
         });
 
-        // Touch events for mobile signature
+        // Touch event listeners for mobile signature drawing
         signatureCanvas.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent scrolling
+            e.preventDefault(); // Prevent default touch behavior (like scrolling)
             drawing = true;
-            const touch = e.touches[0];
+            const touch = e.touches[0]; // Get the first touch point
             const rect = signatureCanvas.getBoundingClientRect();
             ctx.beginPath();
             ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
         });
 
         signatureCanvas.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // Prevent scrolling
+            e.preventDefault(); // Prevent default touch behavior
             if (!drawing) return;
             const touch = e.touches[0];
             const rect = signatureCanvas.getBoundingClientRect();
@@ -934,64 +481,81 @@
             signatureDataInput.value = signatureCanvas.toDataURL();
         });
 
-
-        // Function to show/hide steps
+        /**
+         * Shows a specific step in the multi-step form and updates sidebar navigation.
+         * @param {number} stepIndex - The 0-indexed number of the step to show.
+         */
         function showStep(stepIndex) {
+            // Hide all form sections and remove 'active' class from sidebar buttons
             formSections.forEach((section, index) => {
+                section.classList.add('hidden');
                 section.classList.remove('active');
-                if (index === stepIndex) {
-                    section.classList.add('active');
-                }
+            });
+            stepButtons.forEach((button) => {
+                button.classList.remove('active-step');
+                button.querySelector('i').classList.remove('fa-circle-check');
+                button.querySelector('i').classList.add('fa-circle');
             });
 
-            stepButtons.forEach((button, index) => {
-                button.classList.remove('active');
-                if (index === stepIndex) {
-                    button.classList.add('active');
-                }
-            });
+            // Show the target step and update its corresponding sidebar button
+            formSections[stepIndex].classList.remove('hidden');
+            formSections[stepIndex].classList.add('active');
+            stepButtons[stepIndex].classList.add('active-step');
+            stepButtons[stepIndex].querySelector('i').classList.remove('fa-circle');
+            stepButtons[stepIndex].querySelector('i').classList.add('fa-circle-check');
 
-            currentStep = stepIndex;
-            // Scroll form content area to top when changing steps
+            currentStep = stepIndex; // Update the current step index
+
+            // Scroll the main form content area to the top when changing steps
             const formContentArea = document.querySelector('.form-content-area');
             if (formContentArea) {
                 formContentArea.scrollTop = 0;
             }
         }
 
-        // Initialize form to show the first step
+        // Initialize form to show the first step when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
             showStep(0);
         });
 
-        // Basic validation function for required fields in the current step
+        /**
+         * Validates all required fields within a given form step.
+         * Applies red border to invalid fields.
+         * @param {HTMLElement} stepElement - The DOM element of the current form step.
+         * @returns {boolean} True if all required fields are valid, false otherwise.
+         */
         function validateCurrentStep(stepElement) {
-            const inputs = stepElement.querySelectorAll('input[required], select[required], textarea[required]');
+            const inputs = stepElement.querySelectorAll('[required]');
             let allValid = true;
 
             inputs.forEach(input => {
                 let isValid = true;
 
-                // Handle text, email, number, date, select, textarea
+                // Handle text, email, number, date, select, textarea, file inputs
                 if (input.type !== 'radio' && input.type !== 'file' && input.value.trim() === '') {
                     isValid = false;
                 }
+                // Handle file inputs (check if files are selected, if required)
+                if (input.type === 'file' && input.hasAttribute('required') && input.files.length === 0) {
+                    isValid = false;
+                }
 
-                // Handle radio groups
+                // Handle radio groups: check if at least one radio in the group is checked
                 if (input.type === 'radio') {
                     const radioGroupName = input.name;
-                    // Check if at least one radio in the group is checked within the current step
                     if (stepElement.querySelector(`input[name="${radioGroupName}"]:checked`) === null) {
                         isValid = false;
                     }
                 }
 
-                // Apply/remove error styling
+                // Apply/remove error styling based on validity
                 if (!isValid) {
                     allValid = false;
-                    input.style.borderColor = 'red';
+                    input.classList.add('border-red-500'); // Tailwind class for red border
+                    input.classList.remove('border-modernBorder');
                 } else {
-                    input.style.borderColor = ''; // Reset
+                    input.classList.remove('border-red-500');
+                    input.classList.add('border-modernBorder');
                 }
             });
 
@@ -1000,32 +564,43 @@
                 const signatureInput = document.getElementById('signatureData');
                 const ownerNameInput = document.getElementById('ownerNameSignature');
                 const signatureDateInput = document.getElementById('signatureDate');
+                const signatureCanvasContainer = document.querySelector('.signature-canvas-container');
 
+                // Validate Owner Name
                 if (ownerNameInput.value.trim() === '') {
-                    ownerNameInput.style.borderColor = 'red';
+                    ownerNameInput.classList.add('border-red-500');
+                    ownerNameInput.classList.remove('border-modernBorder');
                     allValid = false;
                 } else {
-                    ownerNameInput.style.borderColor = '';
+                    ownerNameInput.classList.remove('border-red-500');
+                    ownerNameInput.classList.add('border-modernBorder');
                 }
 
+                // Validate Signature Date
                 if (signatureDateInput.value.trim() === '') {
-                    signatureDateInput.style.borderColor = 'red';
+                    signatureDateInput.classList.add('border-red-500');
+                    signatureDateInput.classList.remove('border-modernBorder');
                     allValid = false;
                 } else {
-                    signatureDateInput.style.borderColor = '';
+                    signatureDateInput.classList.remove('border-red-500');
+                    signatureDateInput.classList.add('border-modernBorder');
                 }
 
+                // Validate Signature Canvas
                 if (signatureInput.value === '') {
+                    signatureCanvasContainer.classList.add('border-red-500'); // Apply red border to container
+                    signatureCanvasContainer.classList.remove('border-modernBorder');
                     allValid = false;
-                    document.querySelector('.signature-canvas-container').style.border = '1px solid red';
                 } else {
-                    document.querySelector('.signature-canvas-container').style.border = '1px solid var(--modern-border)'; // Reset
+                    signatureCanvasContainer.classList.remove('border-red-500');
+                    signatureCanvasContainer.classList.add('border-modernBorder');
                 }
             }
 
             return allValid;
         }
 
+        // Event listeners for 'Continue' buttons
         continueButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const currentFormSection = formSections[currentStep];
@@ -1034,98 +609,74 @@
                         showStep(currentStep + 1);
                     }
                 } else {
-                    // Replaced alert with a custom message box for better UX
                     showMessageBox('Please fill out all required fields correctly before proceeding.', 'error');
                 }
             });
         });
 
-        // Step buttons allow jumping backwards or forwards with validation for forward steps
+        // Event listeners for sidebar step buttons (allow jumping backwards or forwards with validation)
         stepButtons.forEach((button, index) => {
             button.addEventListener('click', () => {
-                if (index < currentStep) { // Navigating backwards
+                if (index < currentStep) { // Navigating backwards: no validation needed
                     showStep(index);
-                } else if (index > currentStep) { // Navigating forwards
+                } else if (index > currentStep) { // Navigating forwards: validate current step
                     const currentFormSection = formSections[currentStep];
                     if (validateCurrentStep(currentFormSection)) {
-                           showStep(index);
+                        showStep(index);
                     } else {
-                           // Replaced alert with a custom message box for better UX
-                           showMessageBox('Please fill out all required fields correctly before proceeding.', 'error');
+                        showMessageBox('Please fill out all required fields correctly before proceeding.', 'error');
                     }
                 }
                 // If index == currentStep, do nothing
             });
         });
 
-        // Basic form submission handler (for demonstration)
+        // Main form submission handler
         document.getElementById('applicationForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault(); // Prevent default browser form submission
+            // Validate the current (last) step before final submission
             if (validateCurrentStep(formSections[currentStep])) {
-                showMessageBox('Application Submitted! (This is a demo. Data is not actually sent yet.)', 'success');
-                // Here you would typically collect all form data and send it to your server or Jotform API
+                showMessageBox('Application Submitted! Thank you for your submission.', 'success');
+                // In a real application, you would collect form data and send it to a server here.
                 const formData = new FormData(this);
-                // Example of logging data:
-                // for (let [key, value] = formData.entries();;) {
-                //      console.log(`${key}: ${value}`);
-                // }
-                // console.log('Signature Data URL:', document.getElementById('signatureData').value);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+                data.signatureData = signatureDataInput.value; // Add signature data
+                console.log('Form Data:', data); // Log collected data for demonstration
             } else {
                 showMessageBox('Please fill out all required fields correctly before submitting.', 'error');
             }
         });
 
-        // Reset border color on input change
+        // Reset border color on input/select/textarea change or input
         document.querySelectorAll('input, select, textarea').forEach(input => {
             input.addEventListener('input', function() {
-                this.style.borderColor = ''; // Reset individual input border
-                const parentGroup = this.closest('.form-group');
-                if (parentGroup && parentGroup.querySelector('.signature-canvas-container')) {
-                    parentGroup.querySelector('.signature-canvas-container').style.border = ''; // Reset signature canvas border
+                this.classList.remove('border-red-500');
+                this.classList.add('border-modernBorder');
+                // Special handling for signature canvas border reset
+                if (this.id === 'signatureData' || this.id === 'ownerNameSignature' || this.id === 'signatureDate') {
+                    document.querySelector('.signature-canvas-container').classList.remove('border-red-500');
+                    document.querySelector('.signature-canvas-container').classList.add('border-modernBorder');
                 }
             });
             input.addEventListener('change', function() { // For selects, radios, dates, files
-                this.style.borderColor = '';
-                const parentGroup = this.closest('.form-group');
-                if (parentGroup && parentGroup.querySelector('.signature-canvas-container')) {
-                    parentGroup.querySelector('.signature-canvas-container').style.border = ''; // Reset signature canvas border
-                }
+                this.classList.remove('border-red-500');
+                this.classList.add('border-modernBorder');
             });
         });
 
-        // Funding Amount Dollar Sign visibility logic (removed as per request)
-        const fundingAmountInput = document.getElementById('fundingAmount');
-        const fundingAmountGroup = document.getElementById('fundingAmountGroup');
-
-        // Initial call to ensure no dollar sign
-        if (fundingAmountGroup) {
-            fundingAmountGroup.classList.remove('dollar-visible');
-        }
-
-        // Custom Message Box Implementation (replaces alert())
+        /**
+         * Displays a custom message box at the top of the screen.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('success', 'error', 'info').
+         */
         function showMessageBox(message, type = 'info') {
             let messageBox = document.getElementById('customMessageBox');
             if (!messageBox) {
                 messageBox = document.createElement('div');
                 messageBox.id = 'customMessageBox';
-                messageBox.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    padding: 15px 30px;
-                    border-radius: 8px;
-                    font-family: 'Open Sans', sans-serif;
-                    font-size: 1em;
-                    font-weight: 600;
-                    z-index: 2000;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    opacity: 0;
-                    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-                `;
                 document.body.appendChild(messageBox);
             }
 
@@ -1134,30 +685,31 @@
             let bgColor = '';
             let textColor = '#ffffff';
 
+            // Determine icon and colors based on message type
             if (type === 'success') {
                 iconHtml = '<i class="fas fa-check-circle"></i>';
-                bgColor = '#28a745'; // Green
+                bgColor = theme('colors.accentGreen');
             } else if (type === 'error') {
                 iconHtml = '<i class="fas fa-times-circle"></i>';
-                bgColor = '#dc3545'; // Red
+                bgColor = '#dc3545'; /* Specific red for error */
             } else { // info
                 iconHtml = '<i class="fas fa-info-circle"></i>';
-                bgColor = '#007bff'; // Blue
+                bgColor = theme('colors.primaryBlue');
             }
 
             messageBox.style.backgroundColor = bgColor;
             messageBox.style.color = textColor;
             messageBox.innerHTML = `${iconHtml}<span>${message}</span>`;
 
-            // Show the message box
+            // Show the message box with animation
             messageBox.style.opacity = '1';
             messageBox.style.transform = 'translateX(-50%) translateY(0)';
 
-            // Hide after 3 seconds
+            // Hide after 3 seconds with animation
             setTimeout(() => {
                 messageBox.style.opacity = '0';
                 messageBox.style.transform = 'translateX(-50%) translateY(-20px)';
-                // Remove from DOM after transition
+                // Remove from DOM after transition completes
                 setTimeout(() => {
                     if (messageBox.parentNode) {
                         messageBox.parentNode.removeChild(messageBox);
