@@ -211,14 +211,19 @@
             overflow-y: auto; /* Allow form content to scroll */
         }
 
-        .form-section {
+        #applicationForm { /* NEW: Apply max-width and centering to the form itself */
             width: 100%;
-            max-width: 800px; /* **All forms now consistently use this width** */
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            width: 100%; /* Now takes 100% of the parent form's constrained width */
             padding: 0; /* Remove any padding that might affect width */
             box-shadow: none; /* No box shadow directly on section */
             border: none; /* No border directly on section */
             display: none;
-            margin: 0 auto; /* CRITICAL FIX: Ensures the section itself takes max-width and centers */
+            /* REMOVED: margin: 0 auto; and max-width: 800px; from here */
         }
 
         .form-section.active {
@@ -539,9 +544,13 @@
                 align-items: stretch; /* Stretch content to fill area */
             }
 
+            #applicationForm { /* Responsive adjustment for the form itself */
+                max-width: 100%; /* Take full width on small screens */
+            }
+
             .form-section {
                 max-width: 100%; /* On small screens, take full width */
-                margin: 0 auto; /* Ensure centering on small screens too */
+                /* margin: 0 auto; - Removed as parent form handles this */
             }
 
             .form-section h2 {
@@ -1152,3 +1161,4 @@
     </script>
 </body>
 </html>
+
