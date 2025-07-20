@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* NEW: Global box-sizing for consistent layout calculations */
+        /* Global box-sizing for consistent layout calculations */
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -208,28 +208,28 @@
 
         .form-content-area {
             flex-grow: 1;
-            /* NEW: Set max-width, margin-auto, padding, background, and shadow directly on this container */
-            max-width: 800px; /* This is the effective width of the white content block */
-            margin: 0 auto; /* This centers the white content block */
-            padding: 50px 80px; /* Apply padding here, inside the max-width */
-            background-color: var(--form-bg); /* Moved background here */
-            box-shadow: var(--shadow-md); /* Added shadow to make it a distinct card */
+            /* This is the main container for the form content, setting its overall visual width */
+            max-width: 800px; /* Defines the consistent width of the white content panel */
+            margin: 0 auto; /* Centers the content panel horizontally */
+            padding: 50px 80px; /* Applies padding inside the max-width */
+            background-color: var(--form-bg); /* Sets the white background */
+            box-shadow: var(--shadow-md); /* Adds a subtle shadow for depth */
 
             display: flex;
             flex-direction: column;
-            align-items: center; /* Still centers children horizontally within this block */
-            overflow-y: auto;
-            width: 100%; /* Allows it to shrink on smaller screens */
+            align-items: center; /* Centers the form elements horizontally within this panel */
+            overflow-y: auto; /* Allows scrolling if form content is too long */
+            width: 100%; /* Ensures responsiveness on smaller screens */
         }
 
         #applicationForm {
-            width: 100%; /* Will now fill the padded form-content-area */
-            /* REMOVED max-width, margin, padding, background-color, box-shadow from here */
+            width: 100%; /* Fills the now correctly sized .form-content-area */
+            /* No max-width, margin, or padding needed here, as parent handles it */
         }
 
         .form-section {
-            width: 100%; /* Will fill the #applicationForm */
-            /* REMOVED padding from here, as it's now on .form-content-area */
+            width: 100%; /* Fills the #applicationForm */
+            /* No padding needed here, as .form-content-area handles it */
             box-shadow: none;
             border: none;
             display: none;
@@ -249,7 +249,7 @@
             letter-spacing: -0.8px;
             padding-bottom: 10px;
             border-bottom: 2px solid var(--modern-border); /* Subtle underline */
-            width: 100%; /* Make sure heading spans full available width of form-section */
+            width: 100%; /* Ensures heading spans full available width */
         }
 
         .form-row {
@@ -257,18 +257,18 @@
             justify-content: space-between; /* Space between side-by-side fields */
             gap: 20px; /* Consistent gap between items */
             margin-bottom: 20px; /* Consistent spacing between rows */
-            width: 100%; /* Ensure form-rows take full width of their parent .form-section */
+            width: 100%; /* Ensures form-rows take full width of their parent .form-section */
         }
 
         .form-row .form-group {
-            flex: none; /* Remove flex-grow/shrink from default */
-            width: calc(50% - 10px); /* Explicitly set width for two columns, accounting for gap */
-            margin-bottom: 0; /* Remove bottom margin from child form-group as row handles spacing */
+            flex: none; /* Prevents flex-grow/shrink from default behavior */
+            width: calc(50% - 10px); /* Explicitly sets width for two columns, accounting for the 20px gap */
+            margin-bottom: 0; /* Removes bottom margin from child form-group as row handles spacing */
         }
 
         .form-group {
             margin-bottom: 20px; /* Default vertical spacing for single-column groups */
-            width: 100%; /* Ensure form-groups take full width when not in a row */
+            width: 100%; /* Ensures form-groups take full width when not in a row */
         }
 
         .form-group label {
@@ -286,7 +286,7 @@
         .form-group input[type="date"],
         .form-group select,
         .form-group textarea {
-            width: 100%; /* Ensure input fields take full width of their parent form-group */
+            width: 100%; /* Ensures input fields take full width of their parent form-group */
             padding: 12px 15px; /* Reduced padding for compactness, but still comfortable */
             border: 1px solid var(--modern-border);
             border-radius: 8px; /* Slightly less rounded than before, more modern */
@@ -835,7 +835,7 @@
             <a href="https://www.bbb.org/us/ny/brooklyn/profile/loan-broker/on-time-capital-llc-0121-87177095" target="_blank">
                 <img src="https://www.kearneyhvac.com/wp-content/uploads/2023/07/bbb_a_rating_logo.jpg.webp" alt="BBB Reviews">
             </a>
-            <a href="https://www.google.com/search?client=ms-android-samsung-rvo1&sca_esv=9cb49794e0b2005d&source=android-browser&biw=384&bih=660&sxsrf=AE3TifP11cT4abYNJS2Tr3vHyfvhqpZd2Q:1752822174800&q=on+time+capital+reviews&uds=AOm0WdFY0GdalVU1UsU-tNmlAtO_htFNr1j1I-MaW1oNviMuaWsdu_n44X9cEoBW8Lsh2xzFHEI4oHJRGjsbHj8adJ-J0pJnnbkXJpem00Rm7vWrCSI7s3VWakNl-lgluLImnUjLp68dJGh0yt_mfBJq_Q2NIMBjs-boDZAMD-An1zpY8ItBOekyHhaSjbUSXHHYn3YatgzYK5jrFSkiC7aKj8u2k4qexVfsA4Lwz9rAr8Ts_81kPbGGTmeELwXaMN4p0B-_M4MZnYuPJ9aT7ipwbGN2N5EczAPuCj6E5y6VTg_yknmzJbuOjz1KmCEn9HjS-YTug8At2RQ6GpKzkRyfQijTbmlzze4UNBVQzmuCllCl2FM0kKFhkH69URcr7rC21zqAw&si=AMgyJEtREmoPL4P1I1IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-Ewq6B3PqomtRWx9b4ay5ggq_5vePRSJkel3oxu8PD5y3vsTKhvNsHU6D67m6zCJticCU7vaolUG3xmdiQcF4FolzpWm5&sa=X&ved=2ahUKEwiYldW468WOAxXFFVkFHexgJ4IQk8gLegQIHRAB&ictx=1" target="_blank">
+            <a href="https://www.google.com/search?client=ms-android-samsung-rvo1&sca_esv=9cb49794e0b2005d&source=android-browser&biw=384&bih=660&sxsrf=AE3TifP11cT4abYNJS2Tr3vHyfvhqpZd2Q:1752822174800&q=on+time+capital+reviews&uds=AOm0WdFY0GdalVU1UsU-tNmlAtO_htFNr1j1I-MaW1oNviMuaWsdu_n44X9cEoBW8Lsh2xzFHEI4oHJRGjsbHj8adJ-J0pJnnbkXJpem00Rm7vWrCSI7s3VWakNl-lgluLImnUjLp68dJGh0yt_mfBJq_Q2NIMBjs-boDZAMD-An1zpY8ItBOekyHhaSjbUSXHHYn3YatgzYK5jrFSkiC7aKj8u2k4exVfsA4Lwz9rAr8Ts_81kPbGGTmeELwXaMN4p0B-_M4MZnYuPJ9aT7ipwbGN2N5EczAPuCj6E5y6VTg_yknmzJbuOjz1KmCEn9HjS-YTug8At2RQ6GpKzkRyfQijTbmlzze4UNBVQzmuCllCl2FM0kKFhkH69URcr7rC21zqAw&si=AMgyJEtREmoPL4P1I1IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-Ewq6B3PqomtRWx9b4ay5ggq_5vePRSJkel3oxu8PD5y3vsTKhvNsHU6D67m6zCJticCU7vaolUG3xmdiQcF4FolzpWm5&sa=X&ved=2ahUKEwiYldW468WOAxXFFVkFHexgJ4IQk8gLegQIHRAB&ictx=1" target="_blank">
                 <img src="https://cdn.prod.website-files.com/602cf6148109ccfeb1d80c49/60d4509851d12743d030a9eb_5c11336dd43b9272273fb4ce_Google-Reviews.webp" alt="Google Reviews">
             </a>
         </div>
