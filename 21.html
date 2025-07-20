@@ -203,29 +203,32 @@
 
         .form-content-area {
             flex-grow: 1;
-            /* REMOVED padding: 50px 80px; from here */
+            /* NEW: Set max-width, margin-auto, and padding directly on this container */
+            max-width: 800px; /* This is the effective width of the white content block */
+            margin: 0 auto; /* This centers the white content block */
+            padding: 50px 80px; /* Apply padding here, inside the max-width */
+            box-sizing: border-box; /* Crucial for padding to be included in max-width */
+
             display: flex;
             flex-direction: column;
-            align-items: center; /* Center the form sections horizontally */
+            align-items: center; /* Still centers children horizontally within this block */
             background-color: var(--form-bg);
-            overflow-y: auto; /* Allow form content to scroll */
-            width: 100%; /* Ensure it takes full available width */
-            max-width: 800px; /* NEW: Constrain the main content area itself */
-            margin: 0 auto; /* NEW: Center the main content area */
+            overflow-y: auto;
+            width: 100%; /* Allows it to shrink on smaller screens */
         }
 
         #applicationForm {
-            width: 100%; /* Now takes 100% of the parent form-content-area's constrained width */
-            /* REMOVED max-width and margin from here */
+            width: 100%; /* Will now fill the padded form-content-area */
+            /* REMOVED max-width, margin, and padding from here */
         }
 
         .form-section {
-            width: 100%; /* Takes 100% of the parent form's width */
-            padding: 50px 80px; /* NEW: Apply padding directly to each section */
-            box-shadow: none; /* No box shadow directly on section */
-            border: none; /* No border directly on section */
+            width: 100%; /* Will fill the #applicationForm */
+            /* REMOVED padding from here, as it's now on .form-content-area */
+            box-shadow: none;
+            border: none;
             display: none;
-            box-sizing: border-box; /* Ensure padding is included in the width */
+            /* REMOVED box-sizing from here */
         }
 
         .form-section.active {
@@ -242,7 +245,6 @@
             letter-spacing: -0.8px;
             padding-bottom: 10px;
             border-bottom: 2px solid var(--modern-border); /* Subtle underline */
-            /* Ensure heading itself is within the max-width and centered if needed */
             width: 100%; /* Make sure heading spans full available width of form-section */
             box-sizing: border-box; /* Include padding/border in width calculation */
         }
@@ -256,7 +258,8 @@
         }
 
         .form-row .form-group {
-            flex: 1; /* Each group takes equal space */
+            flex: none; /* Remove flex-grow/shrink from default */
+            width: calc(50% - 10px); /* NEW: Explicitly set width for two columns, accounting for gap */
             margin-bottom: 0; /* Remove bottom margin from child form-group as row handles spacing */
         }
 
@@ -542,16 +545,17 @@
             }
 
             .form-content-area {
-                padding: 0; /* No padding on mobile, handled by form-section */
+                padding: 30px 20px; /* Adjusted padding for mobile */
                 max-width: 100%; /* Take full width on small screens */
             }
 
             #applicationForm { /* Responsive adjustment for the form itself */
                 max-width: 100%; /* Take full width on small screens */
+                padding: 0; /* Padding handled by form-content-area on mobile */
             }
 
             .form-section {
-                padding: 30px 20px; /* Adjusted padding for mobile */
+                /* No padding here, handled by form-content-area */
                 max-width: 100%; /* On small screens, take full width */
             }
 
@@ -565,7 +569,8 @@
                 gap: 10px; /* Adjust gap for stacked items */
             }
             .form-row .form-group {
-                margin-bottom: 0; /* No extra margin when stacked */
+                width: 100%; /* Each group takes full width when stacked */
+                flex: none; /* Remove flex:none when stacked */
             }
             .form-group {
                 margin-bottom: 15px; /* Adjust default for stacked */
