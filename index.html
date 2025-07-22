@@ -244,7 +244,7 @@
         .modal-close-btn:hover {
             color: var(--theme-primary);
         }
-
+        
         /* Styles for color circles */
         .color-circle {
             width: 30px;
@@ -341,7 +341,6 @@
 
         <main id="mainContent" class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 w-full">
             <form id="applicationForm" class="w-full max-w-5xl px-4 md:px-8" method="post" action="https://hooks.zapier.com/hooks/catch/20419096/uuoe8pe/">
-                <input type="hidden" name="api_key" value="8031e758c7e2783e0556efeeac4f5306">
 
                 <div id="step1" class="form-section active">
                     <h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Basic Information</h2>
@@ -778,7 +777,7 @@
                 fileItem.style.backgroundColor = 'var(--theme-input-bg)';
                 fileItem.style.borderColor = 'var(--theme-input-border)';
                 fileItem.style.color = 'var(--theme-text)';
-
+                
                 fileItem.innerHTML = `
                     <span><i class="fas fa-file-alt mr-2 file-icon-style"></i>${file.name}</span>
                     <button type="button" class="text-red-500 hover:text-red-700 ml-2" data-index="${index}">
@@ -936,7 +935,7 @@
         const submitApplicationBtn = document.getElementById('submitApplicationBtn');
         submitApplicationBtn.addEventListener('click', function(event) {
             event.preventDefault(); // Prevent default browser form submission
-
+            
             // Validate the current (last) step before submitting
             if (!validateCurrentStep()) {
                 return; // Stop submission if validation fails
@@ -1127,12 +1126,12 @@ fetch(applicationForm.action, {
             // Update selected class for visual feedback on circles
             const allColorCircles = document.querySelectorAll('.color-circle'); // Select all circles, including those in footer
             allColorCircles.forEach(c => c.classList.remove('selected'));
-
+            
             const currentCircle = document.querySelector(`.color-circle[data-theme-name="${themeName}"]`);
             if (currentCircle) {
                 currentCircle.classList.add('selected');
             }
-
+            
             // Re-apply styles to elements that might need explicit updates after theme change
             applyThemeToElements();
         }
