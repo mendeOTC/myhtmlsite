@@ -62,12 +62,12 @@
             
             <form id="applicationForm" class="w-full max-w-5xl px-4 md:px-8" method="post" action="https://form.jotform.com/252018689230154">
 
-                <div id="step1" class="form-section active">
+                <div id="step1" class="form-section hidden">
                     <h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Basic Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
                         <div class="form-group">
                             <label for="fundingAmount" class="block mb-2 font-semibold text-theme-heading text-lg">How much funding are you looking for?</label>
-                            <input type="number" id="fundingAmount" name="fundingAmount" placeholder="Enter amount" required class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                            <input type="number" id="fundingAmount" name="howMuch" placeholder="Enter amount" required class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
                         </div>
                         <div class="form-group">
                             <label for="creditScore" class="block mb-2 font-semibold text-theme-heading text-lg">What is your credit score?</label>
@@ -75,11 +75,11 @@
                         </div>
                         <div class="form-group">
                             <label for="industry" class="block mb-2 font-semibold text-theme-heading text-lg">What industry are you in?</label>
-                            <input type="text" id="industry" name="industry" placeholder="e.g., Retail, Tech, Food Service" required class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                            <input type="text" id="industry" name="typeA95" placeholder="e.g., Retail, Tech, Food Service" required class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
                         </div>
                         <div class="form-group">
                             <label for="timeframe" class="block mb-2 font-semibold text-theme-heading text-lg">What timeframe do you need the money?</label>
-                            <select id="timeframe" name="timeframe" required class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                            <select id="timeframe" name="typeA90" required class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
                                 <option value="">Select an option</option>
                                 <option value="ASAP">ASAP</option>
                                 <option value="within_week">Within a week</option>
@@ -94,7 +94,7 @@
                         </div>
                         <div class="form-group">
                             <label for="phoneNumber" class="block mb-2 font-semibold text-theme-heading text-lg">Phone Number</label>
-                            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(123) 456-7890" maxlength="10" required class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
+                            <input type="tel" id="phoneNumber" name="phone" placeholder="(123) 456-7890" maxlength="10" required class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style">
                         </div>
                     </div>
                      <div class="flex justify-center mt-10">
@@ -102,7 +102,7 @@
                     </div>
                 </div>
 
-                <div id="step2" class="form-section hidden">
+                <div id="step2" class="form-section active">
                     </div>
 
                 <div id="step3" class="form-section hidden">
