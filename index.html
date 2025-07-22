@@ -964,8 +964,36 @@
                 data[key] = value;
             }
             data.signatureData = signatureDataInput.value; // Add signature data
-            console.log('Form Data:', data); // Log collected data for demonstration
-            showMessageBox('Application submitted successfully!', 'success');
+            // Show a loading/submitting message
+showMessageBox('Submitting your application...', 'info');
+
+fetch(applicationForm.action, {
+    method: 'POST',
+    body: formData // The FormData object is sent directly
+})
+.then(response => {
+    if (response.ok) {
+        // If the server responds with a success status, show the success message
+        showMessageBox('Application submitted successfully!', 'success');
+
+        // Now, hide the form and show the thank you page
+        applicationForm.classList.add('hidden');
+        sidebar.classList.add('hidden');
+        mainContent.classList.remove('justify-start');
+        mainContent.classList.add('justify-center', 'items-center', 'flex-grow');
+        thankYouPage.classList.remove('hidden');
+        thankYouPage.classList.add('flex-grow');
+        window.scrollTo(0, 0); // Scroll to top
+    } else {
+        // If there was a server error, show an error message
+        throw new Error('Submission failed. Please try again.');
+    }
+})
+.catch(error => {
+    // If there was a network error, log it and show an error message
+    console.error('Submission Error:', error);
+    showMessageBox('Could not submit application. Please check your connection and try again.', 'error');
+});
         });
 
         // Event listeners for the new contact buttons on the thank you page
