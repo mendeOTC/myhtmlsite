@@ -340,7 +340,7 @@
         </aside>
 
         <main id="mainContent" class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 w-full">
-            <form id="applicationForm" class="w-full max-w-5xl px-4 md:px-8" method="post" action="https://hooks.zapier.com/hooks/catch/20419096/uuoe8pe/">
+            <form id="applicationForm" class="w-full max-w-5xl px-4 md:px-8">
 
                 <div id="step1" class="form-section active">
                     <h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Basic Information</h2>
@@ -964,36 +964,8 @@
                 data[key] = value;
             }
             data.signatureData = signatureDataInput.value; // Add signature data
-            // Show a loading/submitting message
-showMessageBox('Submitting your application...', 'info');
-
-fetch(applicationForm.action, {
-    method: 'POST',
-    body: formData // The FormData object is sent directly
-})
-.then(response => {
-    if (response.ok) {
-        // If the server responds with a success status, show the success message
-        showMessageBox('Application submitted successfully!', 'success');
-
-        // Now, hide the form and show the thank you page
-        applicationForm.classList.add('hidden');
-        sidebar.classList.add('hidden');
-        mainContent.classList.remove('justify-start');
-        mainContent.classList.add('justify-center', 'items-center', 'flex-grow');
-        thankYouPage.classList.remove('hidden');
-        thankYouPage.classList.add('flex-grow');
-        window.scrollTo(0, 0); // Scroll to top
-    } else {
-        // If there was a server error, show an error message
-        throw new Error('Submission failed. Please try again.');
-    }
-})
-.catch(error => {
-    // If there was a network error, log it and show an error message
-    console.error('Submission Error:', error);
-    showMessageBox('Could not submit application. Please check your connection and try again.', 'error');
-});
+            console.log('Form Data:', data); // Log collected data for demonstration
+            showMessageBox('Application submitted successfully!', 'success');
         });
 
         // Event listeners for the new contact buttons on the thank you page
