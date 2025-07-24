@@ -337,7 +337,7 @@
 </div>
 </aside>
 <main class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 w-full" id="mainContent">
-<form class="w-full max-w-5xl px-4 md:px-8" id="applicationForm" action="https://mjotc.app.n8n.cloud/webhook/e12ae141-821c-429d-bbe6-5da9ee1a209f/webhook" method="post" >
+<form class="w-full max-w-5xl px-4 md:px-8" id="applicationForm" method="post">
 <div class="form-section active" id="step1">
 <h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Basic Information</h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
@@ -527,7 +527,7 @@
 <input id="signatureData" name="ownersSignature" required="" type="hidden"/>
 </div>
 <div class="flex justify-center mt-10 w-full">
-<button class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" id="submitApplicationBtn" type="submit">
+<button class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" id="submitApplicationBtn" type="button">
                             Submit Application
                         </button>
 </div>
@@ -1198,5 +1198,56 @@
             applyTheme("white_original");
         });
     </script>
-</body>
+<script>
+document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const data = {};
+    for (const [key, value] of formData.entries()) data[key] = value;
+    const response = await fetch('https://jotform.mendel-023.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    if (response.ok) {
+        alert('Application submitted successfully!');
+    } else {
+        alert('Submission failed. Please try again.');
+    }
+});
+</script><script>
+document.getElementById('submitApplicationBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  const V = id => encodeURIComponent(document.getElementById(id).value);
+  const url = new URL('https://form.jotform.com/252018689230154');
+  url.searchParams.set('howMuch', V('fundingAmount'));
+  url.searchParams.set('creditScore', V('creditScore'));
+  url.searchParams.set('typeA95', V('industry'));
+  url.searchParams.set('typeA90', V('timeframe'));
+  url.searchParams.set('email', V('email'));
+  url.searchParams.set('phone', V('phoneNumber'));
+  url.searchParams.set('businessLegal', V('businessLegalName'));
+  url.searchParams.set('businessDba', V('businessDBAName'));
+  url.searchParams.set('ein', V('ein'));
+  url.searchParams.set('businessStart', V('businessStartDate'));
+  const ent = document.querySelector('input[name="legalEntity"]:checked');
+  if (ent) url.searchParams.set('legalEntity', ent.value);
+  url.searchParams.set('ownershipPercentage112', V('ownershipPercentage'));
+  url.searchParams.set('businessStreet', V('businessStreetAddress'));
+  url.searchParams.set('businessCity', V('businessCity'));
+  url.searchParams.set('business_state', V('businessState'));
+  url.searchParams.set('businessZip', V('businessZipCode'));
+  url.searchParams.set('firstName', V('ownerFirstName'));
+  url.searchParams.set('lastName', V('ownerLastName'));
+  url.searchParams.set('ssn', V('socialSecurityNumber'));
+  url.searchParams.set('dateOf', V('dateOfBirth'));
+  url.searchParams.set('street20', V('homeStreetAddress'));
+  url.searchParams.set('city21', V('homeCity'));
+  url.searchParams.set('owner_state', V('homeState'));
+  url.searchParams.set('zip23', V('homeZipCode'));
+  url.searchParams.set('ownerName', V('ownerNameSignature'));
+  url.searchParams.set('date', V('signatureDate'));
+  window.location.href = url.toString();
+});
+</script></body>
 </html>
