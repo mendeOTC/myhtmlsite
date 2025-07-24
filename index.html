@@ -3,129 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Funding Application</title>
+    <title>Business Funding Application - Working Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f7fafc; }
-        .form-section { border-bottom: 2px solid #e2e8f0; padding-bottom: 2rem; margin-bottom: 2rem; }
+        /* Your original CSS is preserved */
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Open Sans', sans-serif; }
+        .signature-canvas-container.error { border: 2px solid red !important; }
+        #status-message {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 1rem 1.5rem; border-radius: 8px; font-weight: 600; z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 text-gray-700">
 
-<div class="container mx-auto p-8">
-    <div class="max-w-4xl mx-auto bg-white p-10 rounded-xl shadow-lg">
+<header class="bg-white p-4 sticky top-0 z-50 border-b">
+    </header>
+<div class="flex flex-col md:flex-row flex-grow w-full">
+    <aside class="bg-white w-full md:w-72 p-8 border-r" id="sidebar">
+        <button class="step-btn text-left text-lg font-medium py-3 relative pl-8" data-step="0">Step 1: Basic Info</button>
+        <button class="step-btn text-left text-lg font-medium py-3 relative pl-8" data-step="1">Step 2: Business Info</button>
+        <button class="step-btn text-left text-lg font-medium py-3 relative pl-8" data-step="2">Step 3: Owner Info</button>
+        <button class="step-btn text-left text-lg font-medium py-3 relative pl-8" data-step="3">Step 4: Upload & Sign</button>
+    </aside>
+    <main class="flex-grow flex flex-col items-center justify-start py-8 w-full" id="mainContent">
+        <form id="applicationForm" action="https://mjotc.app.n8n.cloud/webhook/e12ae141-821c-429d-bbe6-5da9ee1a209f/webhook" method="POST" class="w-full max-w-5xl px-8">
 
-        <div class="text-center mb-10">
-            <h1 class="text-4xl font-bold text-gray-800">Working Capital Application</h1>
-            <p class="text-gray-500 mt-2">Please complete all fields below.</p>
-        </div>
-
-        <form id="applicationForm" action="https://mjotc.app.n8n.cloud/webhook/e12ae141-821c-429d-bbe6-5da9ee1a209f/webhook" method="POST">
-            
-            <div class="form-section">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-6">Basic Information</h2>
+            <div class="form-section" data-step="0">
+                <h2 class="text-3xl font-bold text-center mb-10">Basic Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label class="block text-gray-600">Funding Amount?</label><input type="number" name="howMuch" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">Credit Score?</label><input type="number" name="creditScore" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">Industry?</label><input type="text" name="typeA95" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">Timeframe?</label><select name="typeA90" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required><option value="">Select an option</option><option value="ASAP">ASAP</option><option value="within_week">Within a week</option></select></div>
-                    <div><label class="block text-gray-600">Email</label><input type="email" name="email" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">Phone Number</label><input type="tel" name="phone" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label for="fundingAmount" class="block font-semibold">Funding Amount?</label><input type="number" id="fundingAmount" name="howMuch" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
+                    <div><label for="creditScore" class="block font-semibold">Credit Score?</label><input type="number" id="creditScore" name="creditScore" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
+                    <div><label for="industry" class="block font-semibold">Industry?</label><input type="text" id="industry" name="typeA95" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
+                    <div><label for="email" class="block font-semibold">Email</label><input type="email" id="email" name="email" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
                 </div>
+                <div class="flex justify-center mt-10"><button type="button" class="continue-btn px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold">Continue</button></div>
             </div>
 
-            <div class="form-section">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-6">Business Information</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label class="block text-gray-600">Business Legal Name</label><input type="text" name="businessLegal" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">Business DBA Name</label><input type="text" name="businessDba" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">EIN</label><input type="text" name="ein" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">Business Start Date</label><input type="date" name="businessStart" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                </div>
+            <div class="form-section hidden" data-step="1">
+                <h2 class="text-3xl font-bold text-center mb-10">Business Information</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label for="businessLegalName" class="block font-semibold">Business Legal Name</label><input type="text" id="businessLegalName" name="businessLegal" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
+                    <div><label for="businessDBAName" class="block font-semibold">Business DBA Name</label><input type="text" id="businessDBAName" name="businessDba" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
+                 </div>
+                <div class="flex justify-center mt-10"><button type="button" class="continue-btn px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold">Continue</button></div>
             </div>
 
-            <div class="form-section">
-                <h2 class="text-2xl font-semibold text-gray-700 mb-6">Owner Information</h2>
+            <div class="form-section hidden" data-step="2">
+                <h2 class="text-3xl font-bold text-center mb-10">Owner Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label class="block text-gray-600">First Name</label><input type="text" name="firstName" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">Last Name</label><input type="text" name="lastName" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">SSN</label><input type="text" name="ssn" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
-                    <div><label class="block text-gray-600">Date of Birth</label><input type="date" name="dateOf" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label for="ownerFirstName" class="block font-semibold">First Name</label><input type="text" id="ownerFirstName" name="firstName" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
+                    <div><label for="ownerLastName" class="block font-semibold">Last Name</label><input type="text" id="ownerLastName" name="lastName" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
                 </div>
+                <div class="flex justify-center mt-10"><button type="button" class="continue-btn px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold">Continue</button></div>
             </div>
 
-            <div class="form-section">
-                 <h2 class="text-2xl font-semibold text-gray-700 mb-6">Upload & Signature</h2>
+            <div class="form-section hidden" data-step="3">
+                <h2 class="text-3xl font-bold text-center mb-10">Upload & Signature</h2>
                 <div>
-                    <label class="block text-gray-600">Bank Statements (Optional)</label>
-                    <input type="file" name="bankStatements" multiple class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                    <label class="block font-semibold">Bank Statements (Optional)</label>
+                    <input type="file" name="bankStatements" id="bankStatements" multiple class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
                 </div>
-            </div>
-
-            <div class="mt-10">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition-transform transform hover:scale-105">
-                    Submit Application
-                </button>
+                <div class="mt-6">
+                    <label class="block font-semibold">Signature</label>
+                    <div class="signature-canvas-container mt-1 border border-gray-300 rounded-md h-40 w-full relative"><canvas id="signatureCanvas"></canvas></div>
+                    <input type="hidden" id="signatureData" name="ownersSignature" required>
+                    <button type="button" id="clearSignature" class="text-sm text-blue-600 hover:underline mt-2">Clear Signature</button>
+                </div>
+                <div class="flex justify-center mt-10 w-full"><button type="submit" class="w-full px-8 py-4 bg-green-600 text-white rounded-lg font-semibold text-xl">Submit Application</button></div>
             </div>
         </form>
-
-        <div id="status" class="text-center mt-6 font-semibold"></div>
-
-    </div>
+        <div id="status-message"></div>
+    </main>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('applicationForm');
-    const statusDiv = document.getElementById('status');
 
-    // This is the only event listener needed.
-    // It listens for the 'submit' event on the entire form.
+    // --- ELEMENT SELECTORS ---
+    const form = document.getElementById('applicationForm');
+    const statusMessage = document.getElementById('status-message');
+    const formSections = document.querySelectorAll('.form-section');
+    const stepButtons = document.querySelectorAll('.step-btn');
+    const continueButtons = document.querySelectorAll('.continue-btn');
+
+    // Signature Pad Elements
+    const signatureCanvas = document.getElementById('signatureCanvas');
+    const signatureDataInput = document.getElementById('signatureData');
+    const clearSignatureBtn = document.getElementById('clearSignature');
+    const sigPadContainer = document.querySelector('.signature-canvas-container');
+    const ctx = signatureCanvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    let currentStep = 0;
+
+    // --- FUNCTIONS ---
+
+    // Function to display status messages
+    function showStatus(message, isError = false) {
+        statusMessage.textContent = message;
+        statusMessage.className = isError 
+            ? 'bg-red-500 text-white p-4 rounded-lg' 
+            : 'bg-green-500 text-white p-4 rounded-lg';
+        statusMessage.style.display = 'block';
+        setTimeout(() => { statusMessage.style.display = 'none'; }, 4000);
+    }
+
+    // Function to show a specific step
+    function showStep(stepIndex) {
+        formSections.forEach((section, index) => {
+            section.classList.toggle('hidden', index !== stepIndex);
+        });
+        stepButtons.forEach((button, index) => {
+            button.classList.toggle('text-blue-600', index === stepIndex);
+            button.classList.toggle('text-gray-500', index !== stepIndex);
+        });
+        currentStep = stepIndex;
+        window.scrollTo(0, 0);
+        if(stepIndex === 3) { // If it's the signature step, resize canvas
+            resizeCanvas();
+        }
+    }
+
+    // Function to validate required fields in the current step
+    function validateStep() {
+        let isValid = true;
+        const currentSection = formSections[currentStep];
+        currentSection.querySelectorAll('[required]').forEach(input => {
+            // Clear previous errors
+            input.classList.remove('border-red-500');
+            sigPadContainer.classList.remove('error');
+
+            if (!input.value.trim()) {
+                isValid = false;
+                if (input.type === 'hidden' && input.id === 'signatureData') {
+                    sigPadContainer.classList.add('error');
+                } else {
+                    input.classList.add('border-red-500');
+                }
+            }
+        });
+        if (!isValid) {
+            showStatus('Please fill all required fields.', true);
+        }
+        return isValid;
+    }
+
+    // Signature Pad Logic
+    function resizeCanvas() {
+        signatureCanvas.width = signatureCanvas.offsetWidth;
+        signatureCanvas.height = signatureCanvas.offsetHeight;
+    }
+    
+    function draw(e) {
+        if (!isDrawing) return;
+        const rect = signatureCanvas.getBoundingClientRect();
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        [lastX, lastY] = [x, y];
+    }
+
+    function startDrawing(e) {
+        isDrawing = true;
+        sigPadContainer.classList.remove('error');
+        const rect = signatureCanvas.getBoundingClientRect();
+        [lastX, lastY] = [(e.touches ? e.touches[0].clientX : e.clientX) - rect.left, (e.touches ? e.touches[0].clientY : e.clientY) - rect.top];
+    }
+    
+    function stopDrawing() {
+        if (!isDrawing) return;
+        isDrawing = false;
+        signatureDataInput.value = signatureCanvas.toDataURL(); // Save signature as Base64
+    }
+
+    // --- EVENT LISTENERS ---
+
+    // Form Submission
     form.addEventListener('submit', function(event) {
-        
-        // 1. Prevent the default browser action that reloads the page.
-        event.preventDefault();
-        
+        event.preventDefault(); // Stop default page reload
+        if (!validateStep()) return;
+
         const submitButton = form.querySelector('button[type="submit"]');
         submitButton.disabled = true;
-        submitButton.textContent = 'Submitting... Please Wait...';
-        statusDiv.textContent = '';
-        statusDiv.className = '';
+        submitButton.textContent = 'Submitting...';
 
-        // 2. Create a FormData object. This automatically collects
-        // ALL the data from your form fields, including files.
         const formData = new FormData(form);
 
-        // 3. Use the modern `fetch` API to send the data.
-        // It sends the data to the 'action' URL specified in your HTML form tag.
         fetch(form.action, {
-            method: form.method,
-            body: formData, // FormData handles the complex encoding for you.
+            method: 'POST',
+            body: formData,
         })
         .then(response => {
-            // This part runs after the server responds.
             if (response.ok) {
-                // If the submission was successful (e.g., status 200 OK)
-                statusDiv.textContent = '✅ Thank you! Your application has been submitted successfully.';
-                statusDiv.className = 'text-center mt-6 font-semibold text-green-600';
-                form.reset(); // Clear the form fields.
-                submitButton.textContent = 'Submitted!';
+                showStatus('Application submitted successfully!');
+                form.reset();
+                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+                showStep(0);
+                 submitButton.textContent = 'Submitted!';
             } else {
-                // If the server returned an error (e.g., status 404, 500)
-                throw new Error(`Server Error: ${response.statusText}`);
+                throw new Error('Network response was not ok.');
             }
         })
         .catch(error => {
-            // This part runs if there was a network error (e.g., no internet)
-            // or if the server returned an error in the step above.
-            console.error('Submission Error:', error);
-            statusDiv.textContent = '❌ An error occurred. Please try again. ' + error.message;
-            statusDiv.className = 'text-center mt-6 font-semibold text-red-600';
-            submitButton.disabled = false; // Re-enable the button so you can try again.
-            submitButton.textContent = 'Submit Application';
+            showStatus('Submission failed. Please try again.', true);
+            console.error('Fetch Error:', error);
+        })
+        .finally(() => {
+             // Re-enable button unless successful
+             if(submitButton.textContent !== 'Submitted!') {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Application';
+             }
         });
     });
+
+    // "Continue" Buttons
+    continueButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (validateStep()) {
+                showStep(currentStep + 1);
+            }
+        });
+    });
+
+    // Sidebar Step Buttons
+    stepButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetStep = parseInt(button.dataset.step);
+            // Allow jumping back, but validate when jumping forward
+            if (targetStep < currentStep || validateStep()) {
+                showStep(targetStep);
+            }
+        });
+    });
+    
+    // Signature Pad Listeners
+    signatureCanvas.addEventListener('mousedown', startDrawing);
+    signatureCanvas.addEventListener('mousemove', draw);
+    signatureCanvas.addEventListener('mouseup', stopDrawing);
+    signatureCanvas.addEventListener('mouseout', stopDrawing);
+    signatureCanvas.addEventListener('touchstart', startDrawing);
+    signatureCanvas.addEventListener('touchmove', draw);
+    signatureCanvas.addEventListener('touchend', stopDrawing);
+    
+    clearSignatureBtn.addEventListener('click', () => {
+        ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+        signatureDataInput.value = '';
+    });
+    
+    // --- INITIALIZATION ---
+    window.addEventListener('resize', resizeCanvas);
+    showStep(0); // Show the first step on page load
 });
 </script>
 
