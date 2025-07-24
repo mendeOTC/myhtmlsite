@@ -1,270 +1,1202 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Funding Application - Working Version</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Your original CSS is preserved */
-        *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Open Sans', sans-serif; }
-        .signature-canvas-container.error { border: 2px solid red !important; }
-        #status-message {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            padding: 1rem 1.5rem; border-radius: 8px; font-weight: 600; z-index: 2000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none;
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Business Funding Application - Redesigned</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        'open-sans': ['Open Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        // Base colors from your original config (used as fallbacks or for specific elements)
+                        primaryBlue: '#007bff',
+                        darkBlue: '#0056b3',
+                        lightBlueBg: '#e0f7fa',
+                        accentGreen: '#28a745',
+                        grayText: '#495057',
+                        lightGrayBorder: '#dee2e6',
+                        backgroundWhite: '#ffffff',
+                        backgroundBody: '#f8f9fa',
+                        modernPrimary: '#1a202c',
+                        modernSecondary: '#4a5568',
+                        modernAccent: '#3182ce',
+                        modernBgLight: '#f7fafc',
+                        modernBorder: '#e2e8f0',
+
+                        // Dynamic Theme Colors (CSS Variables)
+                        'theme-primary': 'var(--theme-primary, #3182ce)', // Main accent color
+                        'theme-secondary': 'var(--theme-secondary, #4a5568)', // Secondary accent/text color
+                        'theme-background': 'var(--theme-background, #f7fafc)', // Main background
+                        'theme-sidebar-bg': 'var(--theme-sidebar-bg, #ffffff)', // Sidebar/modal background
+                        'theme-text': 'var(--theme-text, #4a5568)', // General text color
+                        'theme-heading': 'var(--theme-heading, #1a202c)', // Heading text color
+                        'theme-border': 'var(--theme-border, #e2e8f0)', // General border color
+                        'theme-input-bg': 'var(--theme-input-bg, #ffffff)', // Input background
+                        'theme-input-border': 'var(--theme-input-border, #e2e8f0)', // Input border
+                        'theme-input-focus-border': 'var(--theme-input-focus-border, #3182ce)', // Input focus border
+                        'theme-input-focus-ring': 'var(--theme-input-focus-ring, rgba(49, 130, 206, 0.3))', // Input focus ring
+                        'theme-button-bg': 'var(--theme-button-bg, #ffffff)', // Button background
+                        'theme-button-text': 'var(--theme-button-text, #4a5568)', // Button text
+                        'theme-button-hover-bg': 'var(--theme-button-hover-bg, #f7fafc)', // Button hover background
+                        'theme-button-hover-border': 'var(--theme-button-hover-border, #cbd5e0)', // Button hover border
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+<style>
+        /* Ensure box-sizing is border-box globally for consistent layout */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--theme-background); /* Dynamic background */
+            color: var(--theme-text); /* Dynamic text color */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
+        }
+        /* Style for date input to ensure light mode calendar */
+        input[type="date"] {
+            color-scheme: light; /* Keep calendar light by default */
+        }
+        /* Custom styles for signature canvas border on error */
+        .signature-canvas-container.error {
+            border: 1px solid red !important;
+        }
+
+        /* Custom Message Box Styles */
+        #customMessageBox {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1em;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden; /* Use visibility for smoother hiding */
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, visibility 0.3s ease;
+        }
+        #customMessageBox.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Dynamic Theme Styling for specific elements */
+        .header-bg {
+            background-color: var(--theme-sidebar-bg);
+            border-bottom-color: var(--theme-border);
+        }
+        .sidebar-bg {
+            background: var(--theme-sidebar-bg); /* Use solid color for sidebar now */
+            border-right-color: var(--theme-border);
+            border-bottom-color: var(--theme-border);
+        }
+        .text-theme-heading {
+            color: var(--theme-heading);
+        }
+        .text-theme-primary {
+            color: var(--theme-primary);
+        }
+        .text-theme-secondary {
+            color: var(--theme-text);
+        }
+        .border-theme-border {
+            border-color: var(--theme-border);
+        }
+        .input-style {
+            background-color: var(--theme-input-bg);
+            border-color: var(--theme-input-border);
+            color: var(--theme-text);
+            /* Ensure cursor and caret are visible against dark backgrounds */
+            caret-color: var(--theme-text);
+        }
+        .input-style:focus {
+            border-color: var(--theme-input-focus-border);
+            box-shadow: 0 0 0 2px var(--theme-input-focus-ring);
+            outline: none;
+        }
+        .button-style {
+            background-color: var(--theme-button-bg);
+            color: var(--theme-button-text);
+            border-color: var(--theme-button-border); /* Use a specific border for buttons */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .button-style:hover {
+            background-color: var(--theme-button-hover-bg);
+            border-color: var(--theme-button-hover-border);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        .file-upload-box-style {
+            border-color: var(--theme-input-border);
+            background-color: var(--theme-input-bg);
+        }
+        .file-upload-box-style:hover {
+            border-color: var(--theme-input-focus-border);
+            background-color: var(--theme-input-bg); /* Keep same bg on hover */
+        }
+        .file-icon-style {
+            color: var(--theme-primary);
+        }
+        .modal-content-style {
+            background-color: var(--theme-sidebar-bg);
+        }
+        .modal-img-border {
+            border-color: var(--theme-primary);
+        }
+        .modal-icon-color {
+            color: var(--theme-primary);
+        }
+        .step-btn .active-icon { /* Apply default circle icon */
+            content: "\f111"; /* Circle icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: theme('colors.modernBorder'); /* Default to a light gray */
+            font-size: 0.8em;
+            transition: color 0.3s ease, content 0.3s ease; /* Transition content for icon change */
+        }
+
+        .step-btn.active-step .active-icon {
+            color: var(--theme-primary) !important; /* Active step color now uses theme variable */
+            content: "\f058"; /* Checkmark circle for active */
+        }
+        /* Radio button accent color */
+        input[type="radio"] {
+            accent-color: var(--theme-primary);
+        }
+
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(5px); /* Blur effect */
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--theme-text);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--theme-primary);
+        }
+        
+        /* Styles for color circles */
+        .color-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            flex-shrink: 0; /* Prevent circles from shrinking */
+        }
+        .color-circle:hover {
+            transform: scale(1.1);
+            border-color: #333;
+        }
+        .color-circle.selected {
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.2);
+        }
+
+        /* Seamless borders: Use 1px borders with theme color */
+        header {
+            border-bottom: 1px solid var(--theme-border);
+            box-shadow: none !important;
+        }
+        aside {
+            border-right: 1px solid var(--theme-border);
+            box-shadow: none !important;
+        }
+        footer {
+            border-top: 1px solid var(--theme-border);
+            box-shadow: none !important;
+        }
+        /* Specific border updates to match theme */
+        .sidebar-bg .border-t {
+            border-color: var(--theme-border) !important;
+        }
+        .border-b-2 { /* Section title underlines */
+            border-bottom-width: 1px !important;
+            border-bottom-color: var(--theme-border) !important;
+        }
+        .form-group .border { /* Input borders */
+            border-width: 1px !important;
+            border-color: var(--theme-input-border) !important;
+        }
+        .file-upload-box { /* File upload box border */
+            border-width: 1px !important;
+            border-style: dashed !important;
+        }
+        .signature-canvas-container { /* Signature pad border */
+            border-width: 1px !important;
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-700">
-
-<header class="bg-white p-4 sticky top-0 z-50 border-b">
-    </header>
-<div class="flex flex-col md:flex-row flex-grow w-full">
-    <aside class="bg-white w-full md:w-72 p-8 border-r" id="sidebar">
-        <button class="step-btn text-left text-lg font-medium py-3 relative pl-8" data-step="0">Step 1: Basic Info</button>
-        <button class="step-btn text-left text-lg font-medium py-3 relative pl-8" data-step="1">Step 2: Business Info</button>
-        <button class="step-btn text-left text-lg font-medium py-3 relative pl-8" data-step="2">Step 3: Owner Info</button>
-        <button class="step-btn text-left text-lg font-medium py-3 relative pl-8" data-step="3">Step 4: Upload & Sign</button>
-    </aside>
-    <main class="flex-grow flex flex-col items-center justify-start py-8 w-full" id="mainContent">
-        <form id="applicationForm" action="https://mjotc.app.n8n.cloud/webhook/e12ae141-821c-429d-bbe6-5da9ee1a209f/webhook" method="POST" class="w-full max-w-5xl px-8">
-
-            <div class="form-section" data-step="0">
-                <h2 class="text-3xl font-bold text-center mb-10">Basic Information</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label for="fundingAmount" class="block font-semibold">Funding Amount?</label><input type="number" id="fundingAmount" name="howMuch" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
-                    <div><label for="creditScore" class="block font-semibold">Credit Score?</label><input type="number" id="creditScore" name="creditScore" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
-                    <div><label for="industry" class="block font-semibold">Industry?</label><input type="text" id="industry" name="typeA95" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
-                    <div><label for="email" class="block font-semibold">Email</label><input type="email" id="email" name="email" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
-                </div>
-                <div class="flex justify-center mt-10"><button type="button" class="continue-btn px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold">Continue</button></div>
-            </div>
-
-            <div class="form-section hidden" data-step="1">
-                <h2 class="text-3xl font-bold text-center mb-10">Business Information</h2>
-                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label for="businessLegalName" class="block font-semibold">Business Legal Name</label><input type="text" id="businessLegalName" name="businessLegal" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
-                    <div><label for="businessDBAName" class="block font-semibold">Business DBA Name</label><input type="text" id="businessDBAName" name="businessDba" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
-                 </div>
-                <div class="flex justify-center mt-10"><button type="button" class="continue-btn px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold">Continue</button></div>
-            </div>
-
-            <div class="form-section hidden" data-step="2">
-                <h2 class="text-3xl font-bold text-center mb-10">Owner Information</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label for="ownerFirstName" class="block font-semibold">First Name</label><input type="text" id="ownerFirstName" name="firstName" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
-                    <div><label for="ownerLastName" class="block font-semibold">Last Name</label><input type="text" id="ownerLastName" name="lastName" class="mt-1 block w-full p-3 border-gray-300 rounded-md" required></div>
-                </div>
-                <div class="flex justify-center mt-10"><button type="button" class="continue-btn px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold">Continue</button></div>
-            </div>
-
-            <div class="form-section hidden" data-step="3">
-                <h2 class="text-3xl font-bold text-center mb-10">Upload & Signature</h2>
-                <div>
-                    <label class="block font-semibold">Bank Statements (Optional)</label>
-                    <input type="file" name="bankStatements" id="bankStatements" multiple class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-                </div>
-                <div class="mt-6">
-                    <label class="block font-semibold">Signature</label>
-                    <div class="signature-canvas-container mt-1 border border-gray-300 rounded-md h-40 w-full relative"><canvas id="signatureCanvas"></canvas></div>
-                    <input type="hidden" id="signatureData" name="ownersSignature" required>
-                    <button type="button" id="clearSignature" class="text-sm text-blue-600 hover:underline mt-2">Clear Signature</button>
-                </div>
-                <div class="flex justify-center mt-10 w-full"><button type="submit" class="w-full px-8 py-4 bg-green-600 text-white rounded-lg font-semibold text-xl">Submit Application</button></div>
-            </div>
-        </form>
-        <div id="status-message"></div>
-    </main>
+<body class="flex flex-col min-h-screen">
+<header class="header-bg p-4 md:px-10 flex flex-col md:flex-row justify-between items-center sticky top-0 z-50">
+<a class="logo-link mb-4 md:mb-0 md:absolute md:left-10" href="https://ontimecap.com/" target="_blank">
+<img alt="On Time Capital Logo" class="h-14 transition-transform duration-200 hover:scale-105" src="https://ontimecap.com/wp-content/uploads/2024/05/logos3-1.png"/>
+</a>
+<div class="flex items-center gap-2 md:relative md:right-10 whitespace-nowrap" style="letter-spacing: -0.05em; margin-left: auto;">
+<span class="text-lg font-montserrat font-semibold text-theme-heading">Need help?</span>
+<i class="fas fa-phone-alt text-xl text-theme-primary"></i>
+<a class="text-xl text-theme-heading no-underline hover:text-theme-primary transition-colors duration-200 font-montserrat font-extralight" href="tel:4122046096">412 204 6096</a>
 </div>
-
+</header>
+<div class="flex flex-col md:flex-row flex-grow w-full">
+<aside class="sidebar-bg w-full md:w-72 p-8 md:p-12 flex flex-col gap-10 sticky top-0 h-auto md:h-screen overflow-y-auto" id="sidebar">
+<div class="flex flex-row md:flex-col gap-5 overflow-x-auto md:overflow-x-hidden pb-2 md:pb-0">
+<button class="step-btn flex-shrink-0 md:flex-shrink text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-theme-primary text-theme-secondary" data-step="1">
+<i class="active-icon"></i>
+                    Basic Info
+                </button>
+<button class="step-btn flex-shrink-0 md:flex-shrink text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-theme-primary text-theme-secondary" data-step="2">
+<i class="active-icon"></i>
+                    Business Info
+                </button>
+<button class="step-btn flex-shrink-0 md:flex-shrink text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-theme-primary text-theme-secondary" data-step="3">
+<i class="active-icon"></i>
+                    Owner Info
+                </button>
+<button class="step-btn flex-shrink-0 md:flex-shrink text-left text-lg font-montserrat font-medium py-3 px-0 md:px-0 relative pl-8 md:pl-0 transition-colors duration-300 hover:text-theme-primary text-theme-secondary" data-step="4">
+<i class="active-icon"></i>
+                    Upload Documents &amp; Signature
+                </button>
+</div>
+<div class="mt-auto pt-8 border-t border-theme-border flex flex-col gap-4">
+<h3 class="font-montserrat text-xl text-theme-heading mb-1">Have any questions?</h3>
+<p class="text-base text-theme-secondary">Get in contact:</p>
+<a class="text-theme-primary no-underline font-medium hover:text-theme-heading transition-colors duration-200" href="mailto:Mendel@ontimecap.com">Mendel@ontimecap.com</a>
+</div>
+</aside>
+<main class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 w-full" id="mainContent">
+<form class="w-full max-w-5xl px-4 md:px-8" id="applicationForm" action="https://mjotc.app.n8n.cloud/webhook/e12ae141-821c-429d-bbe6-5da9ee1a209f/webhook" method="post" >
+<div class="form-section active" id="step1">
+<h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Basic Information</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="fundingAmount">How much funding are you looking for?</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="fundingAmount" name="howMuch" placeholder="Enter amount" required="" type="number"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="creditScore">What is your credit score?</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="creditScore" max="850" min="300" name="creditScore" oninput="if(this.value.length &gt; 3) this.value = this.value.slice(0, 3);" placeholder="e.g., 700" required="" type="number"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="industry">What industry are you in?</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="industry" name="typeA95" placeholder="e.g., Retail, Tech, Food Service" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="timeframe">What timeframe do you need the money?</label>
+<select class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="timeframe" name="typeA90" required="">
+<option value="">Select an option</option>
+<option value="ASAP">ASAP</option>
+<option value="within_week">Within a week</option>
+<option value="within_two_weeks">Within two weeks</option>
+<option value="within_month">Within a month</option>
+<option value="Browse_rates">Just Browse rates</option>
+</select>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="email">Email</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="email" name="email" placeholder="you@example.com" required="" type="email"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="phoneNumber">Phone Number</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="phoneNumber" maxlength="10" name="phone" placeholder="(123) 456-7890" required="" type="tel"/>
+</div>
+</div>
+<div class="flex justify-center mt-10">
+<button class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" type="button">
+                            Continue
+                        </button>
+</div>
+</div>
+<div class="form-section hidden" id="step2">
+<h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Business Information</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="businessLegalName">Business Legal Name</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="businessLegalName" name="businessLegal" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="businessDBAName">Business DBA Name</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="businessDBAName" name="businessDba" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="ein">EIN (Employer Identification Number)</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="ein" maxlength="9" name="ein" placeholder="XX-XXXXXXX" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="businessStartDate">Business Start Date</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="businessStartDate" name="businessStart" required="" type="date"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg">Legal Entity</label>
+<div class="flex flex-wrap gap-x-8 gap-y-2" id="legalEntityRadios">
+<label class="inline-flex items-center text-theme-text text-base cursor-pointer">
+<input class="form-radio h-5 w-5 mr-2 transform scale-110" name="legalEntity" type="radio" value="corporation"/>
+                                    Corporation
+                                </label>
+<label class="inline-flex items-center text-theme-text text-base cursor-pointer">
+<input class="form-radio h-5 w-5 mr-2 transform scale-110" name="legalEntity" type="radio" value="llc"/>
+                                    LLC
+                                </label>
+<label class="inline-flex items-center text-theme-text text-base cursor-pointer">
+<input class="form-radio h-5 w-5 mr-2 transform scale-110" name="legalEntity" type="radio" value="partnership"/>
+                                    Partnership
+                                </label>
+<label class="inline-flex items-center text-theme-text text-base cursor-pointer">
+<input class="form-radio h-5 w-5 mr-2 transform scale-110" name="legalEntity" type="radio" value="sole_proprietorship"/>
+                                    Sole Proprietorship
+                                </label>
+</div>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="ownershipPercentage">Ownership Percentage</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="ownershipPercentage" max="100" maxlength="3" min="0" name="ownershipPercentage112" oninput="if(this.value.length &gt; this.maxLength) this.value = this.value.slice(0, this.maxLength);" placeholder="e.g., 100" required="" type="number"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="businessStreetAddress">Business Street Address</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="businessStreetAddress" name="businessStreet" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="businessCity">Business City</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="businessCity" name="businessCity" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="businessState">Business State</label>
+<select class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="businessState" name="business_state" required="">
+<option value="">Select a State</option>
+<option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+</select>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="businessZipCode">Business Zip Code</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="businessZipCode" maxlength="5" name="businessZip" required="" type="text"/>
+</div>
+</div>
+<div class="flex justify-center mt-10">
+<button class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" type="button">
+                            Continue
+                        </button>
+</div>
+</div>
+<div class="form-section hidden" id="step3">
+<h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Owner Information</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="ownerFirstName">First Name</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="ownerFirstName" name="firstName" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="ownerLastName">Last Name</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="ownerLastName" name="lastName" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="socialSecurityNumber">Social Security Number (SSN)</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="socialSecurityNumber" maxlength="9" name="ssn" placeholder="XXX-XX-XXXX" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="dateOfBirth">Date of Birth</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="dateOfBirth" name="dateOf" required="" type="date"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="homeStreetAddress">Home Street Address</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="homeStreetAddress" name="street20" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="homeCity">Home City</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="homeCity" name="city21" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="homeState">Home State</label>
+<select class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="homeState" name="owner_state" required="">
+<option value="">Select a State</option>
+<option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+</select>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="homeZipCode">Home Zip Code</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="homeZipCode" maxlength="5" name="zip23" required="" type="text"/>
+</div>
+</div>
+<div class="flex justify-center mt-10">
+<button class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" type="button">
+                            Continue
+                        </button>
+</div>
+</div>
+<div class="form-section hidden" id="step4">
+<h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Upload Documents &amp; Signature</h2>
+<div class="form-group mb-6 w-full">
+<label class="block mb-2 font-semibold text-theme-heading text-lg">Upload Business Bank Statements (Last 3 months) (Optional)</label>
+<div class="file-upload-box flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer shadow-sm file-upload-box-style" id="fileUploadArea">
+<i class="fas fa-cloud-upload-alt text-5xl mb-4 file-icon-style"></i>
+<p class="text-theme-secondary font-medium text-lg text-center">Drag &amp; Drop files here or click to browse</p>
+<input class="hidden" id="bankStatements" multiple="" name="3Business" type="file"/>
+</div>
+<div class="mt-4 space-y-2" id="fileList">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="ownerNameSignature">Owner Name (for signature)</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="ownerNameSignature" name="ownerName" placeholder="Full Legal Name" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="signatureDate">Date</label>
+<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="signatureDate" name="date" required="" type="date"/>
+</div>
+</div>
+<div class="form-group mb-6 w-full">
+<label class="block mb-2 font-semibold text-theme-heading text-lg" for="signatureCanvas">Signature</label>
+<div class="signature-canvas-container relative border rounded-lg cursor-crosshair shadow-sm h-40 w-full border-theme-border" style="background-color: var(--theme-input-bg);">
+<canvas class="block w-full h-full rounded-lg" id="signatureCanvas"></canvas>
+<button class="absolute bottom-3 right-3 rounded-md px-3 py-1.5 text-sm cursor-pointer z-10 button-style" id="clearSignature" style="background-color: var(--theme-sidebar-bg); color: var(--theme-text); border-color: var(--theme-border);" type="button">
+                                Clear
+                            </button>
+</div>
+<input id="signatureData" name="ownersSignature" required="" type="hidden"/>
+</div>
+<div class="flex justify-center mt-10 w-full">
+<button class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" id="submitApplicationBtn" type="submit">
+                            Submit Application
+                        </button>
+</div>
+</div>
+</form>
+<div class="hidden flex flex-col items-center justify-center text-center w-full max-w-5xl px-4 md:px-8 py-16 md:py-24 flex-grow" id="thankYouPage">
+<h2 class="font-montserrat text-theme-heading text-4xl md:text-5xl font-bold mb-8">Thank you for submitting the funding application!</h2>
+<p class="text-theme-secondary text-xl mb-4">Funded over $1.5 Billion, over 20,000 Happy Clients!</p>
+<p class="text-theme-secondary text-xl mb-8">We appreciate you choosing On Time Capital. We will review your application shortly.</p>
+<div class="flex flex-col md:flex-row gap-6 mt-8 justify-center w-full">
+<button class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" id="contactRepresentativeBtn">
+                        Contact Your Representative
+                    </button>
+<button class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" id="contactCustomerServiceBtn">
+                        Contact Customer Service
+                    </button>
+</div>
+</div>
+</main>
+</div>
+<div class="modal-overlay" id="representativeModal">
+<div class="modal-content modal-content-style">
+<button class="modal-close-btn" onclick="closeModal('representativeModal')">×</button>
+<h3 class="font-montserrat text-theme-heading text-3xl font-bold mb-6">Your Representative</h3>
+<img alt="Mendel Profile Picture" class="rounded-full w-32 h-32 object-cover mx-auto mb-4 shadow-md border-2 modal-img-border" src="https://d3k81ch9hvuctc.cloudfront.net/company/VvZhYk/images/282c3fbe-3890-45b8-8315-162d78814213.png"/>
+<p class="font-montserrat text-theme-heading text-xl font-semibold mb-2">Mendel Junik</p>
+<p class="text-theme-secondary text-lg mb-1"><i class="fas fa-phone-alt mr-2 modal-icon-color"></i>412-204-6096</p>
+<p class="text-theme-secondary text-lg"><i class="fas fa-envelope mr-2 modal-icon-color"></i>mendel@ontimecap.com</p>
+</div>
+</div>
+<div class="modal-overlay" id="customerServiceModal">
+<div class="modal-content modal-content-style">
+<button class="modal-close-btn" onclick="closeModal('customerServiceModal')">×</button>
+<h3 class="font-montserrat text-theme-heading text-3xl font-bold mb-6">Customer Service</h3>
+<img alt="Emma Profile Picture" class="rounded-full w-32 h-32 object-cover mx-auto mb-4 shadow-md border-2 modal-img-border" src="https://d3k81ch9hvuctc.cloudfront.net/company/VvZhYk/images/d4c7f6ce-009e-4914-af06-0f9feb437e77.png"/>
+<p class="font-montserrat text-theme-heading text-xl font-semibold mb-2">Emma Birch</p>
+<p class="text-theme-secondary text-lg mb-1"><i class="fas fa-phone-alt mr-2 modal-icon-color"></i>718-735-1976</p>
+<p class="text-theme-secondary text-lg"><i class="fas fa-envelope mr-2 modal-icon-color"></i>emma.b@ontimecap.com</p>
+</div>
+</div>
+<footer class="header-bg p-5 md:px-10 flex flex-col md:flex-row justify-between items-center border-t text-theme-secondary text-sm font-normal">
+<div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 mb-4 md:mb-0">
+<span class="font-semibold text-theme-heading text-lg">Customer Reviews:</span>
+<div class="flex items-center gap-4">
+<a href="https://www.trustpilot.com/review/ontimecap.com" target="_blank">
+<img alt="Trustpilot Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200" src="https://www.netimperative.com/wp-content/uploads/2020/01/trustpilot.png"/>
+</a>
+<a href="https://www.bbb.org/us/ny/brooklyn/profile/loan-broker/on-time-capital-llc-0121-87177095" target="_blank">
+<img alt="BBB Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200" src="https://www.kearneyhvac.com/wp-content/uploads/2023/07/bbb_a_rating_logo.jpg.webp"/>
+</a>
+<a href="https://www.google.com/search?q=on+time+capital+reviews" target="_blank">
+<img alt="Google Reviews" class="h-12 w-auto opacity-95 hover:opacity-100 hover:-translate-y-0.5 transition-all duration-200" src="https://cdn.prod.website-files.com/602cf6148109ccfeb1d80c49/60d4509851d12743d030a9eb_5c11336dd43b9272273fb4ce_Google-Reviews.webp"/>
+</a>
+</div>
+</div>
+<div class="flex items-center gap-4 py-2">
+<div class="color-circle" data-theme-name="white_original" style="background-color: #ffffff;"></div>
+<div class="color-circle" data-theme-name="black_dark_mode" style="background-color: #000000;"></div>
+</div>
+<div class="text-theme-secondary">
+            Copyright © 2025 On Time Capital, LLC.
+        </div>
+</footer>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+        // Get all form sections and navigation buttons
+        const formSections = document.querySelectorAll('.form-section');
+        const stepButtons = document.querySelectorAll('.step-btn');
+        const continueButtons = document.querySelectorAll('.continue-btn');
+        const applicationForm = document.getElementById('applicationForm');
+        const thankYouPage = document.getElementById('thankYouPage');
+        const contactRepresentativeBtn = document.getElementById('contactRepresentativeBtn');
+        const contactCustomerServiceBtn = document.getElementById('contactCustomerServiceBtn');
+        const sidebar = document.getElementById('sidebar'); // Get the sidebar element
+        const mainContent = document.getElementById('mainContent'); // Get the main content area
 
-    // --- ELEMENT SELECTORS ---
-    const form = document.getElementById('applicationForm');
-    const statusMessage = document.getElementById('status-message');
-    const formSections = document.querySelectorAll('.form-section');
-    const stepButtons = document.querySelectorAll('.step-btn');
-    const continueButtons = document.querySelectorAll('.continue-btn');
+        const representativeModal = document.getElementById('representativeModal');
+        const customerServiceModal = document.getElementById('customerServiceModal');
 
-    // Signature Pad Elements
-    const signatureCanvas = document.getElementById('signatureCanvas');
-    const signatureDataInput = document.getElementById('signatureData');
-    const clearSignatureBtn = document.getElementById('clearSignature');
-    const sigPadContainer = document.querySelector('.signature-canvas-container');
-    const ctx = signatureCanvas.getContext('2d');
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
+        let currentStep = 0; // Initialize current step to the first one (0-indexed)
 
-    let currentStep = 0;
+        // New Signature Pad Elements & Logic
+        const signatureCanvas = document.getElementById('signatureCanvas');
+        const ctx = signatureCanvas.getContext('2d');
+        const clearSignatureBtn = document.getElementById('clearSignature');
+        const signatureDataInput = document.getElementById('signatureData');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
 
-    // --- FUNCTIONS ---
+        function initializeSignaturePad() {
+            // Set canvas resolution for crisp drawing
+            signatureCanvas.width = signatureCanvas.offsetWidth;
+            signatureCanvas.height = signatureCanvas.offsetHeight;
 
-    // Function to display status messages
-    function showStatus(message, isError = false) {
-        statusMessage.textContent = message;
-        statusMessage.className = isError 
-            ? 'bg-red-500 text-white p-4 rounded-lg' 
-            : 'bg-green-500 text-white p-4 rounded-lg';
-        statusMessage.style.display = 'block';
-        setTimeout(() => { statusMessage.style.display = 'none'; }, 4000);
-    }
-
-    // Function to show a specific step
-    function showStep(stepIndex) {
-        formSections.forEach((section, index) => {
-            section.classList.toggle('hidden', index !== stepIndex);
-        });
-        stepButtons.forEach((button, index) => {
-            button.classList.toggle('text-blue-600', index === stepIndex);
-            button.classList.toggle('text-gray-500', index !== stepIndex);
-        });
-        currentStep = stepIndex;
-        window.scrollTo(0, 0);
-        if(stepIndex === 3) { // If it's the signature step, resize canvas
-            resizeCanvas();
+            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+            ctx.strokeStyle = '#000'; // Default black for signature ink
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            signatureDataInput.value = ''; // Clear any previous data
+             // Remove error class if present
+            signatureCanvas.parentElement.classList.remove('error');
         }
-    }
 
-    // Function to validate required fields in the current step
-    function validateStep() {
-        let isValid = true;
-        const currentSection = formSections[currentStep];
-        currentSection.querySelectorAll('[required]').forEach(input => {
-            // Clear previous errors
-            input.classList.remove('border-red-500');
-            sigPadContainer.classList.remove('error');
+        function draw(e) {
+            if (!isDrawing) return; // Stop the fn from running when they are not moused down
+            const rect = signatureCanvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-            if (!input.value.trim()) {
-                isValid = false;
-                if (input.type === 'hidden' && input.id === 'signatureData') {
-                    sigPadContainer.classList.add('error');
-                } else {
-                    input.classList.add('border-red-500');
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(clientX - rect.left, clientY - rect.top);
+            ctx.stroke();
+            [lastX, lastY] = [clientX - rect.left, clientY - rect.top];
+        }
+
+        signatureCanvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = signatureCanvas.getBoundingClientRect();
+            [lastX, lastY] = [e.clientX - rect.left, e.clientY - rect.top];
+            signatureCanvas.parentElement.classList.remove('error'); // Remove error on drawing start
+        });
+
+        signatureCanvas.addEventListener('mousemove', draw);
+        signatureCanvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL(); // Save signature when drawing stops
+        });
+        signatureCanvas.addEventListener('mouseout', () => {
+            if (isDrawing) { // If mouse leaves while drawing, save the current state
+                signatureDataInput.value = signatureCanvas.toDataURL();
+            }
+            isDrawing = false;
+        });
+
+        // Touch events for mobile
+        signatureCanvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling
+            isDrawing = true;
+            const rect = signatureCanvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            [lastX, lastY] = [touch.clientX - rect.left, touch.clientY - rect.top];
+            signatureCanvas.parentElement.classList.remove('error'); // Remove error on drawing start
+        });
+        signatureCanvas.addEventListener('touchmove', draw);
+        signatureCanvas.addEventListener('touchend', () => {
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL();
+        });
+        signatureCanvas.addEventListener('touchcancel', () => { // For when touch is interrupted
+            isDrawing = false;
+            signatureDataInput.value = signatureCanvas.toDataURL();
+        });
+
+
+        clearSignatureBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height); // Clear the canvas
+            signatureDataInput.value = ''; // Clear the hidden input value
+        });
+
+        // Initialize signature pad when the page loads, ensuring elements are ready
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(0); // Show the first step
+            initializeSignaturePad(); // Initial setup of the signature pad
+        });
+        window.addEventListener('resize', initializeSignaturePad); // Re-initialize on resize
+
+
+        // File list display and removal (using DataTransfer for robust handling)
+        const bankStatementsInput = document.getElementById('bankStatements');
+        const fileListContainer = document.getElementById('fileList');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        let dataTransfer = new DataTransfer(); // Use DataTransfer object to manage files
+
+        // Trigger hidden input click when file upload area is clicked
+        fileUploadArea.addEventListener('click', () => {
+            bankStatementsInput.click();
+        });
+
+        bankStatementsInput.addEventListener('change', (event) => {
+            // Add newly selected files to our DataTransfer object
+            for (const file of event.target.files) {
+                // Check for duplicates before adding (name + size + lastModified for better uniqueness)
+                let isDuplicate = false;
+                for (let i = 0; i < dataTransfer.files.length; i++) {
+                    if (dataTransfer.files[i].name === file.name && dataTransfer.files[i].size === file.size && file.lastModified === dataTransfer.files[i].lastModified) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+                if (!isDuplicate) {
+                    dataTransfer.items.add(file);
                 }
             }
+            renderFileList();
+            // Clear the input's files after processing to allow re-selection
+            event.target.value = null;
         });
-        if (!isValid) {
-            showStatus('Please fill all required fields.', true);
+
+        function renderFileList() {
+            fileListContainer.innerHTML = ''; // Clear current list
+            Array.from(dataTransfer.files).forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex items-center justify-between p-2 border rounded-md text-sm input-style';
+                fileItem.style.backgroundColor = 'var(--theme-input-bg)';
+                fileItem.style.borderColor = 'var(--theme-input-border)';
+                fileItem.style.color = 'var(--theme-text)';
+                
+                fileItem.innerHTML = `
+                    <span><i class="fas fa-file-alt mr-2 file-icon-style"></i>${file.name}</span>
+                    <button type="button" class="text-red-500 hover:text-red-700 ml-2" data-index="${index}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileListContainer.appendChild(fileItem);
+            });
+
+            // Add event listeners to the new delete buttons
+            fileListContainer.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const indexToDelete = parseInt(event.currentTarget.dataset.index);
+                    dataTransfer.items.remove(indexToDelete); // Remove file from DataTransfer
+                    renderFileList(); // Re-render the list
+                });
+            });
         }
-        return isValid;
-    }
 
-    // Signature Pad Logic
-    function resizeCanvas() {
-        signatureCanvas.width = signatureCanvas.offsetWidth;
-        signatureCanvas.height = signatureCanvas.offsetHeight;
-    }
-    
-    function draw(e) {
-        if (!isDrawing) return;
-        const rect = signatureCanvas.getBoundingClientRect();
-        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        [lastX, lastY] = [x, y];
-    }
 
-    function startDrawing(e) {
-        isDrawing = true;
-        sigPadContainer.classList.remove('error');
-        const rect = signatureCanvas.getBoundingClientRect();
-        [lastX, lastY] = [(e.touches ? e.touches[0].clientX : e.clientX) - rect.left, (e.touches ? e.touches[0].clientY : e.clientY) - rect.top];
-    }
-    
-    function stopDrawing() {
-        if (!isDrawing) return;
-        isDrawing = false;
-        signatureDataInput.value = signatureCanvas.toDataURL(); // Save signature as Base64
-    }
+        /**
+         * Shows a specific step in the multi-step form and updates sidebar navigation.
+         * @param {number} stepIndex - The 0-indexed number of the step to show.
+         */
+        function showStep(stepIndex) {
+            // Hide all form sections and remove 'active' class from sidebar buttons
+            formSections.forEach((section, index) => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+            stepButtons.forEach((button) => {
+                button.classList.remove('active-step');
+            });
 
-    // --- EVENT LISTENERS ---
+            // Show the target step and update its corresponding sidebar button
+            formSections[stepIndex].classList.remove('hidden');
+            formSections[stepIndex].classList.add('active');
+            stepButtons[stepIndex].classList.add('active-step');
 
-    // Form Submission
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Stop default page reload
-        if (!validateStep()) return;
+            currentStep = stepIndex; // Update the current step index
 
-        const submitButton = form.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.textContent = 'Submitting...';
+            // Scroll to the top of the window for the new step
+            window.scrollTo(0, 0); // This reliably scrolls the entire window to the top
 
-        const formData = new FormData(form);
-
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => {
-            if (response.ok) {
-                showStatus('Application submitted successfully!');
-                form.reset();
-                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-                showStep(0);
-                 submitButton.textContent = 'Submitted!';
-            } else {
-                throw new Error('Network response was not ok.');
+            // If navigating to the signature step (index 3), ensure the canvas is initialized
+            if (stepIndex === 3) {
+                initializeSignaturePad();
+                renderFileList(); // Re-render file list to apply current theme styles
             }
-        })
-        .catch(error => {
-            showStatus('Submission failed. Please try again.', true);
-            console.error('Fetch Error:', error);
-        })
-        .finally(() => {
-             // Re-enable button unless successful
-             if(submitButton.textContent !== 'Submitted!') {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Application';
-             }
-        });
-    });
+            applyThemeToElements(); // Re-apply theme colors when switching steps
+        }
 
-    // "Continue" Buttons
-    continueButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            if (validateStep()) {
-                showStep(currentStep + 1);
+        /**
+         * Validates all required fields within the current active form section.
+         * @returns {boolean} True if all required fields are filled, false otherwise.
+         */
+        function validateCurrentStep() {
+            const currentSection = document.querySelector('.form-section.active');
+            let isValid = true;
+            let firstInvalidField = null;
+
+            // Select all required input, select, and textarea elements within the current section
+            // Exclude the bankStatements input (file upload) from required validation
+            const requiredFields = currentSection.querySelectorAll('input[required]:not(#bankStatements), select[required], textarea[required]');
+
+            requiredFields.forEach(field => {
+                field.classList.remove('border-red-500', 'border-2'); // Clear previous error styles
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('border-red-500', 'border-2'); // Add error style
+                    if (!firstInvalidField) {
+                        firstInvalidField = field;
+                    }
+                }
+            });
+
+            // Specific validation for radio buttons (Legal Entity)
+            if (currentSection.id === 'step2') {
+                const legalEntityRadios = document.querySelectorAll('input[name="legalEntity"]');
+                const isLegalEntitySelected = Array.from(legalEntityRadios).some(radio => radio.checked);
+                if (!isLegalEntitySelected) {
+                    isValid = false;
+                    // Find the first radio button in the group to focus on for error highlighting
+                    if (!firstInvalidField) {
+                         firstInvalidField = legalEntityRadios[0];
+                         // Add error class to the parent div for visual indication
+                         document.getElementById('legalEntityRadios').parentElement.querySelector('label').style.color = 'red';
+                    }
+                } else {
+                    document.getElementById('legalEntityRadios').parentElement.querySelector('label').style.color = ''; // Reset color
+                }
             }
-        });
-    });
 
-    // Sidebar Step Buttons
-    stepButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const targetStep = parseInt(button.dataset.step);
-            // Allow jumping back, but validate when jumping forward
-            if (targetStep < currentStep || validateStep()) {
-                showStep(targetStep);
+            // Specific validation for signature pad
+            if (currentSection.id === 'step4') {
+                if (!signatureDataInput.value) {
+                    isValid = false;
+                    signatureCanvas.parentElement.classList.add('error'); // Add error class to container
+                    if (!firstInvalidField) {
+                        firstInvalidField = signatureCanvas; // Set canvas as the first invalid field for focus
+                    }
+                } else {
+                    signatureCanvas.parentElement.classList.remove('error');
+                }
             }
-        });
-    });
-    
-    // Signature Pad Listeners
-    signatureCanvas.addEventListener('mousedown', startDrawing);
-    signatureCanvas.addEventListener('mousemove', draw);
-    signatureCanvas.addEventListener('mouseup', stopDrawing);
-    signatureCanvas.addEventListener('mouseout', stopDrawing);
-    signatureCanvas.addEventListener('touchstart', startDrawing);
-    signatureCanvas.addEventListener('touchmove', draw);
-    signatureCanvas.addEventListener('touchend', stopDrawing);
-    
-    clearSignatureBtn.addEventListener('click', () => {
-        ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-        signatureDataInput.value = '';
-    });
-    
-    // --- INITIALIZATION ---
-    window.addEventListener('resize', resizeCanvas);
-    showStep(0); // Show the first step on page load
-});
-</script>
 
+            if (!isValid) {
+                showMessageBox('Please fill in all required fields.', 'error');
+                if (firstInvalidField) {
+                    // For radio buttons, focus on the first radio button in the group
+                    if (firstInvalidField.type === 'radio') {
+                        firstInvalidField.focus();
+                    } else if (firstInvalidField.tagName === 'CANVAS') {
+                        // For canvas, maybe scroll to it or highlight its container
+                        firstInvalidField.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    else {
+                        firstInvalidField.focus(); // Focus on the first invalid field
+                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }
+            return isValid;
+        }
+
+
+        // Event listeners for 'Continue' buttons
+        continueButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (validateCurrentStep()) {
+                    if (currentStep < formSections.length - 1) {
+                        showStep(currentStep + 1);
+                    }
+                }
+            });
+        });
+
+        // Event listeners for sidebar step buttons (allow jumping backwards, but validate forwards)
+        stepButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                if (index < currentStep) { // Allow navigating backward without validation
+                    showStep(index);
+                } else if (index === currentStep) { // If clicking current step, do nothing
+                    return;
+                } else { // If navigating forward, validate current step
+                    // Validate only if navigating to a *later* step than the current one
+                    if (validateCurrentStep()) {
+                        showStep(index);
+                    }
+                }
+            });
+        });
+
+        // Main form submission handler
+        const submitApplicationBtn = document.getElementById('submitApplicationBtn');
+        submitApplicationBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default browser form submission
+            
+            // Validate the current (last) step before submitting
+            if (!validateCurrentStep()) {
+                return; // Stop submission if validation fails
+            }
+
+            // If validation passes, proceed with submission logic
+            // Hide the form and sidebar
+            applicationForm.classList.add('hidden');
+            sidebar.classList.add('hidden'); // Hide the sidebar
+
+            // Show the thank you page and make it fill the main content area
+            mainContent.classList.remove('justify-start'); // Remove justify-start
+            mainContent.classList.add('justify-center', 'items-center', 'flex-grow'); // Center thank you page vertically and horizontally
+            thankYouPage.classList.remove('hidden');
+            thankYouPage.classList.add('flex-grow'); // Ensure it takes available space
+
+            // In a real application, you would collect form data and send it to a server here.
+            const formData = new FormData(applicationForm); // Use applicationForm directly
+            // Append each selected file individually from DataTransfer object
+            Array.from(dataTransfer.files).forEach(file => {
+                formData.append('bankStatements[]', file); // Use '[]' for array-like submission
+            });
+
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            data.signatureData = signatureDataInput.value; // Add signature data
+            console.log('Form Data:', data); // Log collected data for demonstration
+            showMessageBox('Application submitted successfully!', 'success');
+        });
+
+        // Event listeners for the new contact buttons on the thank you page
+        contactRepresentativeBtn.addEventListener('click', () => {
+            openModal('representativeModal');
+        });
+
+        contactCustomerServiceBtn.addEventListener('click', () => {
+            openModal('customerServiceModal');
+        });
+
+
+        // Apply input styling dynamically (important for theme changes)
+        document.querySelectorAll('.input-style').forEach(input => {
+            input.addEventListener('input', () => applyThemeToElements());
+            input.addEventListener('change', () => applyThemeToElements());
+            input.addEventListener('focus', () => {
+                input.style.borderColor = 'var(--theme-input-focus-border)';
+                input.style.boxShadow = '0 0 0 2px var(--theme-input-focus-ring)';
+            });
+            input.addEventListener('blur', () => {
+                input.style.borderColor = 'var(--theme-input-border)';
+                input.style.boxShadow = 'none';
+            });
+        });
+
+        /**
+         * Displays a custom message box at the top of the screen.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('success', 'error', 'info').
+         */
+        function showMessageBox(message, type = 'info') {
+            let messageBox = document.getElementById('customMessageBox');
+            if (!messageBox) {
+                messageBox = document.createElement('div');
+                messageBox.id = 'customMessageBox';
+                document.body.appendChild(messageBox);
+            }
+
+            messageBox.innerHTML = ''; // Clear previous content
+            let iconHtml = '';
+            let bgColor = '';
+            let textColor = ''; // Will be set dynamically
+
+            // Determine icon and colors based on message type
+            if (type === 'success') {
+                iconHtml = '<i class="fas fa-check-circle"></i>';
+                bgColor = 'var(--theme-primary)'; // Use theme primary for success
+                textColor = 'var(--theme-button-text)'; // Text color for buttons
+            } else if (type === 'error') {
+                iconHtml = '<i class="fas fa-times-circle"></i>';
+                bgColor = '#dc3545'; /* Specific red for error */
+                textColor = '#ffffff';
+            } else { // info
+                iconHtml = '<i class="fas fa-info-circle"></i>';
+                bgColor = 'var(--theme-primary)'; // Use theme primary for info
+                textColor = 'var(--theme-button-text)'; // Text color for buttons
+            }
+
+            messageBox.style.backgroundColor = bgColor;
+            messageBox.style.color = textColor;
+            messageBox.innerHTML = `${iconHtml}<span>${message}</span>`;
+
+            // Show the message box with animation
+            messageBox.classList.add('show');
+
+            // Hide after 3 seconds with animation
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000);
+        }
+
+        /**
+         * Opens a modal by adding the 'show' class.
+         * @param {string} modalId - The ID of the modal to open.
+         */
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        /**
+         * Closes a modal by removing the 'show' class.
+         * @param {string} modalId - The ID of the modal to close.
+         */
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Theme definitions with darker, shinier, high-contrast styles
+        const themes = {
+            "white_original": { // This is the new default white theme
+                "--theme-primary":"#3182ce", "--theme-secondary":"#4a5568", "--theme-background":"#f7fafc", "--theme-sidebar-bg":"#ffffff", "--theme-text":"#4a5568", "--theme-heading":"#1a202c", "--theme-border":"#e2e8f0", "--theme-input-bg":"#ffffff", "--theme-input-border":"#e2e8f0", "--theme-input-focus-border":"#3182ce", "--theme-input-focus-ring":"rgba(49, 130, 206, 0.3)", "--theme-button-bg":"#ffffff", "--theme-button-text":"#4a5568", "--theme-button-hover-bg":"#f7fafc", "--theme-button-hover-border":"#cbd5e0"
+            },
+            "black_dark_mode": { // Truly darker dark mode
+                "--theme-primary":"#66ccff", "--theme-secondary":"#aaaaaa","--theme-background":"#000000","--theme-sidebar-bg":"#1a1a1a","--theme-text":"#f0f0f0","--theme-heading":"#ffffff","--theme-border":"#2a2a2a","--theme-input-bg":"#1a1a1a","--theme-input-border":"#3a3a3a","--theme-input-focus-border":"#66ccff","--theme-input-focus-ring":"rgba(102, 204, 255, 0.3)","--theme-button-bg":"#1a1a1a","--theme-button-text":"#f0f0f0","--theme-button-hover-bg":"#3a3a3a","--theme-button-hover-border":"#5a5a5a"
+            },
+            "deep_purplish_blue": { // New blue based on image style, more purplish
+                "--theme-primary":"#5c6bc0", "--theme-secondary":"#9fa8da","--theme-background":"#282c3f","--theme-sidebar-bg":"#34394c","--theme-text":"#e0e3ed","--theme-heading":"#ffffff","--theme-border":"#4a5266","--theme-input-bg":"#34394c","--theme-input-border":"#4a5266","--theme-input-focus-border":"#5c6bc0","--theme-input-focus-ring":"rgba(92, 107, 192, 0.3)","--theme-button-bg":"#34394c","--theme-button-text":"#e0e3ed","--theme-button-hover-bg":"#4a5266","--theme-button-hover-border":"#5c6bc0"
+            },
+            "deep_orange": { // Matching image style
+                "--theme-primary":"#ffb74d", "--theme-secondary":"#ffe0b2","--theme-background":"#ba3f00","--theme-sidebar-bg":"#e65100","--theme-text":"#fff3e0","--theme-heading":"#ffffff","--theme-border":"#fb8c00","--theme-input-bg":"#e65100","--theme-input-border":"#fb8c00","--theme-input-focus-border":"#ffb74d","--theme-input-focus-ring":"rgba(255, 183, 77, 0.3)","--theme-button-bg":"#e65100","--theme-button-text":"#fff3e0","--theme-button-hover-bg":"#fb8c00","--theme-button-hover-border":"#ffb74d"
+            },
+            "deep_forest_green": { // Matching image style
+                "--theme-primary":"#81c784", "--theme-secondary":"#c8e6c9","--theme-background":"#0a3511","--theme-sidebar-bg":"#1b5e20","--theme-text":"#e8f5e9","--theme-heading":"#ffffff","--theme-border":"#2e7d32","--theme-input-bg":"#1b5e20","--theme-input-border":"#2e7d32","--theme-input-focus-border":"#81c784","--theme-input-focus-ring":"rgba(129, 199, 132, 0.3)","--theme-button-bg":"#1b5e20","--theme-button-text":"#e8f5e9","--theme-button-hover-bg":"#2e7d32","--theme-button-hover-border":"#81c784"
+            },
+            "deep_pink": { // Matching image style
+                "--theme-primary":"#f48fb1", "--theme-secondary":"#f8bbd0","--theme-background":"#6a003f","--theme-sidebar-bg":"#880e4f","--theme-text":"#fce4ec","--theme-heading":"#ffffff","--theme-border":"#ad1457","--theme-input-bg":"#880e4f","--theme-input-border":"#ad1457","--theme-input-focus-border":"#f48fb1","--theme-input-focus-ring":"rgba(244, 143, 177, 0.3)","--theme-button-bg":"#880e4f","--theme-button-text":"#fce4ec","--theme-button-hover-bg":"#ad1457","--theme-button-hover-border":"#f48fb1"
+            },
+            "deep_ocean_blue": { // Matching image style
+                "--theme-primary":"#42a5f5", "--theme-secondary":"#90caf9","--theme-background":"#15284b","--theme-sidebar-bg":"#1a335a","--theme-text":"#bbdefb","--theme-heading":"#e3f2fd","--theme-border":"#2a4b7e","--theme-input-bg":"#1a335a","--theme-input-border":"#2a4b7e","--theme-input-focus-border":"#42a5f5","--theme-input-focus-ring":"rgba(66, 165, 245, 0.3)","--theme-button-bg":"#1a335a","--theme-button-text":"#bbdefb","--theme-button-hover-bg":"#2a4b7e","--theme-button-hover-border":"#42a5f5"
+            },
+            "dark_teal": { // Matching image style
+                "--theme-primary":"#80cbc4", "--theme-secondary":"#b2dfdb","--theme-background":"#00332e","--theme-sidebar-bg":"#004d40","--theme-text":"#e0f2f1","--theme-heading":"#ffffff","--theme-border":"#00695c","--theme-input-bg":"#004d40","--theme-input-border":"#00695c","--theme-input-focus-border":"#80cbc4","--theme-input-focus-ring":"rgba(128, 203, 196, 0.3)","--theme-button-bg":"#004d40","--theme-button-text":"#e0f2f1","--theme-button-hover-bg":"#00695c","--theme-button-hover-border":"#80cbc4"
+            },
+            "sophisticated_gray": { // Matching image style
+                "--theme-primary":"#9e9e9e", "--theme-secondary":"#bdbdbd","--theme-background":"#263238","--theme-sidebar-bg":"#37474f","--theme-text":"#eceff1","--theme-heading":"#cfd8dc","--theme-border":"#455a64","--theme-input-bg":"#37474f","--theme-input-border":"#455a64","--theme-input-focus-border":"#9e9e9e","--theme-input-focus-ring":"rgba(158, 158, 158, 0.3)","--theme-button-bg":"#37474f","--theme-button-text":"#eceff1","--theme-button-hover-bg":"#455a64","--theme-button-hover-border":"#9e9e9e"
+            },
+            "elegant_gold": { // Elegant gold
+                "--theme-primary":"#ffeb3b", "--theme-secondary":"#fff176","--theme-background":"#3e2723","--theme-sidebar-bg":"#5d4037","--theme-text":"#efebe9","--theme-heading":"#ffee58","--theme-border":"#795548","--theme-input-bg":"#5d4037","--theme-input-border":"#795548","--theme-input-focus-border":"#ffeb3b","--theme-input-focus-ring":"rgba(255, 235, 59, 0.3)","--theme-button-bg":"#5d4037","--theme-button-text":"#efebe9","--theme-button-hover-bg":"#795548","--theme-button-hover-border":"#ffeb3b"
+            }
+        };
+
+        function applyTheme(themeName) {
+            const selectedTheme = themes[themeName] || themes["white_original"]; // Fallback to white
+
+            for (const [prop, value] of Object.entries(selectedTheme)) {
+                document.documentElement.style.setProperty(prop, value);
+            }
+
+            // Update selected class for visual feedback on circles
+            const allColorCircles = document.querySelectorAll('.color-circle'); // Select all circles, including those in footer
+            allColorCircles.forEach(c => c.classList.remove('selected'));
+            
+            const currentCircle = document.querySelector(`.color-circle[data-theme-name="${themeName}"]`);
+            if (currentCircle) {
+                currentCircle.classList.add('selected');
+            }
+            
+            // Re-apply styles to elements that might need explicit updates after theme change
+            applyThemeToElements();
+        }
+
+        const colorCircles = document.querySelectorAll('.color-circle');
+        colorCircles.forEach(circle => {
+            circle.addEventListener('click', (event) => {
+                const themeName = event.target.dataset.themeName;
+                applyTheme(themeName);
+            });
+        });
+
+        // Function to apply theme colors to relevant elements (called on theme change and step change)
+        function applyThemeToElements() {
+            const rootStyle = document.documentElement.style;
+
+            // Header/Footer Backgrounds and Borders
+            document.querySelector('header').style.backgroundColor = rootStyle.getPropertyValue('--theme-sidebar-bg');
+            document.querySelector('header').style.borderColor = rootStyle.getPropertyValue('--theme-border');
+            document.querySelector('footer').style.backgroundColor = rootStyle.getPropertyValue('--theme-sidebar-bg');
+            document.querySelector('footer').style.borderColor = rootStyle.getPropertyValue('--theme-border');
+
+            // Sidebar Background and Borders
+            sidebar.style.background = rootStyle.getPropertyValue('--theme-sidebar-bg');
+            sidebar.style.borderColor = rootStyle.getPropertyValue('--theme-border');
+            sidebar.querySelector('.border-t').style.borderColor = rootStyle.getPropertyValue('--theme-border'); // Separator in sidebar
+
+            // Headings
+            document.querySelectorAll('h2, h3').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-heading');
+            });
+            document.querySelectorAll('.border-b-2').forEach(el => { // Section title underlines
+                el.style.borderColor = rootStyle.getPropertyValue('--theme-border');
+            });
+
+            // General Text (if not specifically heading/primary)
+            document.body.style.color = rootStyle.getPropertyValue('--theme-text');
+            document.querySelectorAll('.text-theme-secondary').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-text');
+            });
+
+            // Primary/Accent Text & Icons
+            document.querySelectorAll('.text-theme-primary, .fas.fa-phone-alt, a[href^="mailto"], .file-icon-style').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-primary');
+            });
+            document.querySelectorAll('.step-btn .text-theme-secondary').forEach(el => { // Sidebar step text
+                 el.style.color = rootStyle.getPropertyValue('--theme-text');
+            });
+            document.querySelectorAll('.step-btn.active-step .active-icon').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-primary');
+            });
+            document.querySelector('a[href^="tel:"]').style.color = rootStyle.getPropertyValue('--theme-heading'); // Phone number text
+            document.querySelector('span.text-lg.font-montserrat.font-semibold.text-theme-heading').style.color = rootStyle.getPropertyValue('--theme-heading'); // "Need help?" text
+
+            // Input Fields
+            document.querySelectorAll('.input-style').forEach(el => {
+                el.style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+                el.style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+                el.style.color = rootStyle.getPropertyValue('--theme-text');
+                el.style.caretColor = rootStyle.getPropertyValue('--theme-text'); // Ensure caret is visible
+            });
+
+            // Buttons (Continue, Submit, Clear Signature, Contact Buttons)
+            document.querySelectorAll('.button-style').forEach(el => {
+                el.style.backgroundColor = rootStyle.getPropertyValue('--theme-button-bg');
+                el.style.color = rootStyle.getPropertyValue('--theme-button-text');
+                el.style.borderColor = rootStyle.getPropertyValue('--theme-button-border');
+            });
+            // Specific hover for buttons
+            document.querySelectorAll('.button-style').forEach(el => {
+                el.onmouseover = () => {
+                    el.style.backgroundColor = rootStyle.getPropertyValue('--theme-button-hover-bg');
+                    el.style.borderColor = rootStyle.getPropertyValue('--theme-button-hover-border');
+                };
+                el.onmouseout = () => {
+                    el.style.backgroundColor = rootStyle.getPropertyValue('--theme-button-bg');
+                    el.style.borderColor = rootStyle.getPropertyValue('--theme-button-border');
+                };
+            });
+
+
+            // File Upload Box
+            document.querySelector('.file-upload-box').style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+            document.querySelector('.file-upload-box').style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+            document.querySelector('.file-upload-box').onmouseover = () => {
+                document.querySelector('.file-upload-box').style.borderColor = rootStyle.getPropertyValue('--theme-input-focus-border');
+                document.querySelector('.file-upload-box').style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg'); // Keep same on hover
+            };
+            document.querySelector('.file-upload-box').onmouseout = () => {
+                document.querySelector('.file-upload-box').style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+                document.querySelector('.file-upload-box').style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+            };
+
+            // File List Items
+            document.querySelectorAll('#fileList > div').forEach(item => {
+                item.style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+                item.style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+                item.style.color = rootStyle.getPropertyValue('--theme-text');
+                item.querySelector('.file-icon-style').style.color = rootStyle.getPropertyValue('--theme-primary');
+            });
+
+
+            // Modals (Content Background, Image Borders, Icons)
+            document.querySelectorAll('.modal-content-style').forEach(el => {
+                el.style.backgroundColor = rootStyle.getPropertyValue('--theme-sidebar-bg');
+            });
+            document.querySelectorAll('.modal-img-border').forEach(el => {
+                el.style.borderColor = rootStyle.getPropertyValue('--theme-primary');
+            });
+            document.querySelectorAll('.modal-icon-color').forEach(el => {
+                el.style.color = rootStyle.getPropertyValue('--theme-primary');
+            });
+            document.querySelectorAll('.modal-close-btn').forEach(el => {
+                 el.style.color = rootStyle.getPropertyValue('--theme-text');
+            });
+            document.querySelectorAll('.modal-close-btn').forEach(el => {
+                el.onmouseover = () => { el.style.color = rootStyle.getPropertyValue('--theme-primary'); };
+                el.onmouseout = () => { el.style.color = rootStyle.getPropertyValue('--theme-text'); };
+            });
+
+            // Radio Buttons accent-color
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.style.accentColor = rootStyle.getPropertyValue('--theme-primary');
+            });
+
+            // Signature Canvas container border and background
+            document.querySelector('.signature-canvas-container').style.borderColor = rootStyle.getPropertyValue('--theme-input-border');
+            document.querySelector('.signature-canvas-container').style.backgroundColor = rootStyle.getPropertyValue('--theme-input-bg');
+        }
+
+        // Set initial theme (white_original)
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme("white_original");
+        });
+    </script>
 </body>
 </html>
