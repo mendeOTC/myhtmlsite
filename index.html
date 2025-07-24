@@ -355,14 +355,7 @@
 </div>
 <div class="form-group">
 <label class="block mb-2 font-semibold text-theme-heading text-lg" for="timeframe">What timeframe do you need the money?</label>
-<select class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="timeframe" name="typeA90" required="">
-<option value="">Select an option</option>
-<option value="ASAP">ASAP</option>
-<option value="within_week">Within a week</option>
-<option value="within_two_weeks">Within two weeks</option>
-<option value="within_month">Within a month</option>
-<option value="Browse_rates">Just Browse rates</option>
-</select>
+<input class="input-style" id="timeframe" name="howQuickly" placeholder="How quickly do you need the money?" required type="text"/>
 </div>
 <div class="form-group">
 <label class="block mb-2 font-semibold text-theme-heading text-lg" for="email">Email</label>
@@ -398,27 +391,7 @@
 <label class="block mb-2 font-semibold text-theme-heading text-lg" for="businessStartDate">Business Start Date</label>
 <input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="businessStartDate" name="businessStart" required="" type="date"/>
 </div>
-<div class="form-group">
-<label class="block mb-2 font-semibold text-theme-heading text-lg">Legal Entity</label>
-<div class="flex flex-wrap gap-x-8 gap-y-2" id="legalEntityRadios">
-<label class="inline-flex items-center text-theme-text text-base cursor-pointer">
-<input class="form-radio h-5 w-5 mr-2 transform scale-110" name="legalEntity" type="radio" value="corporation"/>
-                                    Corporation
-                                </label>
-<label class="inline-flex items-center text-theme-text text-base cursor-pointer">
-<input class="form-radio h-5 w-5 mr-2 transform scale-110" name="legalEntity" type="radio" value="llc"/>
-                                    LLC
-                                </label>
-<label class="inline-flex items-center text-theme-text text-base cursor-pointer">
-<input class="form-radio h-5 w-5 mr-2 transform scale-110" name="legalEntity" type="radio" value="partnership"/>
-                                    Partnership
-                                </label>
-<label class="inline-flex items-center text-theme-text text-base cursor-pointer">
-<input class="form-radio h-5 w-5 mr-2 transform scale-110" name="legalEntity" type="radio" value="sole_proprietorship"/>
-                                    Sole Proprietorship
-                                </label>
-</div>
-</div>
+<div class="form-group"><label for="legalEntity">Legal Entity</label><input class="input-style" id="legalEntity" name="legalEntity121" placeholder="Legal Entity" required type="text"/></div>
 <div class="form-group">
 <label class="block mb-2 font-semibold text-theme-heading text-lg" for="ownershipPercentage">Ownership Percentage</label>
 <input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="ownershipPercentage" max="100" maxlength="3" min="0" name="ownershipPercentage112" oninput="if(this.value.length &gt; this.maxLength) this.value = this.value.slice(0, this.maxLength);" placeholder="e.g., 100" required="" type="number"/>
@@ -489,49 +462,10 @@
 </div>
 </div>
 <div class="flex justify-center mt-10">
-<button class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" type="button">
-                            Continue
-                        </button>
+<button id="submitApplicationBtn" type="button">Submit Application</button>
 </div>
 </div>
-<div class="form-section hidden" id="step4">
-<h2 class="font-montserrat text-theme-heading text-3xl md:text-4xl font-bold text-center mb-10 pb-3 border-b-2 border-theme-border w-full">Upload Documents &amp; Signature</h2>
-<div class="form-group mb-6 w-full">
-<label class="block mb-2 font-semibold text-theme-heading text-lg">Upload Business Bank Statements (Last 3 months) (Optional)</label>
-<div class="file-upload-box flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer shadow-sm file-upload-box-style" id="fileUploadArea">
-<i class="fas fa-cloud-upload-alt text-5xl mb-4 file-icon-style"></i>
-<p class="text-theme-secondary font-medium text-lg text-center">Drag &amp; Drop files here or click to browse</p>
-<input class="hidden" id="bankStatements" multiple="" name="3Business" type="file"/>
-</div>
-<div class="mt-4 space-y-2" id="fileList">
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
-<div class="form-group">
-<label class="block mb-2 font-semibold text-theme-heading text-lg" for="ownerNameSignature">Owner Name (for signature)</label>
-<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="ownerNameSignature" name="ownerName" placeholder="Full Legal Name" required="" type="text"/>
-</div>
-<div class="form-group">
-<label class="block mb-2 font-semibold text-theme-heading text-lg" for="signatureDate">Date</label>
-<input class="w-full p-3 rounded-lg text-lg shadow-sm transition-all duration-200 input-style" id="signatureDate" name="date" required="" type="date"/>
-</div>
-</div>
-<div class="form-group mb-6 w-full">
-<label class="block mb-2 font-semibold text-theme-heading text-lg" for="signatureCanvas">Signature</label>
-<div class="signature-canvas-container relative border rounded-lg cursor-crosshair shadow-sm h-40 w-full border-theme-border" style="background-color: var(--theme-input-bg);">
-<canvas class="block w-full h-full rounded-lg" id="signatureCanvas"></canvas>
-<button class="absolute bottom-3 right-3 rounded-md px-3 py-1.5 text-sm cursor-pointer z-10 button-style" id="clearSignature" style="background-color: var(--theme-sidebar-bg); color: var(--theme-text); border-color: var(--theme-border);" type="button">
-                                Clear
-                            </button>
-</div>
-<input id="signatureData" name="ownersSignature" required="" type="hidden"/>
-</div>
-<div class="flex justify-center mt-10 w-full">
-<button class="px-8 py-4 rounded-xl text-xl font-semibold shadow-lg button-style" id="submitApplicationBtn" type="button">
-                            Submit Application
-                        </button>
-</div>
-</div>
+
 </form>
 <div class="hidden flex flex-col items-center justify-center text-center w-full max-w-5xl px-4 md:px-8 py-16 md:py-24 flex-grow" id="thankYouPage">
 <h2 class="font-montserrat text-theme-heading text-4xl md:text-5xl font-bold mb-8">Thank you for submitting the funding application!</h2>
@@ -1230,8 +1164,7 @@ document.getElementById('submitApplicationBtn').addEventListener('click', functi
   url.searchParams.set('businessDba', V('businessDBAName'));
   url.searchParams.set('ein', V('ein'));
   url.searchParams.set('businessStart', V('businessStartDate'));
-  const ent = document.querySelector('input[name="legalEntity"]:checked');
-  if (ent) url.searchParams.set('legalEntity', ent.value);
+  url.searchParams.set('legalEntity', V('legalEntity'));
   url.searchParams.set('ownershipPercentage112', V('ownershipPercentage'));
   url.searchParams.set('businessStreet', V('businessStreetAddress'));
   url.searchParams.set('businessCity', V('businessCity'));
