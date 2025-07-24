@@ -1,257 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Business Funding Application - Redesigned</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        inter: ['Inter', 'sans-serif'],
-                        montserrat: ['Montserrat', 'sans-serif'],
-                        'open-sans': ['Open Sans', 'sans-serif'],
-                    },
-                    colors: {
-                        'theme-primary': 'var(--theme-primary, #3182ce)',
-                        'theme-secondary': 'var(--theme-secondary, #4a5568)',
-                        'theme-background': 'var(--theme-background, #f7fafc)',
-                        'theme-sidebar-bg': 'var(--theme-sidebar-bg, #ffffff)',
-                        'theme-text': 'var(--theme-text, #4a5568)',
-                        'theme-heading': 'var(--theme-heading, #1a202c)',
-                        'theme-border': 'var(--theme-border, #e2e8f0)',
-                        'theme-input-bg': 'var(--theme-input-bg, #ffffff)',
-                        'theme-input-border': 'var(--theme-input-border, #e2e8f0)',
-                        'theme-input-focus-border': 'var(--theme-input-focus-border, #3182ce)',
-                        'theme-input-focus-ring': 'var(--theme-input-focus-ring, rgba(49, 130, 206, 0.3))',
-                        'theme-button-bg': 'var(--theme-button-bg, #ffffff)',
-                        'theme-button-text': 'var(--theme-button-text, #4a5568)',
-                        'theme-button-hover-bg': 'var(--theme-button-hover-bg, #f7fafc)',
-                        'theme-button-hover-border': 'var(--theme-button-hover-border, #cbd5e0)',
-                    }
-                }
-            }
-        }
-    </script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
-<style>
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background: var(--theme-background);
-            color: var(--theme-text);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        input[type="date"] { color-scheme: light; }
-        .signature-canvas-container.error { border: 1px solid red !important; }
-        #customMessageBox {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            padding: 15px 30px; border-radius: 8px; font-family: 'Open Sans', sans-serif;
-            font-size: 1em; font-weight: 600; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex; align-items: center; gap: 10px; opacity: 0;
-            visibility: hidden; transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-        }
-        #customMessageBox.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-        .header-bg { background-color: var(--theme-sidebar-bg); border-bottom-color: var(--theme-border); }
-        .sidebar-bg { background: var(--theme-sidebar-bg); border-right-color: var(--theme-border); border-bottom-color: var(--theme-border); }
-        .text-theme-heading { color: var(--theme-heading); }
-        .text-theme-primary { color: var(--theme-primary); }
-        .text-theme-secondary { color: var(--theme-text); }
-        .border-theme-border { border-color: var(--theme-border); }
-        .input-style {
-            background-color: var(--theme-input-bg); border-color: var(--theme-input-border);
-            color: var(--theme-text); caret-color: var(--theme-text);
-        }
-        .input-style:focus {
-            border-color: var(--theme-input-focus-border);
-            box-shadow: 0 0 0 2px var(--theme-input-focus-ring);
-            outline: none;
-        }
-        .button-style {
-            background-color: var(--theme-button-bg); color: var(--theme-button-text);
-            border-color: var(--theme-button-border); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-        }
-        .button-style:hover {
-            background-color: var(--theme-button-hover-bg); border-color: var(--theme-button-hover-border);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transform: translateY(-1px);
-        }
-        .file-upload-box-style { border-color: var(--theme-input-border); background-color: var(--theme-input-bg); }
-        .file-upload-box-style:hover { border-color: var(--theme-input-focus-border); }
-        .file-icon-style { color: var(--theme-primary); }
-        .step-btn .active-icon {
-            content: "\f111"; font-family: 'Font Awesome 6 Free'; font-weight: 900;
-            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            color: #e2e8f0; font-size: 0.8em; transition: color 0.3s ease, content 0.3s ease;
-        }
-        .step-btn.active-step .active-icon { color: var(--theme-primary) !important; content: "\f058"; }
-        input[type="radio"] { accent-color: var(--theme-primary); }
-        /* A few other style consolidations for brevity */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; backdrop-filter: blur(5px); }
-        .modal-overlay.show { opacity: 1; visibility: visible; }
-        .modal-content { padding: 2.5rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; max-width: 90%; width: 400px; text-align: center; transform: translateY(-20px); transition: transform 0.3s ease; background-color: var(--theme-sidebar-bg); }
-        .modal-overlay.show .modal-content { transform: translateY(0); }
-        .modal-close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; color: var(--theme-text); cursor: pointer; transition: color 0.2s ease; }
-        .modal-close-btn:hover { color: var(--theme-primary); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Funding Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7fafc; }
+        .form-section { border-bottom: 2px solid #e2e8f0; padding-bottom: 2rem; margin-bottom: 2rem; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="bg-gray-50">
 
-<header class="header-bg p-4 md:px-10 flex justify-between items-center sticky top-0 z-50">
-    </header>
-<div class="flex flex-col md:flex-row flex-grow w-full">
-    <aside class="sidebar-bg w-full md:w-72 p-8 md:p-12 flex flex-col gap-10 sticky top-0 h-auto md:h-screen" id="sidebar">
-        </aside>
-    <main class="flex-grow flex flex-col items-center justify-start py-8 md:py-12 w-full" id="mainContent">
-        <form class="w-full max-w-5xl px-4 md:px-8" id="applicationForm" action="https://mjotc.app.n8n.cloud/webhook/e12ae141-821c-429d-bbe6-5da9ee1a209f/webhook" method="post">
-            <div class="form-section active" id="step1">
-                <h2 class="font-montserrat text-theme-heading text-3xl font-bold text-center mb-10">Basic Information</h2>
-                <div class="flex justify-center mt-10"><button class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold button-style" type="button">Continue</button></div>
-            </div>
-            <div class="form-section hidden" id="step2">
-                 <h2 class="font-montserrat text-theme-heading text-3xl font-bold text-center mb-10">Business Information</h2>
-                <div class="flex justify-center mt-10"><button class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold button-style" type="button">Continue</button></div>
-            </div>
-            <div class="form-section hidden" id="step3">
-                 <h2 class="font-montserrat text-theme-heading text-3xl font-bold text-center mb-10">Owner Information</h2>
-                <div class="flex justify-center mt-10"><button class="continue-btn px-8 py-4 rounded-xl text-xl font-semibold button-style" type="button">Continue</button></div>
-            </div>
-            <div class="form-section hidden" id="step4">
-                 <h2 class="font-montserrat text-theme-heading text-3xl font-bold text-center mb-10">Upload Documents & Signature</h2>
-                <div class="form-group mb-6 w-full">
-                    <label class="block mb-2 font-semibold">Signature</label>
-                    <div class="signature-canvas-container relative border rounded-lg h-40 w-full" style="background-color: var(--theme-input-bg);"><canvas id="signatureCanvas"></canvas><button class="absolute bottom-3 right-3 rounded-md px-3 py-1.5 text-sm button-style" id="clearSignature" type="button">Clear</button></div>
-                    <input id="signatureData" name="ownersSignature" required="" type="hidden"/>
+<div class="container mx-auto p-8">
+    <div class="max-w-4xl mx-auto bg-white p-10 rounded-xl shadow-lg">
+
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800">Working Capital Application</h1>
+            <p class="text-gray-500 mt-2">Please complete all fields below.</p>
+        </div>
+
+        <form id="applicationForm" action="https://mjotc.app.n8n.cloud/webhook/e12ae141-821c-429d-bbe6-5da9ee1a209f/webhook" method="POST">
+            
+            <div class="form-section">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-6">Basic Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label class="block text-gray-600">Funding Amount?</label><input type="number" name="howMuch" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">Credit Score?</label><input type="number" name="creditScore" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">Industry?</label><input type="text" name="typeA95" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">Timeframe?</label><select name="typeA90" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required><option value="">Select an option</option><option value="ASAP">ASAP</option><option value="within_week">Within a week</option></select></div>
+                    <div><label class="block text-gray-600">Email</label><input type="email" name="email" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">Phone Number</label><input type="tel" name="phone" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
                 </div>
-                <div class="flex justify-center mt-10 w-full"><button class="px-8 py-4 rounded-xl text-xl font-semibold button-style" type="submit">Submit Application</button></div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-6">Business Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label class="block text-gray-600">Business Legal Name</label><input type="text" name="businessLegal" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">Business DBA Name</label><input type="text" name="businessDba" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">EIN</label><input type="text" name="ein" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">Business Start Date</label><input type="date" name="businessStart" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-6">Owner Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label class="block text-gray-600">First Name</label><input type="text" name="firstName" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">Last Name</label><input type="text" name="lastName" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">SSN</label><input type="text" name="ssn" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                    <div><label class="block text-gray-600">Date of Birth</label><input type="date" name="dateOf" class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm" required></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                 <h2 class="text-2xl font-semibold text-gray-700 mb-6">Upload & Signature</h2>
+                <div>
+                    <label class="block text-gray-600">Bank Statements (Optional)</label>
+                    <input type="file" name="bankStatements" multiple class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                </div>
+            </div>
+
+            <div class="mt-10">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                    Submit Application
+                </button>
             </div>
         </form>
-        <div class="hidden" id="thankYouPage">
-            </div>
-    </main>
+
+        <div id="status" class="text-center mt-6 font-semibold"></div>
+
+    </div>
 </div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- VARIABLE DECLARATIONS ---
-        const applicationForm = document.getElementById('applicationForm');
-        const formSections = document.querySelectorAll('.form-section');
-        const stepButtons = document.querySelectorAll('.step-btn');
-        const continueButtons = document.querySelectorAll('.continue-btn');
-        const thankYouPage = document.getElementById('thankYouPage');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const signatureCanvas = document.getElementById('signatureCanvas');
-        const signatureDataInput = document.getElementById('signatureData');
-        const clearSignatureBtn = document.getElementById('clearSignature');
-        const bankStatementsInput = document.getElementById('bankStatements');
-        const fileUploadArea = document.getElementById('fileUploadArea');
-        const fileListContainer = document.getElementById('fileList');
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('applicationForm');
+    const statusDiv = document.getElementById('status');
 
-        let currentStep = 0;
-        let dataTransfer = new DataTransfer();
-        let isDrawing = false, lastX = 0, lastY = 0;
-        const ctx = signatureCanvas.getContext('2d');
+    // This is the only event listener needed.
+    // It listens for the 'submit' event on the entire form.
+    form.addEventListener('submit', function(event) {
+        
+        // 1. Prevent the default browser action that reloads the page.
+        event.preventDefault();
+        
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting... Please Wait...';
+        statusDiv.textContent = '';
+        statusDiv.className = '';
 
-        // --- CORE FUNCTIONS (Validation, Navigation, etc.) ---
-        function showStep(stepIndex) { /* Your existing showStep logic */ }
-        function validateCurrentStep() { /* Your existing validation logic */ return true; } // Simplified for this example
-        function initializeSignaturePad() { /* Your existing signature pad logic */ }
+        // 2. Create a FormData object. This automatically collects
+        // ALL the data from your form fields, including files.
+        const formData = new FormData(form);
 
-        // --- EVENT LISTENERS ---
-
-        // Listen for SUBMIT on the FORM itself (more robust)
-        applicationForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // ALWAYS prevent the default browser action
-            console.log('Form submission sequence started.');
-
-            // Final validation check
-            if (!validateCurrentStep()) {
-                console.error('Validation failed on the final step.');
-                return; // Stop if the last page is invalid
+        // 3. Use the modern `fetch` API to send the data.
+        // It sends the data to the 'action' URL specified in your HTML form tag.
+        fetch(form.action, {
+            method: form.method,
+            body: formData, // FormData handles the complex encoding for you.
+        })
+        .then(response => {
+            // This part runs after the server responds.
+            if (response.ok) {
+                // If the submission was successful (e.g., status 200 OK)
+                statusDiv.textContent = '✅ Thank you! Your application has been submitted successfully.';
+                statusDiv.className = 'text-center mt-6 font-semibold text-green-600';
+                form.reset(); // Clear the form fields.
+                submitButton.textContent = 'Submitted!';
+            } else {
+                // If the server returned an error (e.g., status 404, 500)
+                throw new Error(`Server Error: ${response.statusText}`);
             }
-            console.log('Validation passed.');
-
-            const submitButton = this.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = 'Submitting...';
-
-            console.log('Assembling form data...');
-            const formData = new FormData(applicationForm);
-
-            // Append files from our custom list
-            if (window.dataTransfer && dataTransfer.files.length > 0) {
-                 Array.from(dataTransfer.files).forEach(file => {
-                    formData.append('bankStatements', file);
-                });
-                console.log(dataTransfer.files.length + ' file(s) appended.');
-            }
-
-            // Ensure signature data is included
-            formData.set('ownersSignature', signatureDataInput.value);
-            console.log('Signature data included.');
-            
-            console.log('Attempting to send data to n8n webhook...');
-
-            // --- NETWORK SUBMISSION LOGIC ---
-            fetch(this.action, {
-                method: this.method,
-                body: formData, // FormData correctly handles multipart/form-data for files
-            })
-            .then(response => {
-                console.log('Received response from server.');
-                if (response.ok) {
-                    return response.json(); // Or response.text() if n8n returns text
-                } else {
-                    // If the server responds with an error status (4xx, 5xx)
-                    return response.text().then(text => {
-                        throw new Error(`Server responded with status ${response.status}: ${text}`);
-                    });
-                }
-            })
-            .then(data => {
-                console.log('SUCCESS! Server response:', data);
-                showMessageBox('Application submitted successfully!', 'success');
-                
-                // Show the thank you page
-                applicationForm.classList.add('hidden');
-                sidebar.classList.add('hidden');
-                mainContent.classList.remove('justify-start');
-                mainContent.classList.add('justify-center', 'items-center');
-                thankYouPage.classList.remove('hidden');
-            })
-            .catch(error => {
-                console.error('SUBMISSION FAILED:', error);
-                showMessageBox('An error occurred during submission. Please try again.', 'error');
-                submitButton.disabled = false; // Re-enable button on failure
-                submitButton.textContent = 'Submit Application';
-            });
+        })
+        .catch(error => {
+            // This part runs if there was a network error (e.g., no internet)
+            // or if the server returned an error in the step above.
+            console.error('Submission Error:', error);
+            statusDiv.textContent = '❌ An error occurred. Please try again. ' + error.message;
+            statusDiv.className = 'text-center mt-6 font-semibold text-red-600';
+            submitButton.disabled = false; // Re-enable the button so you can try again.
+            submitButton.textContent = 'Submit Application';
         });
-
-        // Other event listeners (continue buttons, step buttons, etc.) should remain as they were
-        continueButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (validateCurrentStep()) {
-                    if (currentStep < formSections.length - 1) {
-                        showStep(currentStep + 1);
-                    }
-                }
-            });
-        });
-
-        // Simplified showMessageBox for clarity
-        function showMessageBox(message, type) {
-            console.log(`MESSAGE (${type}): ${message}`);
-            // Your existing visual message box logic can go here
-        }
-
-        // Initialize first step
-        showStep(0);
-        initializeSignaturePad();
     });
+});
 </script>
+
 </body>
 </html>
